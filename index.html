@@ -271,6 +271,10 @@ html[lang="en"] .seg button{font-family:var(--sans);font-size:14px}
 <style>
 /* 独立打开（GitHub Pages）时补上 artifact 外壳提供的基础重置 */
 [hidden]{display:none!important}
+.whint{font-size:11px;line-height:1.4;color:var(--muted)}
+.whint b{color:var(--amber);font-weight:500}
+#weightF.idle .ctl{opacity:.45}
+.intake .tr2 i.k2{background:var(--amber);opacity:.9}
 body{margin:0}
 :root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
 /* ---------- 手机 / 触屏优化 ---------- */
@@ -413,8 +417,9 @@ button,.drawer,.recipe,.chip,.flag,.card h3,input,select{touch-action:manipulati
             <label class="field"><span data-i="days">连续服用</span>
               <span class="ctl"><input type="range" id="days" min="1" max="90" step="1"><output id="daysO"></output></span>
             </label>
-            <label class="field"><span data-i="weight">体重</span>
+            <label class="field" id="weightF"><span data-i="weight">体重</span>
               <span class="ctl"><input type="range" id="weight" min="30" max="120" step="1"><output id="weightO"></output></span>
+              <small class="whint" id="weightHint"></small>
             </label>
           </div>
           <div style="display:flex;gap:16px;flex-wrap:wrap">
@@ -1124,6 +1129,21 @@ const $=s=>document.querySelector(s);
 const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
 const r1=v=>Math.round(v*10)/10;
 function mid(h){return (h.d[0]+h.d[1])/2}
+/* 低体重（<50 kg）时按经验收紧常用量上限，只影响提醒，不改克数 */
+function wf(){return S.weight<50?clamp(S.weight/55,.7,1):1}
+function upper(h){return Math.max(h.d[0],Math.round(h.d[1]*wf()*2)/2)}
+const WEIGHT_HERBS={rougui:['香豆素上限','coumarin limit'],chaye:['咖啡因上限','caffeine limit'],gancao:['甘草酸保守参考值','conservative glycyrrhizin value']};
+function weightHint(){
+  const el=$('#weightHint'),f=$('#weightF');if(!el)return;
+  const hit=S.items.filter(i=>WEIGHT_HERBS[i.id]&&(+i.g||0)>0).map(i=>`${hnShort(BY[i.id])}${L('的','’s ')}${L(WEIGHT_HERBS[i.id][0],WEIGHT_HERBS[i.id][1])}`);
+  const low=S.weight<50;
+  const parts=[];
+  if(hit.length)parts.push(L('影响：','Affects: ')+hit.join(L('、',', ')));
+  if(low)parts.push(`<b>${L(`低于 50 kg：超量提醒阈值收紧为常用上限的 ${Math.round(wf()*100)}%`,`Under 50 kg: overdose alerts tightened to ${Math.round(wf()*100)}% of the usual maximum`)}</b>`);
+  if(!parts.length)parts.push(L('当前方中没有按体重计算的成分（肉桂、绿茶、甘草）；低于 50 kg 时会收紧剂量提醒','No weight-based compounds in this formula (cinnamon, green tea, licorice); below 50 kg dose alerts are tightened'));
+  el.innerHTML=parts.join('<br>');
+  f.classList.toggle('idle',!hit.length&&!low);
+}
 
 /* 单次溶出率：该次煎/泡中有效成分转移到汤液的比例（绝对值）
    cfg 为烹制条件，默认取当前设置；R = 加水量 ÷ 药量（液固比） */
@@ -1244,7 +1264,8 @@ function flagsHTML(h,it){
 function doseBar(h,g){
   const top=Math.max(h.d[1]*1.6,g*1.05);
   const Lf=h.d[0]/top*100,W=(h.d[1]-h.d[0])/top*100,M=clamp(g/top*100,0,100);
-  return `<div class="track"><div class="zone" style="left:${Lf}%;width:${W}%"></div><div class="mark${g>h.d[1]?' over':''}" style="left:${M}%"></div></div><small>${L('常用量','Usual dose')} ${h.d[0]}–${h.d[1]} g</small>`;
+  const U=upper(h),UL=U/top*100;
+  return `<div class="track"><div class="zone" style="left:${Lf}%;width:${W}%"></div>${U<h.d[1]?`<div class="mark" style="left:${UL}%;width:2px;height:10px;top:-2px;background:var(--amber)" title="${L('低体重上限','low-weight maximum')}"></div>`:''}<div class="mark${g>U?' over':''}" style="left:${M}%"></div></div><small>${L('常用量','Usual dose')} ${h.d[0]}–${h.d[1]} g${U<h.d[1]?L(` · 宜 ≤ ${U} g`,` · keep ≤ ${U} g`):''}</small>`;
 }
 function renderRows(){
   const box=$('#rows');
@@ -1413,9 +1434,12 @@ function dosing(c){
   const dailyTotal=rows.reduce((a,x)=>a+x.daily,0);
   /* 关键成分每日摄入估算（含量 × 溶出率） */
   const I=[];const f=id=>rows.find(x=>x.r.h.id===id);
-  const gc=f('gancao');if(gc)I.push({k:L('甘草酸','Glycyrrhizin'),v:gc.daily*30*gc.r.et,lim:100,u:'mg',n:L('按含量约 3% 估算；欧盟 SCF 建议长期摄入不超过 100 mg/日','Assumes ~3% content; the EU SCF advises no more than 100 mg/day for regular intake')});
+  const gc=f('gancao');if(gc)I.push({k:L('甘草酸','Glycyrrhizin'),v:gc.daily*30*gc.r.et,lim:100,lim2:.2*S.weight,u:'mg',n:L(`按含量约 3% 估算。实线：欧盟 SCF 建议长期摄入 ≤ 100 mg/日；橙线：按体重的保守参考值 0.2 mg/kg·日（${S.weight} kg → ${r1(.2*S.weight)} mg，van Gelderen 2000）`,`Assumes ~3% content. Solid line: EU SCF limit of 100 mg/day for regular intake; orange line: conservative weight-based value of 0.2 mg/kg/day (${S.weight} kg → ${r1(.2*S.weight)} mg; van Gelderen 2000)`)});
   const rg=f('rougui');if(rg)I.push({k:L('香豆素','Coumarin'),v:rg.daily*4*rg.r.et,lim:.1*S.weight,u:'mg',n:L(`中国肉桂约 0.4% 估算；EFSA 可耐受摄入 0.1 mg/kg·日（按 ${S.weight} kg）`,`Assumes ~0.4% in cassia; EFSA tolerable intake 0.1 mg/kg/day (at ${S.weight} kg)`)});
-  const ch=f('chaye');if(ch)I.push({k:L('咖啡因','Caffeine'),v:ch.daily*30*ch.r.et,lim:S.preg?200:400,u:'mg',n:L(`绿茶约 3% 估算；成人上限 ${S.preg?'200（孕期）':'400'} mg/日，另需计入咖啡、可乐`,`Assumes ~3% in green tea; adult limit ${S.preg?'200 (pregnancy)':'400'} mg/day — count coffee and cola too`)});
+  const ch=f('chaye');if(ch){
+    I.push({k:L('咖啡因','Caffeine'),v:ch.daily*30*ch.r.et,lim:S.preg?200:400,u:'mg',n:L(`绿茶约 3% 估算；成人每日上限 ${S.preg?'200（孕期）':'400'} mg，另需计入咖啡、可乐`,`Assumes ~3% in green tea; adult daily limit ${S.preg?'200 (pregnancy)':'400'} mg — count coffee and cola too`)});
+    I.push({k:L('咖啡因（单剂）','Caffeine (per dose)'),v:ch.r.g*30*ch.r.et,lim:3*S.weight,u:'mg',per:'dose',n:L(`EFSA：单次约 3 mg/kg 以内不引起健康担忧（${S.weight} kg → ${3*S.weight} mg），按一剂一次喝完计`,`EFSA: single doses up to about 3 mg/kg raise no safety concern (${S.weight} kg → ${3*S.weight} mg), assuming one dose is drunk at once`)});
+  }
   const SUG={hongtang:.95,bingtang:1,fengmi:.8,longyan:.65,dazao:.6};
   const sug=rows.filter(x=>SUG[x.r.h.id]);
   if(sug.length)I.push({k:L('糖','Sugar'),v:sug.reduce((a,x)=>a+x.daily*SUG[x.r.h.id]*x.r.et,0),lim:25,u:'g',n:L('红糖、冰糖、蜂蜜、龙眼肉、大枣中溶入汤液的糖；WHO 建议游离糖最好 < 25 g/日','Sugar dissolved from brown sugar, rock sugar, honey, longan and jujube; WHO suggests free sugars ideally < 25 g/day')});
@@ -1425,7 +1449,7 @@ function dosing(c){
   lim.push([aT>1.2?14:aT>.6?28:56,aT>.6?L(`全方药性${natLabel(c.T)}，偏性${aT>1.2?'明显':'较明显'}`,`formula is ${NAT_EN[natLabel(c.T)].toLowerCase()}, a ${aT>1.2?'strong':'noticeable'} bias`):L('全方药性平和','formula is mild in nature')]);
   if(c.ni>.6)lim.push([28,L('滋腻药比重大，久服碍胃','many rich, cloying tonics; prolonged use burdens digestion')]);
   rows.forEach(x=>{if(x.lt)lim.push([x.lt[0],`${hnShort(x.r.h)}${COLON()}${x.lt[1]}`])});
-  I.forEach(x=>{if(x.v>x.lim)lim.push([7,L(`${x.k}每日摄入超过参考上限`,`daily ${x.k.toLowerCase()} exceeds the reference limit`)])});
+  I.forEach(x=>{if(x.v>x.lim&&x.per!=='dose')lim.push([7,L(`${x.k}每日摄入超过参考上限`,`daily ${x.k.toLowerCase()} exceeds the reference limit`)])});
   const maxDays=Math.min(...lim.map(x=>x[0]));
   const binding=lim.filter(x=>x[0]===maxDays).map(x=>x[1]);
   const rest=Math.max(3,Math.round(maxDays/4));
@@ -1433,7 +1457,7 @@ function dosing(c){
   if(days>maxDays)A.push([days>maxDays*2?'red':'amber',L('疗程过长','Course too long'),L(`计划连服 ${days} 天，超过建议的 ${maxDays} 天。限制因素：${binding.join('；')}。`,`You plan ${days} days in a row, beyond the suggested ${maxDays}. Limiting factor: ${binding.join('; ')}.`)]);
   const capDay=S.method==='infuse'?60:150;
   if(dailyTotal>capDay)A.push(['amber',L('每日总量偏大','High daily total'),L(`每日总药量 ${r1(dailyTotal)} g，超过${S.method==='infuse'?'代茶饮':'保健汤剂'}一般上限约 ${capDay} g。`,`Daily total ${r1(dailyTotal)} g exceeds the usual ceiling of about ${capDay} g for a ${S.method==='infuse'?'herbal tea':'wellness decoction'}.`)]);
-  I.forEach(x=>{if(x.v>x.lim)A.push([days>14?'red':'amber',L(`${x.k}超量`,`${x.k} over limit`),L(`估算每日 ${r1(x.v)} ${x.u}，超过参考上限 ${r1(x.lim)} ${x.u}${days>14?`，连服 ${days} 天累积风险较高`:''}。`,`Estimated ${r1(x.v)} ${x.u}/day, above the reference limit of ${r1(x.lim)} ${x.u}${days>14?`; over ${days} days the cumulative risk is higher`:''}.`)])});
+  I.forEach(x=>{if(x.v>x.lim)A.push([days>14?'red':'amber',L(`${x.k}超量`,`${x.k} over limit`),L(`估算${x.per==='dose'?'每剂':'每日'} ${r1(x.v)} ${x.u}，超过参考上限 ${r1(x.lim)} ${x.u}${x.per==='dose'?'，可分次饮用':''}${days>14&&x.per!=='dose'?`，连服 ${days} 天累积风险较高`:''}。`,`Estimated ${r1(x.v)} ${x.u}${x.per==='dose'?' per dose':'/day'}${x.per==='dose'?' (split it into smaller servings)':''}, above the reference limit of ${r1(x.lim)} ${x.u}${days>14&&x.per!=='dose'?`; over ${days} days the cumulative risk is higher`:''}.`)])});
   return {rows,I,dailyTotal,courseTotal:dailyTotal*days,maxDays,binding,rest,A};
 }
 function dosingCard(d){
@@ -1442,10 +1466,10 @@ function dosingCard(d){
   const over=S.days>d.maxDays;
   const DY=L(' 天',' d');
   const tbl=d.rows.map(x=>{
-    const h=x.r.h,st=x.daily>h.d[1]?['amber',L('超日量','Over daily')]:(x.lt&&S.days>x.lt[0])?['amber',L('超久服','Too long')]:['ok',L('正常','OK')];
-    return `<tr><td>${hnShort(h)}</td><td class="num">${r1(x.r.g)}</td><td class="num">${r1(x.daily)}</td><td class="num muted">${h.d[0]}–${h.d[1]}</td><td class="num">${r1(x.total)}</td><td class="num">${x.lt?x.lt[0]+DY:'—'}</td><td><span class="st ${st[0]}">${st[1]}</span></td></tr>`}).join('');
-  const intake=d.I.map(x=>{const p=x.v/x.lim;return `<div class="intake"><div class="ih"><b>${x.k}</b><span class="num">${r1(x.v)} / ${r1(x.lim)} ${x.u} ${L('· 日','/ day')}</span></div>
-    <div class="tr2"><span style="width:${clamp(p,0,1.5)/1.5*100}%;background:var(${p>1?'--red':p>.7?'--amber':'--ok'})"></span><i style="left:${1/1.5*100}%"></i></div><small>${x.n}</small></div>`}).join('');
+    const h=x.r.h,st=x.daily>upper(h)?['amber',L('超日量','Over daily')]:(x.lt&&S.days>x.lt[0])?['amber',L('超久服','Too long')]:['ok',L('正常','OK')];
+    return `<tr><td>${hnShort(h)}</td><td class="num">${r1(x.r.g)}</td><td class="num">${r1(x.daily)}</td><td class="num muted">${h.d[0]}–${upper(h)<h.d[1]?`<s>${h.d[1]}</s> ${upper(h)}`:h.d[1]}</td><td class="num">${r1(x.total)}</td><td class="num">${x.lt?x.lt[0]+DY:'—'}</td><td><span class="st ${st[0]}">${st[1]}</span></td></tr>`}).join('');
+  const intake=d.I.map(x=>{const p=x.v/x.lim,top=Math.max(1.5,x.lim2?x.lim2/x.lim*1.1:0,Math.min(p,3)*1.05);return `<div class="intake"><div class="ih"><b>${x.k}</b><span class="num">${r1(x.v)} / ${r1(x.lim)} ${x.u} ${x.per==='dose'?L('· 剂','/ dose'):L('· 日','/ day')}</span></div>
+    <div class="tr2"><span style="width:${clamp(p/top,0,1)*100}%;background:var(${p>1?'--red':(x.lim2&&x.v>x.lim2)||p>.7?'--amber':'--ok'})"></span><i style="left:${1/top*100}%"></i>${x.lim2?`<i class="k2" style="left:${clamp(x.lim2/x.lim/top,0,1)*100}%"></i>`:''}</div><small>${x.n}</small></div>`}).join('');
   return `<section class="card wide">
     <h3>${L('每日总量与疗程累积','Daily Total & Course')} <small>DAILY &amp; COURSE</small></h3>
     <div class="dstat">
@@ -1470,8 +1494,9 @@ function buildAlerts(c,d){
   c.rows.forEach(r=>{
     const h=r.h,n=hnShort(h);
     const daily=r1(r.g*S.perDay),pdTxt=S.perDay>1?L(`每剂 ${r.g} g × ${S.perDay} 剂 = 每日 ${daily} g`,`${r.g} g × ${S.perDay} doses = ${daily} g/day`):L(`每日 ${daily} g`,`${daily} g/day`);
-    if(daily>h.d[1]*2)A.push(['red',L('日量过大','Daily dose too high'),L(`${n} ${pdTxt}，超过常用日量上限 ${h.d[1]} g 的两倍。`,`${n} ${pdTxt} — more than twice the usual daily maximum of ${h.d[1]} g.`)]);
-    else if(daily>h.d[1])A.push(['amber',L('超日常用量','Above usual dose'),L(`${n} ${pdTxt}，高于常用日量 ${h.d[0]}–${h.d[1]} g。`,`${n} ${pdTxt} — above the usual daily range of ${h.d[0]}–${h.d[1]} g.`)]);
+    const U=upper(h),UT=U<h.d[1]?L(`（体重 ${S.weight} kg，按 ${U} g 计）`,` (at ${S.weight} kg, using ${U} g)`):'';
+    if(daily>U*2)A.push(['red',L('日量过大','Daily dose too high'),L(`${n} ${pdTxt}，超过常用日量上限 ${h.d[1]} g 的两倍${UT}。`,`${n} ${pdTxt} — more than twice the usual daily maximum of ${h.d[1]} g${UT}.`)]);
+    else if(daily>U)A.push(['amber',L('超日常用量','Above usual dose'),L(`${n} ${pdTxt}，高于常用日量 ${h.d[0]}–${h.d[1]} g${UT}。`,`${n} ${pdTxt} — above the usual daily range of ${h.d[0]}–${h.d[1]} g${UT}.`)]);
     else if(daily<h.d[0]*.5)A.push(['info',L('量偏小','Low dose'),L(`${n} ${pdTxt}，低于常用量下限一半，作用轻微。`,`${n} ${pdTxt} — under half the usual minimum; effect will be slight.`)]);
     if(S.method==='infuse'&&r.rel<.4)A.push(['info',L('溶出偏低','Poor extraction'),L(`${n}（${PART[h.p].lab}）泡水估算溶出 ${Math.round(r.e*100)}%，只相当于标准煎煮的 ${Math.round(r.rel*100)}%。建议切薄片、延长焖泡，或改用煮。`,`${n} (${PART_EN[h.p]}) extracts ~${Math.round(r.e*100)}% when steeped — only ${Math.round(r.rel*100)}% of a standard decoction. Slice thinly, steep longer, or decoct instead.`)]);
     if(S.method==='boil'&&h.sp.includes('late')&&!r.it.fl.late&&S.minutes>10)A.push(['info',L('宜后下','Add last'),L(`${n}含挥发性成分，久煎 ${S.minutes} 分钟损失明显，建议关火前 5 分钟放入。`,`${n} contains volatile oils that are largely lost over ${S.minutes} minutes. Add it in the last 5 minutes.`)]);
@@ -1480,13 +1505,14 @@ function buildAlerts(c,d){
     if(h.sp.includes('separate'))A.push(['info',L('另煎','Simmer separately'),L(`${n}贵重，宜单独小火另煎 1–2 小时后兑入，或切薄片含服/泡服。`,`${n} is costly; simmer it alone on low heat for 1–2 hours and add the liquid, or hold thin slices in the mouth / steep them.`)]);
     if(h.tox){
       if(S.method==='infuse')A.push(['red',L('不宜泡水','Do not steep'),L(`${n}含苦杏仁苷，泡水无法经高温破坏其毒性成分，须煎煮使用。`,`${n} contains amygdalin. Steeping does not destroy its toxic component; it must be boiled.`)]);
-      if(r.g>h.d[1])A.push(['red',L('有毒药超量','Toxic herb overdose'),L(`${n}有小毒，${r.g} g 超过常用上限 ${h.d[1]} g，过量可致氰化物中毒。`,`${n} is mildly toxic. ${r.g} g exceeds the usual maximum of ${h.d[1]} g; overdose can cause cyanide poisoning.`)]);
+      if(r.g>upper(h))A.push(['red',L('有毒药超量','Toxic herb overdose'),L(`${n}有小毒，${r.g} g 超过常用上限 ${h.d[1]} g，过量可致氰化物中毒。`,`${n} is mildly toxic. ${r.g} g exceeds the usual maximum of ${h.d[1]} g; overdose can cause cyanide poisoning.`)]);
     }
     if(h.sp.includes('powder'))A.push(['info',L('研粉','Take as powder'),h.id==='jineijin'?L('鸡内金研末吞服（每次 1.5–3 g）效果优于入汤剂，其消化酶不耐高温。','Chicken gizzard lining works better swallowed as powder (1.5–3 g per dose); its enzymes do not survive boiling.'):L(`${n}研粉吞服（每次 1–3 g）效果为佳，入汤剂效力降低。`,`${n} works best swallowed as powder (1–3 g per dose); decocting weakens it.`)]);
     if(h.sp.includes('melt')&&!r.it.fl.melt)A.push(['amber',L('宜烊化','Melt separately'),L(`${n}与群药同${S.method==='boil'?'煎易粘锅、包裹他药':'泡难以溶化'}。应隔水蒸化或用热药液溶化后兑服。`,`${S.method==='boil'?`Cooked with the other herbs, ${n} sticks to the pot and coats them.`:`${n} will not dissolve by steeping.`} Melt it over a water bath or in the hot strained liquid, then stir in.`)]);
     if(h.sp.includes('honey')&&!r.it.fl.honey)A.push(['info',L('蜂蜜宜温调','Add honey warm'),L('蜂蜜不宜久煮或沸水冲，待汤液降至 60 °C 以下再调入，以保留酶类、减少 5-羟甲基糠醛生成。','Do not boil honey or add it to boiling water. Stir it in once the liquid is below 60 °C to keep its enzymes and limit HMF formation.')]);
     if(h.raw&&S.method==='infuse')A.push(['red',L('必须煮熟','Must be cooked'),L(`${n}生品含植物凝集素，泡水不能使其失活，可致恶心呕吐，须充分煮熟。`,`Raw ${n} contains lectins that steeping cannot deactivate; it can cause nausea and vomiting. Boil thoroughly.`)]);
   });
+  if(S.weight<50&&c.rows.length)A.push(['info',L('低体重','Low body weight'),L(`体重 ${S.weight} kg 低于 50 kg，宜取常用量下限。超量提醒已按常用上限的 ${Math.round(wf()*100)}% 计算，克数不会自动修改。`,`At ${S.weight} kg (under 50 kg), stay near the low end of usual doses. Overdose alerts now use ${Math.round(wf()*100)}% of the usual maximum; grams are not changed automatically.`)]);
   if(c.T<=-1.5)A.push(['amber',L('整体寒凉','Overall cold'),L(`全方药性偏寒（${r1(c.T)}），脾胃虚寒、经期女性不宜久服，可加生姜 2–3 片或大枣佐之。`,`The formula is cold overall (${r1(c.T)}). Not for long-term use with a weak, cold digestion or during menstruation; add 2–3 slices of ginger or a few jujubes to balance it.`)]);
   if(c.T>=1.8)A.push(['amber',L('整体温热','Overall hot'),L(`全方药性偏热（${r1(c.T)}），易上火、口干者慎用，夏季慎用。`,`The formula is hot overall (${r1(c.T)}). Use with care if you tend toward “internal heat” or dry mouth, and in summer.`)]);
   if(c.ni>.9)A.push(['amber',L('滋腻碍胃','Heavy on digestion'),L('滋腻药比重较大，可能导致腹胀纳呆，建议加陈皮 3–6 g 或砂仁 3 g 理气醒脾。','Rich, cloying tonics dominate and may cause bloating and poor appetite. Add 3–6 g tangerine peel or 3 g amomum to keep things moving.')]);
@@ -1693,7 +1719,7 @@ $('#unfoldAll').addEventListener('click',()=>foldAllCards(false));
 /* ---------- 刷新 ---------- */
 function refresh(){
   const c=compute();
-  updateRowLive(c);renderBrew(c);renderAnalysis(c);foldCards();save();
+  updateRowLive(c);renderBrew(c);renderAnalysis(c);foldCards();weightHint();save();
 }
 function fullRender(){applyStatic();foldPanels();syncBrewUI();renderCats();renderRows();renderDrawers();renderLib();renderPnote();refresh()}
 function detach(){if(S.pn){S.pn=null;renderLib();renderPnote()}}
