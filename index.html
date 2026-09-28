@@ -253,7 +253,7 @@ footer{font-size:12px;color:var(--muted);border-top:1px solid var(--line);paddin
 <div class="wrap">
 <style>
 .toprow{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
-.langbtn{border:1px solid var(--accent);background:transparent;color:var(--accent);border-radius:999px;padding:3px 12px;font-size:13px;font-weight:500}
+.langbtn{white-space:nowrap;flex:none;border:1px solid var(--accent);background:transparent;color:var(--accent);border-radius:999px;padding:3px 12px;font-size:13px;font-weight:500}
 .langbtn:hover{background:var(--accent);color:var(--accent-ink)}
 .langbtn span{opacity:.55}
 html[lang="en"] .bar{grid-template-columns:7.5em 1fr 44px}
@@ -267,6 +267,71 @@ html[lang="en"] .roles div{grid-template-columns:78px 1fr}
 html[lang="en"] .roles .rk{font-size:13px;text-align:left}
 html[lang="en"] .role{font-family:var(--sans)}
 html[lang="en"] .seg button{font-family:var(--sans);font-size:14px}
+</style>
+<style>
+/* 独立打开（GitHub Pages）时补上 artifact 外壳提供的基础重置 */
+[hidden]{display:none!important}
+body{margin:0}
+:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+/* ---------- 手机 / 触屏优化 ---------- */
+button,.drawer,.recipe,.chip,.flag,.card h3,input,select{touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+@media (pointer:coarse){
+  .stepper button{width:44px;height:44px;font-size:22px}
+  .stepper input{width:64px;font-size:17px}
+  .rm{width:44px;height:44px;font-size:24px;border-radius:6px}
+  .rm:active{background:var(--red-soft)}
+  .fold{width:44px;height:44px}
+  .fold svg{width:20px;height:20px}
+  .chip{min-height:36px;padding:4px 14px;font-size:13px}
+  .flag{min-height:32px;padding:4px 10px;font-size:12px}
+  .btn,.langbtn{min-height:40px;padding:6px 16px;font-size:14px}
+  .seg button{min-height:44px;padding:8px 24px;font-size:16px}
+  .drawer{min-height:62px;padding:9px 10px}
+  .drawer:active,.recipe:active{border-color:var(--accent);background:var(--accent-soft)}
+  .recipe{padding:12px}
+  .check{min-height:40px;font-size:14px}
+  .check input{width:22px;height:22px}
+  details.herb summary{padding:8px 0}
+  /* 16px 以上的输入框不会触发 iOS 自动放大 */
+  .search,.field select,.stepper input{font-size:16px}
+  .search{padding:10px 12px}
+  .field select{min-height:42px}
+  input[type=range]{height:32px}
+  input[type=range]::-webkit-slider-thumb{width:26px;height:26px}
+  input[type=range]::-moz-range-thumb{width:26px;height:26px}
+}
+@media (max-width:640px){
+  body{padding-inline:12px}
+  .wrap{gap:14px}
+  .brand h1{font-size:28px}
+  .toprow{width:100%;justify-content:space-between;flex-wrap:nowrap;align-items:flex-start}
+  .disc{font-size:11px}
+  .drawers{max-height:300px}
+  .phead{padding:10px 12px}
+  .row{padding:10px 12px;gap:8px 10px}
+  .rname b{font-size:17px}
+  .rname small{font-size:12px}
+  .row{grid-template-columns:auto 1fr 44px;grid-template-areas:"n n r" "s d d" "e e e"}
+  .dose{align-self:center}
+  .eff{text-align:left;display:flex;gap:6px;align-items:baseline;flex-wrap:wrap}
+  .eff b{display:inline;font-size:14px}
+  .eff br{display:none}
+  .fields{grid-template-columns:1fr}
+  .field{font-size:13px}
+  .field output{min-width:72px;font-size:14px}
+  .cupbox{grid-template-columns:96px 1fr}
+  .cupbox svg{width:96px}
+  .card{padding:12px}
+  .card h3{font-size:17px;min-height:44px}
+  .grid{gap:12px}
+  .lib{grid-template-columns:1fr}
+  .summary{font-size:15px}
+  .bar{font-size:14px}
+  .alert{font-size:14px}
+  .foldall .btn{flex:1}
+  .foldall .eyebrow{display:none}
+  .total{font-size:13px}
+}
 </style>
   <header class="top">
     <div class="brand">
@@ -1201,7 +1266,7 @@ function updateRowLive(c){
     const row=document.querySelector(`.row[data-id="${it.id}"]`);if(!row)return;
     const h=BY[it.id],e=extraction(h,it);
     row.querySelector('[data-dose]').innerHTML=doseBar(h,+it.g||0);
-    row.querySelector('[data-eff]').innerHTML=`<b>${Math.round(e*100)}%</b>${S.method==='boil'?L('头煎','1st boil'):L('首泡','1st steep')}<br>${L('合计','total')} ${Math.round(eTotal(e)*100)}%`;
+    row.querySelector('[data-eff]').innerHTML=`<b>${Math.round(e*100)}%</b><span>${S.method==='boil'?L('头煎','1st boil'):L('首泡','1st steep')}</span><br><span>${L('合计','total')} ${Math.round(eTotal(e)*100)}%</span>`;
     row.querySelector('[data-eff]').title=L('单次溶出率：有效成分转移到汤液的比例。合计含复煎/续泡。','Single-pass extraction: share of active constituents transferred to the liquid. Total includes the second boil / re-steep.');
     const rl=row.querySelector('[data-role]');const r=roles[it.id];
     rl.textContent=r?roleN(r):'';rl.hidden=!r;rl.className='role'+(r==='君'?' jun':'');
