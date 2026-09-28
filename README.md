@@ -2,6 +2,8 @@
 
 中药保健配伍模拟器（中英双语）。单个 HTML 文件，无需构建，直接用浏览器打开 `index.html` 即可。
 
+**在线使用 Live demo:** https://eezzz.github.io/HerbalistSimulation/
+
 A bilingual (Chinese / English) herbal wellness formula simulator. Single HTML file — open `index.html` in a browser.
 
 ## 功能 Features
