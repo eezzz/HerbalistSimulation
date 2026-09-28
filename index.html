@@ -1,0 +1,1615 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>百草衡</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@600;900&family=Noto+Sans+SC:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+:root{
+  --bg:#EDF0EA; --panel:#F8FAF6; --panel2:#E2E8DE; --ink:#1B2420; --muted:#56635B; --line:#CDD5C9;
+  --accent:#2D5B57; --accent-ink:#F2F6F3; --accent-soft:#D5E3DE;
+  --red:#A23A2A; --red-soft:#F3DDD7; --amber:#8A5E0E; --amber-soft:#F2E6CC; --info:#35597A; --info-soft:#DCE6EF; --ok:#3F6E3A; --ok-soft:#DDE9D6;
+  --wood:#4C7A37; --fire:#B3452F; --earth:#A9832A; --metal:#7B838A; --water:#2D4F77;
+  --cold:#3F6E9A; --hot:#B5462E; --brew-base:#F3F1E4;
+  --serif:"Noto Serif SC","Songti SC","SimSun",serif;
+  --sans:"Noto Sans SC","PingFang SC","Microsoft YaHei",system-ui,sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark;
+    --bg:#111513; --panel:#181E1B; --panel2:#222A26; --ink:#E3E8E2; --muted:#98A49C; --line:#2E3833;
+    --accent:#7DB1A8; --accent-ink:#0F1614; --accent-soft:#223532;
+    --red:#E58574; --red-soft:#3A2320; --amber:#D9AB52; --amber-soft:#352B18; --info:#8BB2D6; --info-soft:#1E2B37; --ok:#8FC082; --ok-soft:#1F2E1D;
+    --wood:#86B86E; --fire:#E27C63; --earth:#D6B25A; --metal:#B8BEC3; --water:#7FA6D4;
+    --cold:#7FAEDB; --hot:#E3826A; --brew-base:#2A2D28;
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --bg:#111513; --panel:#181E1B; --panel2:#222A26; --ink:#E3E8E2; --muted:#98A49C; --line:#2E3833;
+  --accent:#7DB1A8; --accent-ink:#0F1614; --accent-soft:#223532;
+  --red:#E58574; --red-soft:#3A2320; --amber:#D9AB52; --amber-soft:#352B18; --info:#8BB2D6; --info-soft:#1E2B37; --ok:#8FC082; --ok-soft:#1F2E1D;
+  --wood:#86B86E; --fire:#E27C63; --earth:#D6B25A; --metal:#B8BEC3; --water:#7FA6D4;
+  --cold:#7FAEDB; --hot:#E3826A; --brew-base:#2A2D28;
+}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:14px;line-height:1.6;padding-inline:16px;padding-block:20px 40px}
+.wrap{max-width:1360px;margin:0 auto;display:flex;flex-direction:column;gap:18px}
+h1,h2,h3{font-family:var(--serif);text-wrap:balance;margin:0;font-weight:600}
+.num{font-family:var(--mono);font-variant-numeric:tabular-nums}
+button,input,select{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+/* header */
+.top{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:12px;border-bottom:1px solid var(--line);padding-bottom:14px}
+.brand{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap}
+.brand h1{font-size:34px;font-weight:900;letter-spacing:.08em}
+.brand p{margin:0;color:var(--muted)}
+.seal{display:inline-grid;place-items:center;width:30px;height:30px;border:2px solid var(--fire);color:var(--fire);font-family:var(--serif);font-weight:900;font-size:13px;line-height:1;border-radius:3px;transform:translateY(-4px)}
+.disc{font-size:12px;color:var(--muted);max-width:46ch}
+
+.app{display:grid;grid-template-columns:300px minmax(0,1fr);gap:18px;align-items:start}
+@media (max-width:900px){.app{grid-template-columns:1fr}}
+
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:6px}
+.phead{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 14px;border-bottom:1px solid var(--line);flex-wrap:wrap}
+.phead h2{font-size:17px}
+.eyebrow{font-size:11px;letter-spacing:.14em;color:var(--muted);text-transform:uppercase}
+
+/* cabinet */
+.cabinet{position:sticky;top:calc(env(safe-area-inset-top,0px) + 12px);max-height:calc(100vh - 24px);display:flex;flex-direction:column}
+@media (max-width:900px){.cabinet{position:static;max-height:none}}
+.cab-tools{padding:10px 12px;display:flex;flex-direction:column;gap:8px;border-bottom:1px solid var(--line)}
+.search{width:100%;padding:7px 10px;border:1px solid var(--line);border-radius:4px;background:var(--bg)}
+.chips{display:flex;flex-wrap:wrap;gap:4px}
+.chip{border:1px solid var(--line);background:transparent;border-radius:999px;padding:1px 9px;font-size:12px;color:var(--muted)}
+.chip[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.drawers{overflow:auto;padding:10px 12px;display:grid;grid-template-columns:repeat(auto-fill,minmax(82px,1fr));gap:6px}
+@media (max-width:900px){.drawers{max-height:340px}}
+.drawer{position:relative;text-align:left;border:1px solid var(--line);background:var(--bg);border-radius:4px;padding:7px 8px 6px;display:flex;flex-direction:column;gap:1px;min-height:54px}
+.drawer:hover{border-color:var(--accent)}
+.drawer b{font-family:var(--serif);font-size:15px;font-weight:600;line-height:1.2}
+.drawer small{font-size:11px;color:var(--muted);line-height:1.3}
+.drawer .knob{position:absolute;top:7px;right:7px;width:7px;height:7px;border-radius:50%;background:var(--c)}
+.drawer.in{background:var(--accent-soft);border-color:var(--accent)}
+.legend{display:flex;gap:10px;flex-wrap:wrap;font-size:11px;color:var(--muted);padding:8px 12px;border-top:1px solid var(--line)}
+.legend i{display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:4px;vertical-align:1px}
+
+main{display:flex;flex-direction:column;gap:18px;min-width:0}
+
+/* library */
+.libcats{padding:10px 14px 0}
+.lib{padding:10px 14px 14px;display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:8px}
+.recipe{text-align:left;border:1px solid var(--line);background:var(--bg);border-radius:4px;padding:8px 10px;display:flex;flex-direction:column;gap:2px}
+.recipe:hover{border-color:var(--accent)}
+.recipe[aria-current="true"]{border-color:var(--accent);background:var(--accent-soft)}
+.recipe .rt{display:flex;justify-content:space-between;align-items:baseline;gap:6px}
+.recipe b{font-family:var(--serif);font-size:15px;font-weight:600}
+.recipe .mth{font-size:11px;color:var(--muted);white-space:nowrap}
+.recipe small{font-size:12px;color:var(--muted);line-height:1.4}
+.recipe .hs{font-size:11px;color:var(--muted);opacity:.85}
+.recipe.bad b{color:var(--red)}
+.pnote{padding:8px 14px;border-bottom:1px solid var(--line);font-size:13px;background:var(--panel2)}
+.pnote b{font-family:var(--serif)}
+
+/* formula */
+.pre{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.pre select,.btn{border:1px solid var(--line);background:var(--bg);border-radius:4px;padding:4px 10px}
+.btn.primary{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.rows{display:flex;flex-direction:column}
+.row{display:grid;grid-template-columns:minmax(150px,1.3fr) auto minmax(120px,1fr) 72px 28px;gap:12px;align-items:center;padding:9px 14px;border-bottom:1px solid var(--line)}
+.row:last-child{border-bottom:0}
+.row.flash{animation:flash .9s}
+@keyframes flash{from{background:var(--accent-soft)}to{background:transparent}}
+.rname{display:flex;flex-direction:column;gap:2px;min-width:0}
+.rname .t{display:flex;align-items:center;gap:7px;flex-wrap:wrap}
+.rname b{font-family:var(--serif);font-size:16px;font-weight:600}
+.rname small{color:var(--muted);font-size:12px}
+.role{font-size:11px;font-family:var(--serif);border:1px solid var(--line);border-radius:3px;padding:0 5px;color:var(--muted)}
+.role.jun{border-color:var(--fire);color:var(--fire)}
+.natdot{width:9px;height:9px;border-radius:50%;background:var(--c);flex:none}
+.flags{display:flex;gap:4px;flex-wrap:wrap}
+.flag{font-size:11px;border:1px dashed var(--line);border-radius:3px;padding:0 6px;background:transparent;color:var(--muted)}
+.flag[aria-pressed="true"]{border-style:solid;border-color:var(--accent);color:var(--accent)}
+.flag.note{cursor:default}
+.stepper{display:flex;align-items:center;border:1px solid var(--line);border-radius:4px;background:var(--bg)}
+.stepper button{border:0;background:transparent;width:28px;height:30px;font-size:16px;color:var(--muted)}
+.stepper button:hover{color:var(--ink)}
+.stepper input{width:58px;border:0;background:transparent;text-align:right;font-family:var(--mono);font-size:15px;padding:0 2px;-moz-appearance:textfield}
+.stepper input::-webkit-inner-spin-button{display:none}
+.stepper span{font-size:12px;color:var(--muted);padding-right:4px}
+.dose{display:flex;flex-direction:column;gap:3px}
+.track{position:relative;height:6px;background:var(--panel2);border-radius:3px}
+.zone{position:absolute;top:0;bottom:0;background:var(--ok);opacity:.45;border-radius:3px}
+.mark{position:absolute;top:-4px;width:3px;height:14px;background:var(--ink);border-radius:1px;transform:translateX(-1px)}
+.mark.over{background:var(--red)}
+.dose small{font-size:11px;color:var(--muted)}
+.eff{text-align:right;font-size:12px;color:var(--muted);line-height:1.3}
+.eff b{display:block;font-family:var(--mono);font-size:14px;color:var(--ink);font-weight:500}
+.rm{border:0;background:transparent;color:var(--muted);font-size:18px;line-height:1}
+.rm:hover{color:var(--red)}
+.empty{padding:26px 14px;color:var(--muted);text-align:center}
+.total{display:flex;justify-content:space-between;gap:10px;padding:9px 14px;border-top:1px solid var(--line);background:var(--panel2);font-size:13px;flex-wrap:wrap;border-radius:0 0 6px 6px}
+@media (max-width:640px){
+  .row{grid-template-columns:1fr auto 24px;grid-template-areas:"n s r" "d d e"}
+  .rname{grid-area:n}.stepper{grid-area:s}.rm{grid-area:r}.dose{grid-area:d}.eff{grid-area:e}
+}
+
+/* brew */
+.brew{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:0}
+@media (max-width:760px){.brew{grid-template-columns:1fr}}
+.brew-ctl{padding:14px;display:flex;flex-direction:column;gap:12px;border-right:1px solid var(--line)}
+@media (max-width:760px){.brew-ctl{border-right:0;border-bottom:1px solid var(--line)}}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:5px;overflow:hidden;align-self:flex-start}
+.seg button{border:0;background:transparent;padding:6px 18px;font-family:var(--serif);font-size:15px}
+.seg button[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink)}
+.fields{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px 14px}
+.field{display:flex;flex-direction:column;gap:3px;font-size:12px;color:var(--muted)}
+.field .ctl{display:flex;align-items:center;gap:8px}
+.field input[type=range]{flex:1;accent-color:var(--accent);min-width:0}
+.field output{font-family:var(--mono);color:var(--ink);font-size:13px;min-width:62px;text-align:right}
+.field select{border:1px solid var(--line);background:var(--bg);border-radius:4px;padding:4px 6px;color:var(--ink)}
+.check{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--ink)}
+.check input{accent-color:var(--accent)}
+.hint{font-size:12px;color:var(--muted)}
+.cupbox{padding:14px;display:grid;grid-template-columns:120px 1fr;gap:14px;align-items:center}
+.cupbox svg{width:120px;height:auto}
+.stats{display:grid;grid-template-columns:auto 1fr;gap:4px 12px;font-size:13px}
+.stats dt{color:var(--muted)}
+.stats dd{margin:0}
+
+/* analysis */
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:18px;align-items:start}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:14px;display:flex;flex-direction:column;gap:10px;min-width:0}
+.card h3{font-size:16px;display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.card h3 small{font-family:var(--sans);font-size:11px;color:var(--muted);font-weight:400;letter-spacing:.1em}
+.card.wide{grid-column:1/-1}
+.summary{font-size:15px;line-height:1.85;margin:0;max-width:75ch}
+.summary em{font-style:normal;font-weight:700;color:var(--accent)}
+.cols2{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
+.kv h4{margin:0 0 4px;font-size:12px;color:var(--muted);font-weight:500;letter-spacing:.08em}
+.kv ul{margin:0;padding-left:18px}
+.kv li{margin:2px 0}
+.gauge{position:relative;height:34px}
+.gbar{position:absolute;left:0;right:0;top:12px;height:8px;border-radius:4px;background:linear-gradient(90deg,var(--cold),var(--panel2) 50%,var(--hot))}
+.gtick{position:absolute;top:9px;width:2px;height:14px;background:var(--muted);opacity:.55}
+.gmark{position:absolute;top:2px;width:0;height:0;border-left:7px solid transparent;border-right:7px solid transparent;border-top:9px solid var(--ink);transform:translateX(-7px)}
+.glabels{display:flex;justify-content:space-between;font-size:11px;color:var(--muted);font-family:var(--serif)}
+.bignat{font-family:var(--serif);font-size:26px;font-weight:900;line-height:1}
+.bars{display:flex;flex-direction:column;gap:5px}
+.bar{display:grid;grid-template-columns:44px 1fr 44px;gap:8px;align-items:center;font-size:13px}
+.bar .lab{font-family:var(--serif)}
+.bar .tr{height:8px;background:var(--panel2);border-radius:4px;overflow:hidden}
+.bar .fl{height:100%;background:var(--c,var(--accent));border-radius:4px}
+.bar .v{font-family:var(--mono);font-size:12px;color:var(--muted);text-align:right}
+.radar{display:flex;gap:14px;align-items:center;flex-wrap:wrap}
+.radar svg{width:230px;max-width:100%;height:auto;flex:none}
+.radar .txt{flex:1;min-width:200px;font-size:13px;display:flex;flex-direction:column;gap:6px}
+.radar .txt p{margin:0}
+.alerts{display:flex;flex-direction:column;gap:6px}
+.alert{border-radius:4px;padding:7px 10px;font-size:13px;display:grid;grid-template-columns:auto 1fr;gap:8px;align-items:start}
+.alert .pill{font-size:11px;font-weight:700;border-radius:3px;padding:0 6px;line-height:20px;white-space:nowrap}
+.alert.red{background:var(--red-soft)}.alert.red .pill{background:var(--red);color:var(--panel)}
+.alert.amber{background:var(--amber-soft)}.alert.amber .pill{background:var(--amber);color:var(--panel)}
+.alert.info{background:var(--info-soft)}.alert.info .pill{background:var(--info);color:var(--panel)}
+.alert.ok{background:var(--ok-soft)}.alert.ok .pill{background:var(--ok);color:var(--panel)}
+.combo{border-left:0;padding:8px 10px;background:var(--panel2);border-radius:4px;font-size:13px}
+.combo b{font-family:var(--serif);font-size:14px}
+.roles{display:flex;flex-direction:column;gap:6px}
+.roles div{display:grid;grid-template-columns:34px 1fr;gap:8px;font-size:13px;align-items:baseline}
+.roles .rk{font-family:var(--serif);font-weight:900;font-size:18px;color:var(--accent);text-align:center}
+.roles .rk.j{color:var(--fire)}
+details.herb{border-top:1px solid var(--line);padding:6px 0}
+details.herb summary{cursor:pointer;font-family:var(--serif);font-size:14px}
+details.herb p{margin:4px 0;font-size:13px}
+details.herb .lbl{color:var(--muted);font-size:12px}
+.dstat{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
+.dstat>div{display:flex;flex-direction:column;gap:1px;padding:8px 10px;background:var(--panel2);border-radius:4px}
+.dstat b{font-size:22px;font-weight:500;line-height:1.2}
+.dstat small{font-size:12px;color:var(--muted)}
+.course{display:flex;flex-direction:column;gap:4px}
+.ctrack{position:relative;height:10px;background:var(--red-soft);border-radius:5px}
+.cz{position:absolute;left:0;top:0;bottom:0;background:var(--ok);opacity:.55;border-radius:5px}
+.cm{position:absolute;top:-4px;width:4px;height:18px;border-radius:2px;background:var(--ink);transform:translateX(-2px)}
+.cm.over{background:var(--red)}
+.clab{position:relative;display:flex;justify-content:space-between;font-size:11px;color:var(--muted);height:16px}
+.dt{border-collapse:collapse;width:100%;font-size:13px;min-width:460px}
+.dt th{font-weight:500;color:var(--muted);font-size:11px;text-align:right;padding:4px 6px;border-bottom:1px solid var(--line);white-space:nowrap}
+.dt td{padding:5px 6px;border-bottom:1px solid var(--line);text-align:right;white-space:nowrap}
+.dt th:first-child,.dt td:first-child{text-align:left;font-family:var(--serif)}
+.st{font-size:11px;border-radius:3px;padding:0 6px}
+.st.ok{background:var(--ok-soft);color:var(--ok)}.st.amber{background:var(--amber-soft);color:var(--amber)}
+.intake{display:flex;flex-direction:column;gap:3px;margin-bottom:8px}
+.intake .ih{display:flex;justify-content:space-between;gap:8px;font-size:13px}
+.intake small{font-size:11px;color:var(--muted)}
+.tr2{position:relative;height:8px;background:var(--panel2);border-radius:4px}
+.tr2 span{display:block;height:100%;border-radius:4px}
+.tr2 i{position:absolute;top:-3px;width:2px;height:14px;background:var(--ink);opacity:.6}
+.fit{display:flex;align-items:center;gap:10px}
+.fit .score{font-family:var(--mono);font-size:22px}
+.muted{color:var(--muted)}
+footer{font-size:12px;color:var(--muted);border-top:1px solid var(--line);padding-top:12px;max-width:90ch}
+@media (prefers-reduced-motion:reduce){.row.flash{animation:none}}
+</style>
+
+<div class="wrap">
+<style>
+.toprow{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.langbtn{border:1px solid var(--accent);background:transparent;color:var(--accent);border-radius:999px;padding:3px 12px;font-size:13px;font-weight:500}
+.langbtn:hover{background:var(--accent);color:var(--accent-ink)}
+.langbtn span{opacity:.55}
+html[lang="en"] .bar{grid-template-columns:7.5em 1fr 44px}
+html[lang="en"] .bar .lab{font-family:var(--sans);font-size:12px;line-height:1.2}
+html[lang="en"] .drawer b{font-family:var(--sans);font-size:13px;font-weight:500;padding-right:8px;overflow-wrap:anywhere}
+html[lang="en"] .drawers{grid-template-columns:repeat(auto-fill,minmax(104px,1fr));overflow-x:hidden}
+html[lang="en"] .drawer small{overflow-wrap:anywhere}
+html[lang="en"] .recipe b,html[lang="en"] .rname b,html[lang="en"] .combo b,html[lang="en"] .pnote b,html[lang="en"] details.herb summary{font-family:var(--sans);font-weight:600;font-size:14px}
+html[lang="en"] .recipe .rt{flex-wrap:wrap}
+html[lang="en"] .roles div{grid-template-columns:78px 1fr}
+html[lang="en"] .roles .rk{font-size:13px;text-align:left}
+html[lang="en"] .role{font-family:var(--sans)}
+html[lang="en"] .seg button{font-family:var(--sans);font-size:14px}
+</style>
+  <header class="top">
+    <div class="brand">
+      <span class="seal">百草</span>
+      <h1>百草衡</h1>
+      <p data-i="sub">保健草药配伍模拟 · 以克为度 · 性味归经与五行推演</p>
+    </div>
+    <div class="toprow">
+      <p class="disc" data-i="disc">本工具依据《中国药典》常用量与中医药性理论做教学推演，不能替代医师辨证。慢病、服药中、孕期及儿童请先咨询医师或药师。</p>
+      <button class="langbtn" id="lang" aria-label="Switch language"></button>
+    </div>
+  </header>
+
+  <div class="app">
+    <aside class="panel cabinet" aria-label="药柜">
+      <div class="phead"><h2 data-i="cab">药柜</h2><span class="eyebrow" id="cabCount"></span></div>
+      <div class="cab-tools">
+        <input class="search" id="q" type="search" autocomplete="off">
+        <div class="chips" id="cats"></div>
+      </div>
+      <div class="drawers" id="drawers"></div>
+      <div class="legend">
+        <span><i style="background:var(--cold)"></i><span data-i="lgCold">寒凉</span></span>
+        <span><i style="background:var(--muted)"></i><span data-i="lgNeu">平</span></span>
+        <span><i style="background:var(--hot)"></i><span data-i="lgHot">温热</span></span>
+        <span data-i="lgTip">点击抽屉加入药方</span>
+      </div>
+    </aside>
+
+    <main>
+      <section class="panel" aria-label="方库">
+        <div class="phead">
+          <h2><span data-i="lib">方库</span> <span class="eyebrow" id="libCount"></span></h2>
+          <button class="btn" id="libToggle" aria-expanded="true"></button>
+        </div>
+        <div id="libBody">
+          <div class="chips libcats" id="libcats"></div>
+          <div class="lib" id="lib"></div>
+        </div>
+      </section>
+
+      <section class="panel" aria-label="药方">
+        <div class="phead">
+          <h2><span data-i="formula">药方</span> <span class="eyebrow" data-i="doseG">剂量 · 克</span></h2>
+          <div class="pre">
+            <button class="btn" id="clear" data-i="clear">清空</button>
+          </div>
+        </div>
+        <div class="pnote" id="pnote" hidden></div>
+        <div class="rows" id="rows"></div>
+        <div class="total" id="total"></div>
+      </section>
+
+      <section class="panel brew" aria-label="烹制">
+        <div class="brew-ctl">
+          <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap">
+            <div class="seg" role="group" aria-label="烹制方式">
+              <button id="m-infuse" data-m="infuse" data-i="infuse">泡水</button>
+              <button id="m-boil" data-m="boil" data-i="boil">煮</button>
+            </div>
+            <span class="hint" id="mhint"></span>
+          </div>
+          <div class="fields">
+            <label class="field"><span data-i="water">水量</span>
+              <span class="ctl"><input type="range" id="water" min="150" max="1500" step="50"><output id="waterO"></output></span>
+            </label>
+            <label class="field" id="tempF"><span data-i="temp">水温</span>
+              <span class="ctl"><input type="range" id="temp" min="80" max="100" step="5"><output id="tempO"></output></span>
+            </label>
+            <label class="field"><span id="minL">时间</span>
+              <span class="ctl"><input type="range" id="minutes" min="3" max="90" step="1"><output id="minO"></output></span>
+            </label>
+            <label class="field"><span data-i="body">体质</span>
+              <select id="body"></select>
+            </label>
+            <label class="field"><span data-i="perDay">每日剂数</span>
+              <select id="perDay"><option value="1"></option><option value="2"></option><option value="3"></option></select>
+            </label>
+            <label class="field"><span data-i="days">连续服用</span>
+              <span class="ctl"><input type="range" id="days" min="1" max="90" step="1"><output id="daysO"></output></span>
+            </label>
+            <label class="field"><span data-i="weight">体重</span>
+              <span class="ctl"><input type="range" id="weight" min="30" max="120" step="1"><output id="weightO"></output></span>
+            </label>
+          </div>
+          <div style="display:flex;gap:16px;flex-wrap:wrap">
+            <label class="check" id="soakF"><input type="checkbox" id="soak"><span data-i="soak">煎前冷水浸泡 30 分钟</span></label>
+            <label class="check"><input type="checkbox" id="preg"><span data-i="preg">孕期 / 备孕</span></label>
+          </div>
+          <p class="hint" id="waterHint" style="margin:0"></p>
+        </div>
+        <div class="cupbox">
+          <svg viewBox="0 0 120 120" aria-hidden="true" id="cup"></svg>
+          <dl class="stats" id="brewStats"></dl>
+        </div>
+      </section>
+
+      <div class="grid" id="analysis"></div>
+    </main>
+  </div>
+
+  <footer data-i="foot">
+    药性数值化规则：寒 −2、凉 −1.2、微寒 −1、平 0、微温 +1、温 +1.5、热 +2、大热 +3；药力 = 实际克数 ÷ 常用量中值 × 估算溶出率。五行按“五味入五脏”（酸木、苦火、甘土、辛金、咸水）与归经脏腑各半折算。溶出率为教学估算，受药材切制、产地和器具影响很大。
+  </footer>
+</div>
+
+<script>
+/* ---------- 基础映射 ---------- */
+const TMAP={'大寒':-3,'寒':-2,'凉':-1.2,'微寒':-1,'平':0,'微温':1,'温':1.5,'热':2,'大热':3};
+const EL=['木','火','土','金','水'];
+const ELVAR={木:'--wood',火:'--fire',土:'--earth',金:'--metal',水:'--water'};
+const FL2EL={酸:'木',涩:'木',苦:'火',甘:'土',淡:'土',辛:'金',咸:'水'};
+const FL5=['酸','苦','甘','辛','咸'];
+const MER2EL={肝:'木',胆:'木',心:'火',小肠:'火',心包:'火',三焦:'火',脾:'土',胃:'土',肺:'金',大肠:'金',肾:'水',膀胱:'水'};
+const SHENG={木:'火',火:'土',土:'金',金:'水',水:'木'};
+const KE={木:'土',土:'水',水:'火',火:'金',金:'木'};
+const ORG={木:'肝胆',火:'心与小肠',土:'脾胃',金:'肺与大肠',水:'肾与膀胱'};
+const SHENG_TXT={木:'木生火：肝藏血以养心，疏肝亦助心神',火:'火生土：心阳温煦脾土，助运化',土:'土生金：培土生金，健脾以益肺气',金:'金生水：金水相生，肺肾同调、上下互滋',水:'水生木：滋水涵木，肾水滋养肝木（明目、平肝之理）'};
+const CHENG_TXT={木:'木旺乘土——肝气偏盛易犯脾胃，可见脘胀、食欲减退',火:'火旺刑金——心火偏盛易灼肺津，可见咽干、干咳',土:'土壅制水——脾土壅滞易碍水液运行，可见困重、浮肿',金:'金旺乘木——肺金过盛易抑肝木疏泄，可见胸闷、情绪不舒',水:'水旺乘火——寒水偏盛易损心阳，可见心悸、畏寒'};
+const WU_TXT={木:'肝木过旺反侮肺金（木火刑金）',火:'心火过旺反侮肾水',土:'脾土壅盛反侮肝木（土壅木郁）',金:'肺金过盛反侮心火',水:'肾水泛滥反侮脾土'};
+
+/* 药材部位 → 溶出参数：inf 泡水上限，ti 泡水时间常数(min)，tb 煮时间常数(min) */
+const PART={
+  flower:{inf:.9,ti:5,tb:4,lab:'花'}, leaf:{inf:.85,ti:6,tb:5,lab:'叶'}, herb:{inf:.6,ti:10,tb:8,lab:'全草'},
+  peel:{inf:.6,ti:10,tb:8,lab:'果皮'}, fruit:{inf:.45,ti:15,tb:12,lab:'果实'}, seed:{inf:.3,ti:20,tb:15,lab:'种子'},
+  root:{inf:.3,ti:25,tb:18,lab:'根/根茎'}, slice:{inf:.6,ti:12,tb:10,lab:'薄片'}, bark:{inf:.28,ti:25,tb:20,lab:'树皮'},
+  fungus:{inf:.2,ti:30,tb:25,lab:'菌类'}, bulb:{inf:.4,ti:20,tb:15,lab:'鳞茎'}, stem:{inf:.15,ti:30,tb:30,lab:'茎'},
+  algae:{inf:.35,ti:20,tb:12,lab:'藻'}, sugar:{inf:1,ti:1,tb:1,lab:'糖'}, gel:{inf:.3,ti:30,tb:20,lab:'胶'}
+};
+const SPLAB={late:'后下',first:'先煎',crush:'捣碎',separate:'另煎',powder:'研粉冲服'};
+
+const TAGS={
+  补气:['补益脾肺之气','神疲乏力、气短懒言'],养血:['补血养血','面色萎黄、头晕心悸、唇甲色淡'],滋阴:['滋补阴液','口干咽燥、手足心热、盗汗'],
+  温阳:['温补阳气','畏寒肢冷、腰膝冷痛'],温中:['温暖脾胃','胃脘冷痛、受凉易吐泻'],清热:['清热泻火','上火口苦、咽痛目赤'],
+  解毒:['清热解毒','咽喉肿痛、疮疖'],疏风:['疏散风热','风热感冒初起、头痛目赤'],解表:['发散表邪','感冒初起、恶寒发热'],
+  明目:['清肝明目','眼干涩、视物昏花、用眼过度'],平肝:['平抑肝阳','头晕胀痛、急躁易怒'],安神:['宁心安神','失眠多梦、心烦心悸'],
+  理气:['行气和中','脘腹胀满、嗳气'],疏肝:['疏肝解郁','情绪抑郁、胸胁胀闷'],活血:['活血化瘀','面色晦暗、痛处固定、经行不畅'],
+  止血:['化瘀止血','瘀血出血'],祛湿:['健脾祛湿','身重困倦、舌苔厚腻'],利水:['利水渗湿','浮肿、小便不利'],健脾:['健运脾胃','食少便溏'],
+  消食:['消食化积','饮食积滞、肉食不化'],化痰:['化痰','咳嗽痰多'],润肺:['润肺止咳','干咳少痰、秋燥'],宣肺:['宣肺祛痰','咳嗽胸闷、痰出不爽'],
+  利咽:['清利咽喉','咽干声哑'],生津:['生津止渴','口渴、津液不足'],润肠:['润肠通便','肠燥便秘'],收敛:['收敛固涩','久咳、自汗、久泻'],
+  固表:['益卫固表','自汗、易感冒'],调和:['调和诸药','—'],缓急:['缓急止痛','脘腹挛急作痛'],止呕:['和胃止呕','恶心呕吐'],
+  强筋:['补肝肾、强筋骨','腰膝酸软'],软坚:['消痰软坚','痰核结块（须就医明确）']
+};
+
+/* ---------- 药材库 ----------
+ H(id,名,拼音,类,性,味,归经,[常用量min,max],部位,功效权重,功效,主要成分,注意,汤色,{sp,ix,preg,ni,note})
+*/
+function H(id,n,py,cat,tl,f,m,d,p,fx,g,c,w,col,x={}){return {id,n,py,cat,tl,t:TMAP[tl],f,m,mer:parseMer(m),d,p,fx,g,c,w,col,sp:x.sp||[],ix:x.ix||[],preg:x.preg||0,ni:x.ni||0,tox:x.tox||0,raw:x.raw||0,note:x.note||''}}
+function parseMer(s){const two=['小肠','大肠','心包','三焦','膀胱'],o=[];let i=0;while(i<s.length){const t=s.slice(i,i+2);if(two.includes(t)){o.push(t);i+=2}else{o.push(s[i]);i++}}return o}
+
+const HERBS=[
+H('gouqi','枸杞子','gouqizi','补益','平','甘','肝肾',[6,12],'fruit',{滋阴:2,养血:1,明目:2},'滋补肝肾，益精明目','枸杞多糖(LBP)、玉米黄质、甜菜碱','脾虚便溏、外感发热者慎用','#C9542E',{ix:['华法林：有增强抗凝、INR 升高的个案报道']}),
+H('juhua','菊花','juhua','清热','微寒','甘苦','肺肝',[5,10],'flower',{疏风:2,清热:2,明目:2,平肝:1},'散风清热，平肝明目，清热解毒','黄酮类(木犀草素、芹菜素)、绿原酸、挥发油','脾胃虚寒、泄泻者慎用；菊科过敏者慎','#D5BE4E',{sp:['late']}),
+H('jinyinhua','金银花','jinyinhua','清热','寒','甘','肺心胃',[6,15],'flower',{清热:3,解毒:3,疏风:1},'清热解毒，疏散风热','绿原酸、异绿原酸、木犀草苷','脾胃虚寒、气虚疮疡脓清者慎用；不宜长期代茶','#C5AE55'),
+H('gancao','甘草','gancao','补益','平','甘','心肺脾胃',[2,10],'slice',{补气:1,调和:3,化痰:1,解毒:1,缓急:1},'补脾益气，清热解毒，祛痰止咳，缓急止痛，调和诸药','甘草酸(甘草甜素)、甘草次酸、甘草黄酮','长期或大剂量可致假性醛固酮增多：水肿、低血钾、血压升高；湿盛胀满、浮肿者不宜','#C49A52',{ix:['利尿剂 / 地高辛：加重低血钾风险','降压药：可能减弱疗效','糖皮质激素：作用增强'],note:'反海藻、大戟、甘遂、芫花'}),
+H('dazao','大枣','dazao','补益','温','甘','脾胃心',[6,15],'fruit',{补气:2,养血:2,安神:1,调和:1,健脾:1},'补中益气，养血安神','环磷酸腺苷(cAMP)、多糖、三萜酸','湿盛脘腹胀满、痰热咳嗽者慎；糖尿病者注意用量','#96391F',{sp:['crush'],ni:1}),
+H('shengjiang','生姜','shengjiang','解表','微温','辛','肺脾胃',[3,10],'slice',{解表:2,温中:3,止呕:2,化痰:1},'解表散寒，温中止呕，化痰止咳','6-姜酚(姜辣素)、姜烯酚、挥发油','阴虚内热、痔疮出血、目赤者慎用','#D6BE72',{ix:['抗凝药：大量食用可能增加出血倾向']}),
+H('longyan','龙眼肉','longyanrou','补益','温','甘','心脾',[9,15],'fruit',{养血:3,安神:2,补气:1},'补益心脾，养血安神','葡萄糖、蔗糖、腺嘌呤、多酚','湿盛中满、有痰火者慎；血糖偏高者注意','#7A3F1E',{ni:1}),
+H('huangqi','黄芪','huangqi','补益','微温','甘','脾肺',[9,30],'root',{补气:3,固表:2,利水:1,健脾:1},'补气升阳，固表止汗，利水消肿，生津养血','黄芪甲苷(Astragaloside IV)、黄芪多糖、毛蕊异黄酮','表实邪盛、阴虚阳亢、疮疡初起热毒盛者不宜','#D4B46E',{ix:['免疫抑制剂(环孢素等)：可能拮抗疗效']}),
+H('dangshen','党参','dangshen','补益','平','甘','脾肺',[9,30],'root',{补气:3,健脾:2,养血:1,生津:1},'健脾益肺，养血生津','党参炔苷、党参多糖、苍术内酯Ⅲ','气滞、火盛者慎用','#C59C60',{note:'反藜芦'}),
+H('xiyangshen','西洋参','xiyangshen','补益','凉','甘苦','心肺肾',[3,6],'slice',{补气:2,滋阴:2,清热:1,生津:2},'补气养阴，清热生津','人参皂苷(Rb1、Re、Rg1)','中阳衰微、胃有寒湿者忌用','#DECA8C',{sp:['separate'],ix:['华法林：可能降低 INR','降糖药：增强降糖，注意低血糖'],note:'反藜芦'}),
+H('renshen','人参','renshen','补益','微温','甘苦','脾肺心肾',[3,9],'slice',{补气:4,生津:1,安神:1,健脾:1},'大补元气，复脉固脱，补脾益肺，生津养血，安神益智','人参皂苷(Rg1、Rb1、Re)、人参多糖','实证、热证忌服；高血压未控制者慎；失眠者晚间慎服','#D6B477',{sp:['separate'],ix:['华法林：降低抗凝效果','降糖药：低血糖风险','MAOI 类抗抑郁药：可致躁狂、头痛','咖啡因：过度兴奋、失眠'],note:'反藜芦，畏五灵脂，恶莱菔子'}),
+H('danggui','当归','danggui','补益','温','甘辛','肝心脾',[6,12],'slice',{养血:3,活血:2,润肠:1},'补血活血，调经止痛，润肠通便','藁本内酯(挥发油)、阿魏酸、当归多糖','湿盛中满、大便溏泄者慎用；月经过多者慎','#8E5A33',{preg:1,ix:['华法林 / 抗血小板药：增加出血风险']}),
+H('baishao','白芍','baishao','补益','微寒','苦酸','肝脾',[6,15],'slice',{养血:2,平肝:1,缓急:2,收敛:1},'养血调经，敛阴止汗，柔肝止痛，平抑肝阳','芍药苷、芍药内酯苷、苯甲酰芍药苷','阳衰虚寒者不宜单用','#D4BF9C',{note:'反藜芦'}),
+H('shudi','熟地黄','shudihuang','补益','微温','甘','肝肾',[9,15],'root',{养血:3,滋阴:3},'补血滋阴，益精填髓','毛蕊花糖苷、5-羟甲基糠醛、梓醇(炮制后减少)、糖类','性质滋腻碍胃：气滞痰多、脘腹胀满、食少便溏者忌服','#2E1A12',{ni:2}),
+H('shanyao','山药','shanyao','补益','平','甘','脾肺肾',[15,30],'slice',{补气:2,健脾:2,滋阴:1,收敛:1},'补脾养胃，生津益肺，补肾涩精','薯蓣皂苷元、黏液蛋白、尿囊素、淀粉酶','湿盛中满或有积滞者慎用','#E3D8BE'),
+H('fuling','茯苓','fuling','祛湿','平','甘淡','心肺脾肾',[10,15],'fungus',{利水:2,祛湿:2,健脾:2,安神:1},'利水渗湿，健脾，宁心','茯苓多糖(β-茯苓聚糖)、茯苓酸等三萜','阴虚无湿热、虚寒滑精者慎','#E6E0CF'),
+H('yiyiren','薏苡仁','yiyiren','祛湿','凉','甘淡','脾胃肺',[9,30],'seed',{祛湿:3,利水:2,健脾:1,清热:1},'利水渗湿，健脾止泻，除痹，排脓','薏苡仁酯、薏苡仁多糖、甘油三油酸酯','津液不足者慎；孕妇慎用','#E6DFCB',{preg:1}),
+H('chenpi','陈皮','chenpi','理气','温','苦辛','肺脾',[3,10],'peel',{理气:3,化痰:2,祛湿:1,健脾:1},'理气健脾，燥湿化痰','橙皮苷、川陈皮素、挥发油(柠檬烯)','气虚、阴虚燥咳、吐血者慎用','#C4873A'),
+H('shanzha','山楂','shanzha','消食','微温','酸甘','脾胃肝',[9,12],'fruit',{消食:3,活血:1,理气:1},'消食健胃，行气散瘀，化浊降脂','金丝桃苷、牡荆素、熊果酸、枸橼酸','胃酸过多、胃溃疡、脾胃虚弱无积滞者慎','#B2452E',{preg:1,ix:['地高辛 / 降压药：可能增强作用']}),
+H('juemingzi','决明子','juemingzi','清热','微寒','甘苦咸','肝大肠',[9,15],'seed',{清热:1,明目:2,润肠:2,平肝:1},'清热明目，润肠通便','大黄酚、橙黄决明素等蒽醌类','脾虚便溏、低血压者慎；长期大量服用蒽醌类可致结肠黑变病','#7D4B23',{sp:['crush']}),
+H('bohe','薄荷','bohe','解表','凉','辛','肺肝',[3,6],'leaf',{疏风:3,清热:1,利咽:1,疏肝:1},'疏散风热，清利头目，利咽，疏肝行气','薄荷醇(薄荷脑)、薄荷酮','体虚多汗者不宜；哺乳期慎用（可能回乳）','#98B566',{sp:['late']}),
+H('sangye','桑叶','sangye','清热','寒','甘苦','肺肝',[5,10],'leaf',{疏风:2,清热:2,润肺:1,明目:1,平肝:1},'疏散风热，清肺润燥，清肝明目','1-脱氧野尻霉素(DNJ)、芦丁、槲皮素','风寒感冒、脾胃虚寒者慎','#8A9846',{ix:['降糖药：可能增强降糖作用']}),
+H('meigui','玫瑰花','meiguihua','理气','温','甘苦','肝脾',[3,6],'flower',{疏肝:3,理气:2,活血:1},'行气解郁，和血止痛','香茅醇、牻牛儿醇(挥发油)、槲皮素','阴虚火旺者慎；孕妇慎用','#B34C6A',{sp:['late'],preg:1}),
+H('baihe','百合','baihe','补益','寒','甘','心肺',[6,12],'bulb',{滋阴:2,润肺:2,安神:2,清热:1},'养阴润肺，清心安神','百合皂苷、多糖、微量秋水仙碱','风寒咳嗽、中寒便溏者忌','#EAE1C8'),
+H('maidong','麦冬','maidong','补益','微寒','甘苦','心肺胃',[6,12],'root',{滋阴:2,润肺:2,生津:2,清热:1,安神:1},'养阴生津，润肺清心','麦冬皂苷、甲基麦冬黄烷酮、多糖','脾胃虚寒泄泻、痰湿咳嗽者忌','#E0D3A4',{sp:['crush'],ni:1}),
+H('suanzaoren','酸枣仁','suanzaoren','安神','平','甘酸','肝胆心',[10,15],'seed',{安神:3,养血:1,收敛:1},'养心补肝，宁心安神，敛汗生津','酸枣仁皂苷 A/B、斯皮诺素','实邪郁火、滑泄者慎','#A9743F',{sp:['crush'],ix:['镇静催眠药 / 酒精：中枢抑制叠加']}),
+H('wuweizi','五味子','wuweizi','收涩','温','酸甘','肺心肾',[2,6],'fruit',{收敛:3,生津:2,安神:1,补气:1},'收敛固涩，益气生津，补肾宁心','五味子醇甲、五味子乙素(木脂素)','表邪未解、内有实热、咳嗽初起者不宜','#8A2C2C',{sp:['crush'],ix:['他克莫司等 CYP3A 底物：可升高血药浓度']}),
+H('danshen','丹参','danshen','活血','微寒','苦','心肝',[10,15],'slice',{活血:3,安神:1,清热:1},'活血祛瘀，通经止痛，清心除烦','丹参酮ⅡA、丹酚酸B、隐丹参酮','月经过多、无瘀血者慎；孕妇慎用','#9C3A2E',{preg:1,ix:['华法林 / 阿司匹林：显著增加出血风险'],note:'反藜芦'}),
+H('sanqi','三七','sanqi','活血','温','甘苦','肝胃',[3,9],'root',{止血:3,活血:2},'散瘀止血，消肿定痛','三七皂苷R1、人参皂苷Rg1/Rb1、三七素','孕妇慎用；无瘀者不宜长期服','#A08355',{sp:['powder'],preg:1,ix:['抗凝 / 抗血小板药：影响凝血功能']}),
+H('luohanguo','罗汉果','luohanguo','清热','凉','甘','肺大肠',[9,15],'fruit',{润肺:2,利咽:2,润肠:1,清热:1,生津:1},'清热润肺，利咽开音，滑肠通便','罗汉果苷V(甜苷)、黄酮','脾胃虚寒、便溏者慎','#7B4A25',{sp:['crush']}),
+H('pangdahai','胖大海','pangdahai','清热','寒','甘','肺大肠',[2,6],'seed',{利咽:3,润肺:1,清热:2,润肠:1},'清热润肺，利咽开音，润肠通便','西黄芪胶粘素(多糖)、胖大海素','脾胃虚寒便溏者慎；不宜长期代茶','#8B5E3C'),
+H('pugongying','蒲公英','pugongying','清热','寒','苦甘','肝胃',[10,15],'herb',{清热:3,解毒:3,利水:1},'清热解毒，消肿散结，利尿通淋','蒲公英甾醇、咖啡酸、菊糖','阳虚外寒、脾胃虚弱者慎；用量过大可致缓泻','#6E7A3A',{ix:['利尿剂：作用叠加']}),
+H('heye','荷叶','heye','清热','平','苦','肝脾胃',[3,10],'leaf',{清热:1,祛湿:2,止血:1},'清暑化湿，升发清阳，凉血止血','荷叶碱(阿朴啡类生物碱)、槲皮素','体瘦、气血虚弱者慎','#7F8F4A'),
+H('duzhong','杜仲','duzhong','补益','温','甘','肝肾',[6,10],'bark',{温阳:2,强筋:3},'补肝肾，强筋骨，安胎','松脂醇二葡萄糖苷、绿原酸、桃叶珊瑚苷','阴虚火旺者慎','#6B4A30',{ix:['降压药：作用叠加']}),
+H('rougui','肉桂','rougui','温里','大热','辛甘','肾脾心肝',[1,5],'bark',{温阳:4,温中:2,活血:1},'补火助阳，引火归元，散寒止痛，温通经脉','桂皮醛、香豆素','阴虚火旺、里有实热、有出血倾向者忌；孕妇慎；中国肉桂香豆素含量高，长期大量有肝损害风险','#8A3B1E',{sp:['late'],preg:1,note:'畏赤石脂'}),
+H('huangjing','黄精','huangjing','补益','平','甘','脾肺肾',[9,15],'slice',{补气:2,滋阴:2,健脾:1,润肺:1},'补气养阴，健脾，润肺，益肾','黄精多糖、甾体皂苷','中寒泄泻、痰湿痞满者忌','#5A3A22',{ni:1}),
+H('shihu','石斛','shihu','补益','微寒','甘','胃肾',[6,12],'stem',{滋阴:2,生津:3,清热:1},'益胃生津，滋阴清热','石斛碱、石斛多糖','温热病早期阴未伤、湿温未化燥者忌','#C9C08A',{sp:['first']}),
+H('gegen','葛根','gegen','解表','凉','甘辛','脾胃肺',[10,15],'slice',{解表:2,生津:2,清热:1},'解肌退热，生津止渴，透疹，通经活络，解酒毒','葛根素、大豆苷元、大豆苷','胃寒者慎','#D5C8A4',{ix:['降糖药 / 抗凝药：可能增强作用']}),
+H('sangshen','桑椹','sangshen','补益','寒','甘酸','心肝肾',[9,15],'fruit',{滋阴:2,养血:2,生津:1,润肠:1},'滋阴补血，生津润燥','花青素、白藜芦醇、多糖','脾胃虚寒便溏者忌','#4A1C3A'),
+H('danzhuye','淡竹叶','danzhuye','清热','寒','甘淡','心胃小肠',[6,10],'leaf',{清热:3,利水:2,安神:1},'清热泻火，除烦止渴，利尿通淋','芦竹素等三萜、黄酮','无实火、湿热者慎；阴虚者不宜久服','#A5B068'),
+H('lianzi','莲子','lianzi','收涩','平','甘涩','脾肾心',[6,15],'seed',{健脾:2,收敛:2,安神:2,补气:1},'补脾止泻，止带，益肾涩精，养心安神','淀粉、棉子糖、莲心碱(莲子心中)','大便燥结者慎','#E2D5B5',{sp:['crush']}),
+H('lingzhi','灵芝','lingzhi','安神','平','甘','心肺肝肾',[6,12],'fungus',{补气:2,安神:3,化痰:1},'补气安神，止咳平喘','灵芝三萜(灵芝酸)、β-葡聚糖','实证者慎','#6E3A22',{ix:['抗凝 / 降压 / 降糖药：作用可能叠加']}),
+H('honghua','红花','honghua','活血','温','辛','心肝',[3,10],'flower',{活血:4},'活血通经，散瘀止痛','羟基红花黄色素A、红花苷','孕妇禁用；月经过多、有出血倾向者慎','#C23A2A',{preg:2,ix:['抗凝 / 抗血小板药：出血风险']}),
+H('chaye','绿茶','lvcha','清热','凉','苦甘','心肺胃',[3,10],'leaf',{清热:2,利水:1,消食:1,明目:1},'清利头目，除烦止渴，消食，利尿','咖啡因、茶多酚(EGCG)、L-茶氨酸','失眠、心悸、胃溃疡者慎；不宜空腹浓饮','#A7AE48',{sp:['late'],ix:['铁剂：茶多酚减少铁吸收，宜间隔 2 小时','兴奋剂 / 部分哮喘药(茶碱)：咖啡因叠加']}),
+H('jiegeng','桔梗','jiegeng','化痰','平','苦辛','肺',[3,10],'slice',{宣肺:3,化痰:2,利咽:2},'宣肺，利咽，祛痰，排脓','桔梗皂苷D、桔梗多糖','阴虚久咳、咯血者不宜；用量过大易致恶心呕吐','#DFD4BA'),
+H('sharen','砂仁','sharen','祛湿','温','辛','脾胃肾',[3,6],'seed',{理气:2,祛湿:2,温中:2,止呕:1},'化湿开胃，温脾止泻，理气安胎','乙酸龙脑酯、樟脑(挥发油)','阴虚血燥者慎','#8F7A55',{sp:['late','crush']}),
+H('baizhu','白术','baizhu','补益','温','苦甘','脾胃',[6,12],'slice',{健脾:3,补气:2,祛湿:2,固表:1},'健脾益气，燥湿利水，止汗，安胎','苍术酮、白术内酯Ⅰ~Ⅲ','阴虚燥渴者慎','#CFB685'),
+H('chuanxiong','川芎','chuanxiong','活血','温','辛','肝胆心包',[3,10],'slice',{活血:3,理气:2,疏风:1},'活血行气，祛风止痛','川芎嗪(四甲基吡嗪)、藁本内酯、阿魏酸','阴虚火旺、多汗、月经过多者慎；孕妇慎用','#B69A68',{preg:1,ix:['抗凝药：增加出血风险']}),
+H('haizao','海藻','haizao','化痰','寒','苦咸','肝胃肾',[6,12],'algae',{化痰:2,软坚:3,利水:1},'消痰软坚散结，利水消肿','褐藻酸、甘露醇、碘','甲状腺疾病者须遵医嘱（含碘）；脾胃虚寒者慎','#3F4A2E',{note:'反甘草'}),
+H('dingxiang','丁香','dingxiang','温里','温','辛','脾胃肺肾',[1,3],'flower',{温中:3,温阳:1,止呕:2},'温中降逆，补肾助阳','丁香酚(挥发油)','热病及阴虚内热者忌','#7A4A2E',{sp:['late'],ix:['抗凝药：丁香酚抑制血小板聚集'],note:'畏郁金'}),
+H('yujin','郁金','yujin','活血','寒','辛苦','肝心肺',[3,10],'slice',{活血:2,疏肝:2,清热:1,理气:1},'活血止痛，行气解郁，清心凉血，利胆退黄','姜黄素类、莪术醇(挥发油)','孕妇慎用；胆道梗阻者慎','#C99A2E',{preg:1,note:'与丁香相畏（丁香畏郁金）'}),
+H('laifuzi','莱菔子','laifuzi','消食','平','辛甘','肺脾胃',[5,12],'seed',{消食:3,理气:2,化痰:2},'消食除胀，降气化痰','莱菔素、芥子碱、脂肪油','气虚无食积痰滞者慎','#9A6B3E',{sp:['crush'],note:'与人参相恶'}),
+H('wumei','乌梅','wumei','收涩','平','酸涩','肝脾肺大肠',[6,12],'fruit',{收敛:3,生津:2},'敛肺，涩肠，生津，安蛔','枸橼酸、苹果酸、熊果酸','外有表邪、内有实热积滞者不宜','#3A1E1A',{sp:['crush']}),
+H('chixiaodou','赤小豆','chixiaodou','祛湿','平','甘酸','心小肠',[9,30],'seed',{利水:3,祛湿:2,解毒:1},'利水消肿，解毒排脓','三萜皂苷、黄酮、膳食纤维','阴虚津伤者慎；久服令人消瘦','#8A2B2A'),
+H('hongtang','红糖','hongtang','补益','温','甘','肝脾',[10,30],'sugar',{养血:1,温中:2,活血:1,缓急:1},'补中缓肝，和血化瘀','蔗糖、铁、钙、多酚（非离心糖）','糖尿病、湿热中满者慎','#5E2E12'),
+H('bingtang','冰糖','bingtang','补益','平','甘','肺脾',[10,30],'sugar',{润肺:1,生津:1,缓急:1},'补中和胃，润肺止咳','蔗糖（纯度>99%）','糖尿病、痰湿者慎','#EFEADA'),
+H('guihua','桂花','guihua','理气','温','辛','肺脾肾',[1,3],'flower',{温中:1,化痰:1,理气:1},'温肺化饮，散寒止痛','芳樟醇、紫罗兰酮(挥发油)、黄酮','体质燥热者少用','#E3A33A',{sp:['late']}),
+H('luoshen','洛神花','luoshenhua','清热','凉','酸','肝肾',[3,9],'flower',{生津:2,清热:1,消食:1},'清热生津，消暑解渴（玫瑰茄，性味参照地方药材标准）','花青素(飞燕草素)、木槿酸、有机酸','胃酸过多、低血压者慎；孕妇慎','#A2182E',{preg:1,ix:['降压药：作用可能叠加']}),
+H('lvdou','绿豆','lvdou','清热','寒','甘','心胃',[15,30],'seed',{清热:3,解毒:2,生津:1,利水:1},'清热解毒，消暑，利水','牡荆素、异牡荆素(黄酮)、植物蛋白','脾胃虚寒、泄泻者慎；服温补药期间不宜','#6F8A3A'),
+H('xiakucao','夏枯草','xiakucao','清热','寒','辛苦','肝胆',[9,15],'herb',{清热:3,平肝:2,明目:1,软坚:1},'清肝泻火，明目，散结消肿','迷迭香酸、熊果酸、夏枯草多糖','脾胃虚弱者慎','#6A5230'),
+H('lianqiao','连翘','lianqiao','清热','微寒','苦','肺心小肠',[6,15],'fruit',{清热:3,解毒:3,疏风:1},'清热解毒，消肿散结，疏散风热','连翘苷、连翘酯苷A、挥发油','脾胃虚寒、气虚疮疡脓清者不宜','#8B6A3A'),
+H('xingren','苦杏仁','kuxingren','化痰','微温','苦','肺大肠',[5,10],'seed',{宣肺:2,化痰:1,润肠:2},'降气止咳平喘，润肠通便','苦杏仁苷(水解生成氢氰酸)、脂肪油','有小毒：内服不宜过量，婴儿慎用；须煎煮，不宜生用或泡水','#D9C29A',{sp:['crush'],tox:1}),
+H('lugen','芦根','lugen','清热','寒','甘','肺胃',[15,30],'root',{清热:2,生津:3,止呕:1},'清热泻火，生津止渴，除烦，止呕，利尿','薏苡素、多糖、天冬酰胺','脾胃虚寒者慎','#D8CFA6'),
+H('xuanshen','玄参','xuanshen','清热','微寒','甘苦咸','肺胃肾',[9,15],'slice',{滋阴:2,清热:2,解毒:2,利咽:1},'清热凉血，滋阴降火，解毒散结','哈巴俄苷、哈巴苷(环烯醚萜)、苯丙素苷','脾胃虚寒、食少便溏者不宜','#2F2220',{note:'反藜芦'}),
+H('zisuye','紫苏叶','zisuye','解表','温','辛','肺脾',[5,10],'leaf',{解表:3,理气:2,止呕:1},'解表散寒，行气和胃','紫苏醛、紫苏酮、迷迭香酸','气虚、表虚多汗者慎','#6B3F5A',{sp:['late']}),
+H('congbai','葱白','congbai','解表','温','辛','肺胃',[3,10],'slice',{解表:3,温阳:1},'发汗解表，散寒通阳','含硫化合物(大蒜辣素类)、挥发油','表虚多汗者忌','#E6E4CC',{sp:['late']}),
+H('foshou','佛手','foshou','理气','温','辛苦酸','肝脾胃肺',[3,10],'slice',{理气:3,疏肝:2,化痰:1},'疏肝理气，和胃止痛，燥湿化痰','柠檬油素、橙皮苷、挥发油','阴虚有火、无气滞者慎','#D9B85A'),
+H('hehuanhua','合欢花','hehuanhua','安神','平','甘','心肝',[5,10],'flower',{安神:3,疏肝:2},'解郁安神','槲皮苷、芳樟醇','孕妇慎用','#D99AA5',{preg:1,ix:['镇静催眠药：作用叠加']}),
+H('moli','茉莉花','molihua','理气','温','辛甘','肝脾胃',[3,10],'flower',{理气:2,疏肝:1,温中:1},'理气开郁，辟秽和中','芳樟醇、乙酸苄酯(挥发油)','阴虚火旺者慎','#E8E0B8',{sp:['late']}),
+H('xiaomai','小麦','xiaomai','安神','凉','甘','心',[15,30],'seed',{安神:2,养血:1,生津:1},'养心除烦（甘麦大枣汤用淮小麦）','淀粉、蛋白质、B族维生素','麸质过敏者忌','#D8B978'),
+H('qianshi','芡实','qianshi','收涩','平','甘涩','脾肾',[9,15],'seed',{收敛:3,健脾:2,祛湿:1},'益肾固精，补脾止泻，除湿止带','淀粉、多酚、生育酚','大小便不利、便秘者不宜','#E0D2B8',{sp:['crush']}),
+H('maiya','麦芽','maiya','消食','平','甘','脾胃',[10,15],'seed',{消食:3,健脾:1,疏肝:1},'行气消食，健脾开胃，回乳消胀','淀粉酶、麦芽糖、大麦芽碱','哺乳期忌用（回乳）','#C9A566'),
+H('shenqu','神曲','shenqu','消食','温','甘辛','脾胃',[6,15],'herb',{消食:3,健脾:1},'消食和胃','酵母菌、淀粉酶、B族维生素','脾阴虚、胃火盛者慎','#B89A6A',{preg:1}),
+H('yumixu','玉米须','yumixu','祛湿','平','甘','膀胱肝胆',[15,30],'herb',{利水:3,祛湿:1,平肝:1},'利水消肿，利湿退黄','黄酮、皂苷、多糖、钾盐','低血压、多尿者慎','#C9B070',{ix:['利尿 / 降压 / 降糖药：作用可能叠加']}),
+H('shashen','北沙参','beishashen','补益','微寒','甘苦','肺胃',[5,12],'root',{滋阴:2,润肺:2,生津:2,清热:1},'养阴清肺，益胃生津','补骨脂素等香豆素、多糖','风寒咳嗽、中寒便溏者忌','#E3D9B8',{note:'反藜芦'}),
+H('yuzhu','玉竹','yuzhu','补益','微寒','甘','肺胃',[6,12],'slice',{滋阴:2,润肺:2,生津:2},'养阴润燥，生津止渴','玉竹多糖、甾体皂苷、黄酮','痰湿气滞、脾虚便溏者慎','#D9C58E',{ni:1}),
+H('pipaye','枇杷叶','pipaye','化痰','微寒','苦','肺胃',[6,10],'leaf',{化痰:2,润肺:1,止呕:2,清热:1},'清肺止咳，降逆止呕','熊果酸、苦杏仁苷(少量)、挥发油','风寒咳嗽、胃寒呕吐者慎；须刷去绒毛或包煎','#7E7A40',{sp:['wrap']}),
+H('ejiao','阿胶','ejiao','补益','平','甘','肺肝肾',[3,9],'gel',{养血:3,滋阴:2,止血:2,润肺:1},'补血滋阴，润燥，止血','明胶(胶原蛋白水解产物)、多种氨基酸、钙','脾胃虚弱、食少便溏、消化不良者慎；感冒发热期间不宜','#3A2016',{sp:['melt'],ni:2}),
+H('huanglian','黄连','huanglian','清热','寒','苦','心脾胃肝胆大肠',[2,5],'slice',{清热:4,解毒:3,祛湿:2},'清热燥湿，泻火解毒','小檗碱(黄连素)、巴马汀、黄连碱','大苦大寒，易伤脾胃：脾胃虚寒者忌，阴虚津伤者慎；新生儿及 G6PD 缺乏者忌用（小檗碱可致溶血、黄疸）','#C9A21E',{preg:1,ix:['降糖药：小檗碱有降糖作用，注意低血糖','环孢素、他汀等 CYP3A4/2D6 底物：可能升高血药浓度']}),
+H('baimaogen','白茅根','baimaogen','清热','寒','甘','肺胃膀胱',[9,30],'root',{清热:2,止血:2,利水:2,生津:1},'凉血止血，清热利尿','芦竹素、白茅素(三萜)、钾盐、糖类','脾胃虚寒、溲多不渴者忌','#E6DFC8'),
+H('huangqin','黄芩','huangqin','清热','寒','苦','肺胆脾大肠小肠',[3,10],'slice',{清热:3,祛湿:2,解毒:2,止血:1},'清热燥湿，泻火解毒，止血，安胎','黄芩苷、黄芩素、汉黄芩素','脾胃虚寒者不宜','#C4A13C'),
+H('zhimu','知母','zhimu','清热','寒','苦甘','肺胃肾',[6,12],'slice',{清热:3,滋阴:2,生津:1,润肠:1},'清热泻火，滋阴润燥','知母皂苷BⅡ、芒果苷','脾虚便溏者慎','#D1B98A'),
+H('tianma','天麻','tianma','平肝','平','甘','肝',[3,10],'slice',{平肝:3,疏风:1,安神:1},'息风止痉，平抑肝阳，祛风通络','天麻素(天麻苷)、对羟基苯甲醇','气血虚甚者慎','#D9C9A0'),
+H('yimucao','益母草','yimucao','活血','微寒','苦辛','肝心包膀胱',[9,30],'herb',{活血:3,利水:2,清热:1},'活血调经，利尿消肿，清热解毒','益母草碱、水苏碱','孕妇禁用；血虚无瘀者慎；肾功能不全者慎','#6C7A3E',{preg:2}),
+H('taoren','桃仁','taoren','活血','平','苦甘','心肝大肠',[5,10],'seed',{活血:3,润肠:2,化痰:1},'活血祛瘀，润肠通便，止咳平喘','苦杏仁苷、脂肪油','孕妇禁用；有小毒，不可过量；便溏者慎','#C9A884',{sp:['crush'],preg:2,tox:1}),
+H('jineijin','鸡内金','jineijin','消食','平','甘','脾胃小肠膀胱',[3,10],'herb',{消食:3,健脾:1,收敛:1},'健胃消食，涩精止遗，通淋化石','胃激素、角蛋白、淀粉酶(少量)','脾虚无积滞者慎','#C7A45A',{sp:['powder']}),
+H('fengmi','蜂蜜','fengmi','补益','平','甘','肺脾大肠',[15,30],'sugar',{润肺:2,润肠:2,缓急:1,解毒:1},'补中，润燥，止痛，解毒','果糖、葡萄糖、酶类、多酚','1 岁以下婴儿禁食（肉毒杆菌芽孢）；糖尿病、湿阻中满、便溏者慎','#D9A03A',{sp:['honey']}),
+H('heizhima','黑芝麻','heizhima','补益','平','甘','肝肾大肠',[9,15],'seed',{养血:2,滋阴:1,润肠:2},'补肝肾，益精血，润肠燥','芝麻素、芝麻酚、亚油酸、钙','便溏者慎','#2A2522',{sp:['crush']}),
+H('yuxingcao','鱼腥草','yuxingcao','清热','微寒','辛','肺',[15,25],'herb',{清热:3,解毒:3,化痰:1,利水:1},'清热解毒，消痈排脓，利尿通淋','癸酰乙醛(鱼腥草素)、甲基正壬酮、槲皮苷','虚寒证者慎；不宜久煎','#5E6B3A',{sp:['late']}),
+H('banlangen','板蓝根','banlangen','清热','寒','苦','心胃',[9,15],'root',{清热:3,解毒:3,利咽:1},'清热解毒，凉血利咽','靛蓝、靛玉红、(R,S)-告依春','体虚无实火热毒者忌；脾胃虚寒者慎；不宜作长期“预防”饮用','#B7A57A'),
+H('yinyanghuo','淫羊藿','yinyanghuo','补益','温','辛甘','肝肾',[6,10],'leaf',{温阳:3,强筋:2,疏风:1},'补肾阳，强筋骨，祛风湿','淫羊藿苷、宝藿苷等黄酮','阴虚火旺者不宜；有肝损伤个案报道','#7D8A48'),
+H('tusizi','菟丝子','tusizi','补益','平','辛甘','肝肾脾',[6,12],'seed',{温阳:1,滋阴:1,收敛:2,明目:1},'补益肝肾，固精缩尿，安胎，明目，止泻','金丝桃苷、槲皮素、菟丝子多糖','阴虚火旺、大便燥结者慎','#B08A4A',{sp:['wrap']}),
+H('nvzhenzi','女贞子','nvzhenzi','补益','凉','甘苦','肝肾',[6,12],'fruit',{滋阴:3,明目:2},'滋补肝肾，明目乌发','特女贞苷、齐墩果酸','脾胃虚寒泄泻及阳虚者慎','#3A2A38',{sp:['crush']}),
+H('mohanlian','墨旱莲','mohanlian','补益','寒','甘酸','肾肝',[6,12],'herb',{滋阴:2,止血:2},'滋补肝肾，凉血止血','蟛蜞菊内酯、旱莲苷','脾胃虚寒、大便泄泻者不宜','#2F3526'),
+H('taizishen','太子参','taizishen','补益','平','甘苦','脾肺',[9,30],'root',{补气:2,生津:2,健脾:1,润肺:1},'益气健脾，生津润肺（清补之品，小儿常用）','太子参环肽、多糖、皂苷','邪实者慎','#D9CBA3'),
+H('baibiandou','白扁豆','baibiandou','祛湿','微温','甘','脾胃',[9,15],'seed',{健脾:2,祛湿:2,解毒:1},'健脾化湿，和中消暑','蛋白质、植物凝集素、胰蛋白酶抑制剂','生品含凝集素，必须充分煮熟；不宜泡水','#E3D8BC',{sp:['crush'],raw:1}),
+H('huoxiang','藿香','huoxiang','祛湿','微温','辛','脾胃肺',[3,10],'herb',{祛湿:3,止呕:2,解表:1,温中:1},'芳香化浊，和中止呕，发表解暑','广藿香醇、百秋李醇(挥发油)','阴虚血燥者不宜','#6F7240',{sp:['late']}),
+H('niuxi','牛膝','niuxi','活血','平','苦甘酸','肝肾',[5,12],'slice',{活血:2,强筋:2,利水:1},'逐瘀通经，补肝肾，强筋骨，利尿通淋，引血下行','蜕皮甾酮、牛膝皂苷','孕妇禁用；月经过多者忌','#B89A70',{preg:2}),
+H('heshouwu','制何首乌','zhiheshouwu','补益','微温','苦甘涩','肝心肾',[6,12],'slice',{养血:3,滋阴:1,强筋:1,收敛:1},'补肝肾，益精血，乌须发，强筋骨','二苯乙烯苷、蒽醌类、卵磷脂','有药物性肝损伤报道：肝病患者禁用，服用期间监测肝功能；不宜长期大量；便溏者慎','#5A3524',{ni:1}),
+];
+const BY=Object.fromEntries(HERBS.map(h=>[h.id,h]));
+const CATS=['全部','补益','清热','解表','理气','活血','安神','平肝','祛湿','消食','收涩','化痰','温里'];
+
+/* 七情配伍：禁忌 */
+const CONFLICTS=[
+  {a:'gancao',b:'haizao',lv:'red',ty:'十八反',t:'“藻戟遂芫俱战草”——甘草反海藻，同用可能增毒或产生不良反应，保健方中不应同用。'},
+  {a:'dingxiang',b:'yujin',lv:'red',ty:'十九畏',t:'“丁香莫与郁金见”——丁香畏郁金，传统上避免同用。'},
+  {a:'renshen',b:'laifuzi',lv:'amber',ty:'相恶',t:'人参恶莱菔子：莱菔子降气消积，会削弱人参补气之力。'},
+  {a:'xiyangshen',b:'laifuzi',lv:'amber',ty:'相恶',t:'参类与莱菔子同用，补气之力被降气消导所削弱。'},
+  {a:'dangshen',b:'laifuzi',lv:'info',ty:'相恶（轻）',t:'党参与莱菔子一补一消，补益效果打折扣；若为“补而不滞”有意为之可保留。'},
+];
+/* 经典配伍 */
+const COMBOS=[
+  {n:'当归补血汤',need:['huangqi','danggui'],ratio:['huangqi','danggui',5],t:'李东垣方。重用黄芪大补脾肺之气以资化源，“有形之血生于无形之气”，配当归养血和营。原方黄芪:当归 = 5:1（30g : 6g）。'},
+  {n:'生脉饮',need:[['renshen','xiyangshen','dangshen'],'maidong','wuweizi'],t:'《医学启源》方：参补气，麦冬养阴清热，五味子敛阴止汗，一补一润一敛，益气生津。用西洋参偏于清补，适合夏季气阴两伤。'},
+  {n:'四君子汤',need:[['renshen','dangshen'],'baizhu','fuling','gancao'],t:'《太平惠民和剂局方》补气基础方。参为君补元气，白术健脾燥湿为臣，茯苓渗湿为佐，甘草调中为使。'},
+  {n:'四物汤',need:['danggui','shudi','baishao','chuanxiong'],t:'补血调血基础方。熟地、白芍为“血中之血药”，当归、川芎为“血中之气药”，补而不滞。'},
+  {n:'玉屏风散（缺防风）',need:['huangqi','baizhu'],t:'黄芪益气固表、白术健脾，是玉屏风散主体；原方另有防风以散风邪。'},
+  {n:'杞菊药对',need:['gouqi','juhua'],t:'枸杞滋肾养肝属水，菊花清肝明目入木，取“滋水涵木”之意，即杞菊地黄丸的核心药对。'},
+  {n:'桑菊药对',need:['sangye','juhua'],t:'桑菊饮的主药，疏散风热、清肺明目，风热咳嗽初起常用。'},
+  {n:'银菊药对',need:['jinyinhua','juhua'],t:'清热解毒与疏风明目相合，适合风热上火、咽痛目赤。'},
+  {n:'姜枣药对',need:['shengjiang','dazao'],t:'生姜辛温走卫、大枣甘温补营，调和营卫、和胃止呕，桂枝汤等方常用。'},
+  {n:'桔梗汤',need:['jiegeng','gancao'],t:'《伤寒论》方：宣肺利咽，祛痰排脓，常用于咽痛。'},
+  {n:'酸枣仁汤意',need:['suanzaoren','fuling','chuanxiong','gancao'],t:'《金匮要略》酸枣仁汤去知母：养血安神，清热除烦，主“虚劳虚烦不得眠”。'},
+  {n:'二陈汤意',need:['chenpi','fuling','gancao'],t:'二陈汤缺半夏：理气燥湿化痰。'},
+  {n:'熟地配砂仁',need:['shudi','sharen'],t:'砂仁醒脾行气，可制熟地黄滋腻碍胃之弊，古有“砂仁拌熟地”之法。'},
+  {n:'熟地配陈皮',need:['shudi','chenpi'],t:'陈皮理气健脾，使滋补而不壅滞。'},
+  {n:'山楂配陈皮',need:['shanzha','chenpi'],t:'消食化积、行气和胃，饭后积滞常用。'},
+  {n:'玫瑰配陈皮',need:['meigui','chenpi'],t:'疏肝解郁、理气和胃，适合情志不畅兼胃胀。'},
+  {n:'罗汉果配胖大海',need:['luohanguo','pangdahai'],t:'清肺利咽开音，用嗓过度可短期代茶。'},
+  {n:'桂圆配大枣',need:['longyan','dazao'],t:'补益心脾、养血安神。'},
+  {n:'菊花配决明子',need:['juhua','juemingzi'],t:'清肝明目，兼润肠通便。'},
+  {n:'葛根配丹参',need:['gegen','danshen'],t:'生津通络与活血化瘀相合，现代常用于心脑血管保健思路（须遵医嘱）。'},
+  {n:'百合配酸枣仁',need:['baihe','suanzaoren'],t:'清心润肺、养肝宁神，适合虚烦失眠。'},
+  {n:'八珍汤',need:[['renshen','dangshen'],'baizhu','fuling','gancao','danggui','shudi','baishao','chuanxiong'],t:'《正体类要》方：四君子汤合四物汤，气血双补。'},
+  {n:'桑菊饮',need:['sangye','juhua','lianqiao','bohe','jiegeng','xingren','lugen','gancao'],t:'《温病条辨》“辛凉轻剂”：疏风清热，宣肺止咳。原方用量极轻（桑叶 7.5g、菊花 3g），取“治上焦如羽，非轻不举”。'},
+  {n:'甘麦大枣汤',need:['gancao','xiaomai','dazao'],t:'《金匮要略》方，主“妇人脏躁，喜悲伤欲哭”：养心安神，和中缓急。'},
+  {n:'玄麦甘桔',need:['xuanshen','maidong','gancao','jiegeng'],t:'由桔梗汤加玄参、麦冬而成，滋阴清热、利咽，适合阴虚咽干、用嗓过度。'},
+  {n:'四神汤',need:['shanyao','lianzi','fuling','qianshi'],t:'闽台药膳名方：健脾祛湿、固肾止泻，性平可常服。'},
+  {n:'焦三仙',need:['shanzha','maiya','shenqu'],t:'山楂善消肉食，麦芽善消米面，神曲善消谷积，三药合用消一切饮食积滞。'},
+  {n:'酸梅汤',need:['wumei','shanzha'],t:'清宫御膳房方演化而来：乌梅生津敛肺，山楂消食，酸甘化阴，是消暑解渴的传统饮品。'},
+  {n:'夏桑菊',need:['xiakucao','sangye','juhua'],t:'岭南凉茶经典：清肝明目、疏风散热。'},
+  {n:'五红汤',need:['dazao','gouqi','chixiaodou','hongtang'],t:'民间养血方，“以红养红”：补血养心、健脾利水。'},
+  {n:'赤小豆薏米',need:['chixiaodou','yiyiren'],t:'利水渗湿、健脾，湿气重时常用；两者均偏利，津亏者不宜久服。'},
+  {n:'姜糖苏叶',need:['shengjiang','zisuye'],t:'辛温解表、行气和胃，风寒感冒初起兼胃不适时常用。'},
+  {n:'交泰丸',need:['huanglian','rougui'],ratio:['huanglian','rougui',10],t:'《韩氏医通》方：黄连清心火，肉桂温肾阳、引火归元，寒热并用以交通心肾。原方黄连:肉桂约 10:1。'},
+  {n:'黄连阿胶汤',need:['huanglian','ejiao','huangqin','baishao'],t:'《伤寒论》方（原方另有鸡子黄）：黄连、黄芩清心火，阿胶、白芍滋阴血，主“心中烦，不得卧”。'},
+  {n:'二至丸',need:['nvzhenzi','mohanlian'],t:'《医方集解》方：女贞子冬至采、墨旱莲夏至采，故名二至。补益肝肾、滋阴止血，药性平和。'},
+  {n:'茅根芦根',need:['baimaogen','lugen'],t:'白茅根凉血利尿、芦根清热生津，二根相合清热而不伤津。'},
+  {n:'天麻川芎',need:['tianma','chuanxiong'],t:'大川芎丸组成：川芎活血祛风止痛，天麻平肝息风，治头风眩晕。'},
+  {n:'阿胶配陈皮/砂仁',need:['ejiao',['chenpi','sharen']],t:'理气药可制阿胶滋腻碍胃之弊。'},
+];
+
+function matchCombo(x,ids){return x.need.every(n=>Array.isArray(n)?n.some(i=>ids.has(i)):ids.has(n))}
+/* 成方中的君药（识别到成方时按原方定君） */
+Object.entries({当归补血汤:['huangqi'],生脉饮:['renshen','xiyangshen','dangshen'],四君子汤:['renshen','dangshen'],四物汤:['shudi'],'玉屏风散（缺防风）':['huangqi'],酸枣仁汤意:['suanzaoren'],桔梗汤:['jiegeng'],八珍汤:['renshen','dangshen','shudi'],桑菊饮:['sangye'],甘麦大枣汤:['xiaomai'],玄麦甘桔:['xuanshen'],四神汤:['shanyao'],酸梅汤:['wumei'],夏桑菊:['xiakucao'],五红汤:['dazao'],交泰丸:['huanglian'],黄连阿胶汤:['huanglian'],二至丸:['nvzhenzi'],天麻川芎:['tianma']}).forEach(([n,j])=>{const x=COMBOS.find(c=>c.n===n);if(x)x.jun=j});
+
+const BODIES={
+  平和:{want:[],d:'阴阳气血调和'},
+  气虚:{want:['补气','健脾','固表'],d:'易疲乏、气短、易感冒'},
+  阳虚:{want:['温阳','温中','补气'],d:'畏寒怕冷、手足不温'},
+  阴虚:{want:['滋阴','生津','润肺','清热'],d:'口燥咽干、手足心热'},
+  血虚:{want:['养血','补气','滋阴'],d:'面色萎黄、头晕、唇甲淡'},
+  痰湿:{want:['祛湿','健脾','化痰','利水','理气'],d:'体形偏胖、困重、苔腻'},
+  湿热:{want:['清热','祛湿','利水','解毒'],d:'面垢油光、口苦、苔黄腻'},
+  血瘀:{want:['活血','理气','疏肝'],d:'肤色晦暗、易有瘀斑'},
+  气郁:{want:['疏肝','理气','安神'],d:'情绪低落、易紧张、胸闷'},
+  特禀:{want:['固表','补气'],d:'过敏体质'},
+};
+
+/* 方库：c 分类，src 出处，d 一句话功用 */
+const PRESETS=[
+  // 补气养血
+  {c:'补气养血',n:'四君子汤',src:'《太平惠民和剂局方》',d:'益气健脾，补气基础方（党参代人参）',m:'boil',w:700,mi:30,soak:true,items:[['dangshen',15],['baizhu',9],['fuling',9],['gancao',6]]},
+  {c:'补气养血',n:'当归补血汤',src:'《内外伤辨惑论》',d:'补气生血，黄芪:当归 = 5:1',m:'boil',w:700,mi:40,soak:true,items:[['huangqi',30],['danggui',6]]},
+  {c:'补气养血',n:'八珍汤',src:'《正体类要》',d:'气血双补，四君合四物',m:'boil',w:1000,mi:40,soak:true,items:[['dangshen',10],['baizhu',10],['fuling',10],['gancao',5],['danggui',10],['shudi',15],['baishao',10],['chuanxiong',6]]},
+  {c:'补气养血',n:'黄芪枸杞红枣茶',src:'民间保健方',d:'补气养血、益气固表，适合易疲乏者',m:'boil',w:600,mi:20,soak:true,items:[['huangqi',10],['gouqi',10],['dazao',10]]},
+  {c:'补气养血',n:'五红汤',src:'民间药膳',d:'补血养心、健脾利水',m:'boil',w:900,mi:40,soak:true,items:[['dazao',15],['gouqi',10],['chixiaodou',20],['hongtang',15]]},
+  {c:'补气养血',n:'桂圆红枣茶',src:'民间保健方',d:'补益心脾、养血安神',m:'boil',w:500,mi:20,items:[['longyan',10],['dazao',15],['gouqi',6]]},
+  {c:'补气养血',n:'阿胶红枣枸杞饮',src:'民间保健方',d:'补血滋阴，阿胶烊化兑服',m:'boil',w:500,mi:20,items:[['ejiao',6],['dazao',10],['gouqi',10]]},
+  {c:'补气养血',n:'太子参红枣茶',src:'民间保健方',d:'清补脾肺，小儿、体弱者常用',m:'boil',w:500,mi:20,items:[['taizishen',10],['dazao',10]]},
+  // 滋阴润燥
+  {c:'滋阴润燥',n:'二至丸茶',src:'《医方集解》二至丸',d:'补益肝肾、滋阴止血',m:'boil',w:600,mi:30,soak:true,items:[['nvzhenzi',10],['mohanlian',10]]},
+  {c:'滋阴润燥',n:'黑芝麻蜂蜜饮',src:'民间保健方',d:'养血润燥、润肠通便',m:'boil',w:400,mi:15,items:[['heizhima',12],['fengmi',15]]},
+  {c:'滋阴润燥',n:'生脉饮',src:'《医学启源》',d:'益气生津、敛阴止汗，夏季气阴两伤',m:'boil',w:600,mi:30,soak:true,items:[['renshen',9],['maidong',9],['wuweizi',6]]},
+  {c:'滋阴润燥',n:'西洋参生脉茶',src:'生脉饮化裁',d:'清补气阴，适合易上火者',m:'infuse',w:400,mi:15,t:100,items:[['xiyangshen',3],['maidong',6],['wuweizi',3]]},
+  {c:'滋阴润燥',n:'沙参麦冬饮',src:'《温病条辨》沙参麦冬汤简方',d:'清养肺胃、生津润燥，秋燥干咳',m:'boil',w:700,mi:30,soak:true,items:[['shashen',10],['maidong',10],['yuzhu',10],['sangye',6],['gancao',3]]},
+  {c:'滋阴润燥',n:'石斛麦冬茶',src:'民间保健方',d:'益胃生津、滋阴清热',m:'boil',w:700,mi:30,soak:true,items:[['shihu',10],['maidong',10],['gouqi',6]]},
+  {c:'滋阴润燥',n:'百合麦冬饮',src:'民间保健方',d:'润肺清心、养阴安神',m:'boil',w:600,mi:25,items:[['baihe',12],['maidong',10],['bingtang',10]]},
+  {c:'滋阴润燥',n:'桑椹枸杞茶',src:'民间保健方',d:'滋补肝肾、养血润燥',m:'infuse',w:400,mi:15,t:100,items:[['sangshen',12],['gouqi',10]]},
+  // 温中散寒
+  {c:'温阳散寒',n:'姜枣茶',src:'民间保健方',d:'温中和胃、调和营卫',m:'boil',w:500,mi:15,items:[['shengjiang',10],['dazao',15]]},
+  {c:'温阳散寒',n:'肉桂红枣茶',src:'民间保健方',d:'温阳散寒、暖胃，手脚冰凉者',m:'boil',w:500,mi:15,items:[['rougui',2],['dazao',10],['shengjiang',5]]},
+  {c:'温阳散寒',n:'红糖姜茶',src:'民间保健方',d:'温中散寒、和血，经期受寒腹痛',m:'boil',w:400,mi:10,items:[['shengjiang',10],['hongtang',20]]},
+  {c:'温阳散寒',n:'杜仲枸杞茶',src:'民间保健方',d:'补肝肾、强筋骨，腰膝酸软',m:'boil',w:600,mi:30,soak:true,items:[['duzhong',10],['gouqi',10]]},
+  {c:'温阳散寒',n:'淫羊藿枸杞茶',src:'民间保健方',d:'温补肾阳、强筋骨，畏寒腰酸',m:'boil',w:600,mi:25,soak:true,items:[['yinyanghuo',6],['gouqi',10]]},
+  // 解表（感冒初起）
+  {c:'感冒初起',n:'桑菊饮',src:'《温病条辨》',d:'辛凉轻剂：风热咳嗽初起',m:'boil',w:400,mi:15,items:[['sangye',7.5],['juhua',3],['xingren',6],['lianqiao',5],['bohe',2.5],['jiegeng',6],['gancao',2.5],['lugen',6]]},
+  {c:'感冒初起',n:'姜糖苏叶饮',src:'民间验方',d:'辛温解表：风寒感冒、兼胃不适',m:'boil',w:400,mi:10,items:[['shengjiang',10],['zisuye',6],['hongtang',15]]},
+  {c:'感冒初起',n:'葱白生姜饮',src:'《肘后方》葱豉汤化裁',d:'发汗散寒：受凉初起、鼻塞',m:'boil',w:400,mi:8,items:[['congbai',10],['shengjiang',10]]},
+  {c:'感冒初起',n:'薄荷菊花茶',src:'民间保健方',d:'疏散风热、清利头目',m:'infuse',w:350,mi:6,t:90,items:[['bohe',3],['juhua',5]]},
+  // 清热解暑
+  {c:'清热解暑',n:'酸梅汤',src:'清宫御膳房方演化',d:'生津止渴、消暑开胃',m:'boil',w:1200,mi:40,soak:true,items:[['wumei',15],['shanzha',15],['chenpi',6],['gancao',3],['luoshen',5],['guihua',2],['bingtang',30]]},
+  {c:'清热解暑',n:'绿豆汤',src:'《本草纲目》',d:'清热解毒、消暑利水',m:'boil',w:800,mi:20,items:[['lvdou',30]]},
+  {c:'清热解暑',n:'夏桑菊',src:'岭南凉茶',d:'清肝明目、疏风散热',m:'boil',w:600,mi:15,items:[['xiakucao',10],['sangye',6],['juhua',6]]},
+  {c:'清热解暑',n:'竹叶芦根茶',src:'民间保健方',d:'清热除烦、生津止渴',m:'boil',w:600,mi:15,items:[['danzhuye',6],['lugen',15]]},
+  {c:'清热解暑',n:'金银花菊花茶',src:'民间保健方',d:'清热解毒、疏风，上火咽痛',m:'infuse',w:400,mi:8,t:90,items:[['jinyinhua',6],['juhua',5]]},
+  {c:'清热解暑',n:'茅根芦根饮',src:'岭南“二根汤”',d:'清热生津、凉血利尿',m:'boil',w:800,mi:20,items:[['baimaogen',30],['lugen',30]]},
+  {c:'清热解暑',n:'黄连清心饮',src:'民间验方',d:'清心泻火，口舌生疮（短期用）',m:'boil',w:400,mi:15,items:[['huanglian',3],['danzhuye',6],['gancao',3]]},
+  // 润肺利咽
+  {c:'润肺利咽',n:'鱼腥草桔梗茶',src:'民间验方',d:'清肺化痰，黄痰咳嗽',m:'boil',w:500,mi:10,items:[['yuxingcao',20],['jiegeng',6],['gancao',3]]},
+  {c:'润肺利咽',n:'罗汉果利咽茶',src:'民间保健方',d:'清肺利咽、开音',m:'infuse',w:500,mi:15,t:100,items:[['luohanguo',10],['pangdahai',3],['jinyinhua',6]]},
+  {c:'润肺利咽',n:'桔梗甘草茶',src:'《伤寒论》桔梗汤',d:'宣肺利咽、祛痰，桔梗:甘草 = 1:2',m:'boil',w:400,mi:15,items:[['jiegeng',3],['gancao',6]]},
+  {c:'润肺利咽',n:'玄麦甘桔茶',src:'桔梗汤加味',d:'滋阴清热利咽，用嗓过度',m:'boil',w:500,mi:20,items:[['xuanshen',9],['maidong',9],['gancao',3],['jiegeng',6]]},
+  {c:'润肺利咽',n:'枇杷叶冰糖饮',src:'民间验方',d:'清肺止咳、降逆',m:'boil',w:500,mi:20,items:[['pipaye',10],['bingtang',10]]},
+  // 疏肝安神
+  {c:'疏肝安神',n:'甘麦大枣汤',src:'《金匮要略》',d:'养心安神、和中缓急，情志不宁',m:'boil',w:700,mi:30,items:[['gancao',9],['xiaomai',30],['dazao',10]]},
+  {c:'疏肝安神',n:'酸枣仁安神饮',src:'酸枣仁汤化裁',d:'养血安神，虚烦失眠',m:'boil',w:600,mi:30,soak:true,items:[['suanzaoren',15],['fuling',10],['baihe',10],['gancao',3]]},
+  {c:'疏肝安神',n:'玫瑰疏肝茶',src:'民间保健方',d:'疏肝解郁、理气和胃',m:'infuse',w:350,mi:8,t:90,items:[['meigui',5],['chenpi',5],['bohe',3]]},
+  {c:'疏肝安神',n:'佛手玫瑰茶',src:'民间保健方',d:'疏肝理气，胸胁胀闷、胃胀',m:'infuse',w:400,mi:10,t:95,items:[['foshou',6],['meigui',5]]},
+  {c:'疏肝安神',n:'合欢茉莉茶',src:'民间保健方',d:'解郁安神、理气',m:'infuse',w:350,mi:8,t:90,items:[['hehuanhua',8],['moli',3]]},
+  {c:'疏肝安神',n:'灵芝红枣茶',src:'民间保健方',d:'补气安神',m:'boil',w:800,mi:60,soak:true,items:[['lingzhi',10],['dazao',10]]},
+  {c:'疏肝安神',n:'交泰丸茶',src:'《韩氏医通》交泰丸',d:'交通心肾，心火偏亢、心肾不交之失眠；黄连:肉桂 = 10:1',m:'boil',w:400,mi:15,items:[['huanglian',5],['rougui',0.5]]},
+  {c:'疏肝安神',n:'黄连阿胶饮',src:'《伤寒论》黄连阿胶汤（缺鸡子黄）',d:'滋阴降火，虚烦不得眠',m:'boil',w:600,mi:30,soak:true,items:[['huanglian',6],['huangqin',6],['baishao',6],['ejiao',9]]},
+  {c:'疏肝安神',n:'天麻川芎茶',src:'大川芎丸化裁',d:'平肝息风、止头痛',m:'boil',w:500,mi:25,soak:true,items:[['tianma',6],['chuanxiong',6]]},
+  // 健脾祛湿
+  {c:'健脾祛湿',n:'藿香陈皮饮',src:'藿香正气散化裁',d:'芳香化湿、和中止呕，暑湿感冒',m:'boil',w:500,mi:10,items:[['huoxiang',6],['chenpi',5],['shengjiang',3]]},
+  {c:'健脾祛湿',n:'扁豆山药薏米汤',src:'参苓白术散化裁',d:'健脾化湿、止泻',m:'boil',w:900,mi:40,soak:true,items:[['baibiandou',15],['shanyao',15],['yiyiren',15]]},
+  {c:'健脾祛湿',n:'四神汤',src:'闽台药膳',d:'健脾祛湿、固肾止泻',m:'boil',w:900,mi:40,soak:true,items:[['shanyao',15],['lianzi',15],['fuling',12],['qianshi',15]]},
+  {c:'健脾祛湿',n:'赤小豆薏米茶',src:'民间保健方',d:'利水渗湿、健脾',m:'boil',w:900,mi:40,soak:true,items:[['chixiaodou',20],['yiyiren',20]]},
+  {c:'健脾祛湿',n:'玉米须茶',src:'民间保健方',d:'利水消肿',m:'boil',w:600,mi:15,items:[['yumixu',20]]},
+  {c:'健脾祛湿',n:'陈皮茯苓茶',src:'二陈汤化裁',d:'理气健脾、燥湿化痰',m:'boil',w:600,mi:25,soak:true,items:[['chenpi',6],['fuling',12],['gancao',3]]},
+  // 消食化积
+  {c:'消食化积',n:'山楂消食饮',src:'保和丸化裁',d:'消食除胀、行气',m:'boil',w:500,mi:15,items:[['shanzha',10],['chenpi',6],['laifuzi',9]]},
+  {c:'消食化积',n:'焦三仙',src:'传统消食组合',d:'消肉、面、谷一切食积',m:'boil',w:600,mi:20,items:[['shanzha',10],['maiya',10],['shenqu',10]]},
+  {c:'消食化积',n:'陈皮山楂麦芽茶',src:'民间保健方',d:'健脾开胃、消食',m:'infuse',w:400,mi:12,t:100,items:[['chenpi',5],['shanzha',6],['maiya',10]]},
+  {c:'消食化积',n:'鸡内金山楂饮',src:'民间保健方',d:'健胃消食，小儿积食常用',m:'boil',w:400,mi:15,items:[['jineijin',6],['shanzha',9]]},
+  // 明目养肝
+  {c:'明目养肝',n:'杞菊明目茶',src:'杞菊地黄丸药对',d:'滋肾养肝、明目，用眼过度',m:'infuse',w:400,mi:10,t:90,items:[['gouqi',10],['juhua',5]]},
+  {c:'明目养肝',n:'决明子菊花茶',src:'民间保健方',d:'清肝明目、润肠',m:'infuse',w:400,mi:10,t:100,items:[['juemingzi',10],['juhua',5]]},
+  {c:'明目养肝',n:'桑叶菊花枸杞茶',src:'民间保健方',d:'疏风清肝、滋肾明目',m:'infuse',w:400,mi:10,t:90,items:[['sangye',6],['juhua',5],['gouqi',8]]},
+  // 活血降脂
+  {c:'活血降脂',n:'山楂荷叶茶',src:'民间保健方',d:'化浊降脂、消食',m:'infuse',w:500,mi:12,t:100,items:[['shanzha',10],['heye',6]]},
+  {c:'活血降脂',n:'丹参山楂茶',src:'民间保健方',d:'活血化瘀、消食（服抗凝药者禁用）',m:'boil',w:600,mi:20,items:[['danshen',10],['shanzha',10]]},
+  {c:'活血降脂',n:'葛根丹参饮',src:'现代保健方',d:'生津通络、活血（须遵医嘱）',m:'boil',w:700,mi:30,soak:true,items:[['gegen',15],['danshen',10]]},
+  // 配伍反例
+  {c:'配伍反例',n:'甘草 + 海藻',src:'十八反',d:'演示“藻戟遂芫俱战草”',m:'boil',w:600,mi:30,items:[['gancao',6],['haizao',10]]},
+  {c:'配伍反例',n:'丁香 + 郁金',src:'十九畏',d:'演示“丁香莫与郁金见”',m:'boil',w:500,mi:20,items:[['dingxiang',2],['yujin',6]]},
+  {c:'配伍反例',n:'人参 + 莱菔子',src:'相恶',d:'演示补气之力被削弱',m:'boil',w:500,mi:30,items:[['renshen',6],['laifuzi',9]]},
+  {c:'配伍反例',n:'苦杏仁泡水',src:'有毒药误用',d:'演示有毒药材的烹制风险',m:'infuse',w:300,mi:10,t:100,items:[['xingren',12]]},
+];
+const PCATS=[...new Set(PRESETS.map(p=>p.c))];
+
+const EN_DATA={
+  herbs:{
+    gouqi:{n:'Goji Berry (Gouqizi)',g:'Nourish and tonify the liver and kidney, replenish essence and brighten the eyes',c:'Lycium barbarum polysaccharides (LBP), zeaxanthin, betaine',w:'Use with caution in spleen deficiency with loose stools, or fever from external contraction',ix:['Warfarin: case reports of enhanced anticoagulation and elevated INR'],note:''},
+    juhua:{n:'Chrysanthemum Flower (Juhua)',g:'Disperse wind and clear heat, calm the liver and brighten the eyes, clear heat and resolve toxicity',c:'Flavonoids (luteolin, apigenin), chlorogenic acid, volatile oil',w:'Use with caution in spleen-stomach deficiency cold or diarrhea; caution in those allergic to Asteraceae plants',ix:[],note:''},
+    jinyinhua:{n:'Honeysuckle Flower (Jinyinhua)',g:'Clear heat and resolve toxicity, disperse wind-heat',c:'Chlorogenic acid, isochlorogenic acids, luteoloside',w:'Use with caution in spleen-stomach deficiency cold, or qi-deficient sores with thin pus; not for long-term use as a daily tea',ix:[],note:''},
+    gancao:{n:'Licorice Root (Gancao)',g:'Tonify the spleen and augment qi, clear heat and resolve toxicity, expel phlegm and stop cough, relax urgency and relieve pain, harmonize the other herbs',c:'Glycyrrhizic acid (glycyrrhizin), glycyrrhetinic acid, licorice flavonoids',w:'Long-term or high-dose use can cause pseudoaldosteronism: edema, hypokalemia, elevated blood pressure; not suitable for dampness excess with distension and fullness, or edema',ix:['Diuretics / digoxin: increased risk of hypokalemia','Antihypertensives: may reduce efficacy','Corticosteroids: effects enhanced'],note:'Incompatible with Sargassum (Haizao), Euphorbia (Daji), Kansui (Gansui) and Genkwa (Yuanhua)'},
+    dazao:{n:'Jujube (Dazao)',g:'Tonify the middle and augment qi, nourish blood and calm the spirit',c:'Cyclic AMP (cAMP), polysaccharides, triterpenic acids',w:'Use with caution in dampness excess with epigastric and abdominal distension, or phlegm-heat cough; diabetics should watch the amount',ix:[],note:''},
+    shengjiang:{n:'Fresh Ginger (Shengjiang)',g:'Release the exterior and disperse cold, warm the middle and stop vomiting, resolve phlegm and stop cough',c:'6-Gingerol (pungent principles), shogaols, volatile oil',w:'Use with caution in yin deficiency with internal heat, bleeding hemorrhoids, or red eyes',ix:['Anticoagulants: large amounts may increase bleeding tendency'],note:''},
+    longyan:{n:'Longan Aril (Longyanrou)',g:'Tonify the heart and spleen, nourish blood and calm the spirit',c:'Glucose, sucrose, adenine, polyphenols',w:'Use with caution in dampness with middle fullness, or phlegm-fire; watch the amount if blood sugar is high',ix:[],note:''},
+    huangqi:{n:'Astragalus Root (Huangqi)',g:'Tonify qi and raise yang, consolidate the exterior and stop sweating, promote urination and reduce edema, generate fluids and nourish blood',c:'Astragaloside IV, astragalus polysaccharides, calycosin',w:'Not suitable for exterior excess with a strong pathogen, yin deficiency with yang hyperactivity, or early-stage sores with intense heat toxin',ix:['Immunosuppressants (cyclosporine etc.): may antagonize efficacy'],note:''},
+    dangshen:{n:'Codonopsis Root (Dangshen)',g:'Strengthen the spleen and benefit the lung, nourish blood and generate fluids',c:'Lobetyolin, codonopsis polysaccharides, atractylenolide III',w:'Use with caution in qi stagnation or exuberant fire',ix:[],note:'Incompatible with Veratrum (Lilu)'},
+    xiyangshen:{n:'American Ginseng (Xiyangshen)',g:'Tonify qi and nourish yin, clear heat and generate fluids',c:'Ginsenosides (Rb1, Re, Rg1)',w:'Contraindicated in debilitated middle yang or cold-damp in the stomach',ix:['Warfarin: may lower INR','Antidiabetic drugs: enhanced glucose lowering; watch for hypoglycemia'],note:'Incompatible with Veratrum (Lilu)'},
+    renshen:{n:'Ginseng (Renshen)',g:'Powerfully tonify original qi, restore the pulse and rescue from collapse, tonify the spleen and benefit the lung, generate fluids and nourish blood, calm the spirit and boost intelligence',c:'Ginsenosides (Rg1, Rb1, Re), ginseng polysaccharides',w:'Contraindicated in excess and heat patterns; caution in uncontrolled hypertension; those with insomnia should be cautious taking it in the evening',ix:['Warfarin: reduced anticoagulant effect','Antidiabetic drugs: risk of hypoglycemia','MAOI antidepressants: may cause mania, headache','Caffeine: overstimulation, insomnia'],note:'Incompatible with Veratrum (Lilu); antagonized by Trogopterus Dung (Wulingzhi); inhibited by Radish Seed (Laifuzi)'},
+    danggui:{n:'Chinese Angelica Root (Danggui)',g:'Tonify and invigorate blood, regulate menstruation and relieve pain, moisten the intestines and unblock the bowels',c:'Ligustilide (volatile oil), ferulic acid, angelica polysaccharides',w:'Use with caution in dampness with middle fullness or loose stools; caution in heavy menstruation',ix:['Warfarin / antiplatelet drugs: increased bleeding risk'],note:''},
+    baishao:{n:'White Peony Root (Baishao)',g:'Nourish blood and regulate menstruation, preserve yin and stop sweating, soften the liver and relieve pain, calm liver yang',c:'Paeoniflorin, albiflorin, benzoylpaeoniflorin',w:'Not suitable alone for yang-decline deficiency cold',ix:[],note:'Incompatible with Veratrum (Lilu)'},
+    shudi:{n:'Prepared Rehmannia (Shudihuang)',g:'Tonify blood and nourish yin, replenish essence and fill the marrow',c:'Acteoside (verbascoside), 5-hydroxymethylfurfural, catalpol (reduced after processing), sugars',w:'Rich and cloying, it hinders the stomach: contraindicated in qi stagnation with profuse phlegm, epigastric and abdominal distension, or poor appetite with loose stools',ix:[],note:''},
+    shanyao:{n:'Chinese Yam (Shanyao)',g:'Tonify the spleen and nourish the stomach, generate fluids and benefit the lung, tonify the kidney and secure essence',c:'Diosgenin, mucoproteins, allantoin, amylase',w:'Use with caution in dampness with middle fullness, or food accumulation',ix:[],note:''},
+    fuling:{n:'Poria (Fuling)',g:'Promote urination and drain dampness, strengthen the spleen, calm the heart',c:'Poria polysaccharides (beta-pachyman), pachymic acid and other triterpenes',w:'Use with caution in yin deficiency without damp-heat, or deficiency cold with seminal leakage',ix:[],note:''},
+    yiyiren:{n:'Coix Seed (Yiyiren)',g:'Promote urination and drain dampness, strengthen the spleen and stop diarrhea, relieve painful obstruction, expel pus',c:'Coixenolide, coix polysaccharides, glyceryl trioleate',w:'Use with caution in fluid insufficiency; caution in pregnancy',ix:[],note:''},
+    chenpi:{n:'Aged Tangerine Peel (Chenpi)',g:'Regulate qi and strengthen the spleen, dry dampness and resolve phlegm',c:'Hesperidin, nobiletin, volatile oil (limonene)',w:'Use with caution in qi deficiency, yin-deficient dry cough, or vomiting of blood',ix:[],note:''},
+    shanzha:{n:'Hawthorn Fruit (Shanzha)',g:'Promote digestion and strengthen the stomach, move qi and disperse stasis, transform turbidity and lower lipids',c:'Hyperoside, vitexin, ursolic acid, citric acid',w:'Use with caution in hyperacidity, gastric ulcer, or a weak spleen and stomach without food accumulation',ix:['Digoxin / antihypertensives: may enhance effects'],note:''},
+    juemingzi:{n:'Cassia Seed (Juemingzi)',g:'Clear heat and brighten the eyes, moisten the intestines and unblock the bowels',c:'Chrysophanol, aurantio-obtusin and other anthraquinones',w:'Use with caution in spleen deficiency with loose stools, or low blood pressure; long-term heavy use of anthraquinones can cause melanosis coli',ix:[],note:''},
+    bohe:{n:'Peppermint (Bohe)',g:'Disperse wind-heat, clear the head and eyes, soothe the throat, soothe the liver and move qi',c:'Menthol, menthone',w:'Not suitable for weak constitutions with profuse sweating; caution during breastfeeding (may reduce milk supply)',ix:[],note:''},
+    sangye:{n:'Mulberry Leaf (Sangye)',g:'Disperse wind-heat, clear the lung and moisten dryness, clear the liver and brighten the eyes',c:'1-Deoxynojirimycin (DNJ), rutin, quercetin',w:'Use with caution in wind-cold common cold or spleen-stomach deficiency cold',ix:['Antidiabetic drugs: may enhance glucose lowering'],note:''},
+    meigui:{n:'Rose Bud (Meiguihua)',g:'Move qi and relieve constraint, harmonize blood and relieve pain',c:'Citronellol, geraniol (volatile oil), quercetin',w:'Use with caution in yin deficiency with effulgent fire; caution in pregnancy',ix:[],note:''},
+    baihe:{n:'Lily Bulb (Baihe)',g:'Nourish yin and moisten the lung, clear the heart and calm the spirit',c:'Lily saponins, polysaccharides, trace colchicine',w:'Contraindicated in wind-cold cough or middle cold with loose stools',ix:[],note:''},
+    maidong:{n:'Ophiopogon Root (Maidong)',g:'Nourish yin and generate fluids, moisten the lung and clear the heart',c:'Ophiopogonins, methylophiopogonanone, polysaccharides',w:'Contraindicated in spleen-stomach deficiency cold with diarrhea, or phlegm-damp cough',ix:[],note:''},
+    suanzaoren:{n:'Sour Jujube Seed (Suanzaoren)',g:'Nourish the heart and tonify the liver, calm the heart and spirit, restrain sweating and generate fluids',c:'Jujubosides A/B, spinosin',w:'Use with caution in excess pathogens with constrained fire, or efflux diarrhea',ix:['Sedative-hypnotics / alcohol: additive CNS depression'],note:''},
+    wuweizi:{n:'Schisandra Berry (Wuweizi)',g:'Astringe and consolidate, augment qi and generate fluids, tonify the kidney and calm the heart',c:'Schisandrin, schisandrin B (lignans)',w:'Not suitable when an exterior pathogen is unresolved, with internal excess heat, or in the early stage of cough',ix:['Tacrolimus and other CYP3A substrates: may raise blood levels'],note:''},
+    danshen:{n:'Salvia Root (Danshen)',g:'Invigorate blood and dispel stasis, unblock menstruation and relieve pain, clear the heart and relieve irritability',c:'Tanshinone IIA, salvianolic acid B, cryptotanshinone',w:'Use with caution in heavy menstruation or without blood stasis; caution in pregnancy',ix:['Warfarin / aspirin: markedly increased bleeding risk'],note:'Incompatible with Veratrum (Lilu)'},
+    sanqi:{n:'Notoginseng (Sanqi)',g:'Disperse stasis and stop bleeding, reduce swelling and relieve pain',c:'Notoginsenoside R1, ginsenosides Rg1/Rb1, dencichine',w:'Use with caution in pregnancy; not for long-term use without stasis',ix:['Anticoagulant / antiplatelet drugs: affects coagulation'],note:''},
+    luohanguo:{n:'Monk Fruit (Luohanguo)',g:'Clear heat and moisten the lung, soothe the throat and restore the voice, lubricate the intestines and unblock the bowels',c:'Mogroside V (sweet glycoside), flavonoids',w:'Use with caution in spleen-stomach deficiency cold or loose stools',ix:[],note:''},
+    pangdahai:{n:'Sterculia Seed (Pangdahai)',g:'Clear heat and moisten the lung, soothe the throat and restore the voice, moisten the intestines and unblock the bowels',c:'Bassorin (polysaccharide), sterculin',w:'Use with caution in spleen-stomach deficiency cold with loose stools; not for long-term use as a daily tea',ix:[],note:''},
+    pugongying:{n:'Dandelion (Pugongying)',g:'Clear heat and resolve toxicity, reduce swelling and dissipate nodules, promote urination and relieve painful urination',c:'Taraxasterol, caffeic acid, inulin',w:'Use with caution in yang deficiency with external cold, or a weak spleen and stomach; excessive doses may cause mild diarrhea',ix:['Diuretics: additive effects'],note:''},
+    heye:{n:'Lotus Leaf (Heye)',g:'Clear summer-heat and resolve dampness, raise clear yang, cool blood and stop bleeding',c:'Nuciferine (aporphine alkaloid), quercetin',w:'Use with caution in thin individuals or those with qi and blood deficiency',ix:[],note:''},
+    duzhong:{n:'Eucommia Bark (Duzhong)',g:'Tonify the liver and kidney, strengthen sinews and bones, calm the fetus',c:'Pinoresinol diglucoside, chlorogenic acid, aucubin',w:'Use with caution in yin deficiency with effulgent fire',ix:['Antihypertensives: additive effects'],note:''},
+    rougui:{n:'Cinnamon Bark (Rougui)',g:'Tonify fire and assist yang, guide fire back to its source, disperse cold and relieve pain, warm and unblock the channels',c:'Cinnamaldehyde, coumarin',w:'Contraindicated in yin deficiency with effulgent fire, internal excess heat, or bleeding tendency; caution in pregnancy; Chinese cassia is high in coumarin, and long-term heavy use carries a risk of liver damage',ix:[],note:'Antagonized by Halloysite (Chishizhi)'},
+    huangjing:{n:'Polygonatum Rhizome (Huangjing)',g:'Tonify qi and nourish yin, strengthen the spleen, moisten the lung, benefit the kidney',c:'Polygonatum polysaccharides, steroidal saponins',w:'Contraindicated in middle-cold diarrhea, or phlegm-damp with focal distension',ix:[],note:''},
+    shihu:{n:'Dendrobium Stem (Shihu)',g:'Benefit the stomach and generate fluids, nourish yin and clear heat',c:'Dendrobine, dendrobium polysaccharides',w:'Contraindicated in early-stage warm-heat disease before yin is damaged, or damp-warmth not yet transformed into dryness',ix:[],note:''},
+    gegen:{n:'Kudzu Root (Gegen)',g:'Release the muscles and reduce fever, generate fluids and stop thirst, vent rashes, unblock the channels and collaterals, relieve alcohol toxicity',c:'Puerarin, daidzein, daidzin',w:'Use with caution in stomach cold',ix:['Antidiabetic / anticoagulant drugs: may enhance effects'],note:''},
+    sangshen:{n:'Mulberry Fruit (Sangshen)',g:'Nourish yin and tonify blood, generate fluids and moisten dryness',c:'Anthocyanins, resveratrol, polysaccharides',w:'Contraindicated in spleen-stomach deficiency cold with loose stools',ix:[],note:''},
+    danzhuye:{n:'Lophatherum Leaf (Danzhuye)',g:'Clear heat and drain fire, relieve irritability and thirst, promote urination and relieve painful urination',c:'Arundoin and other triterpenes, flavonoids',w:'Use with caution without excess fire or damp-heat; not for prolonged use in yin deficiency',ix:[],note:''},
+    lianzi:{n:'Lotus Seed (Lianzi)',g:'Tonify the spleen and stop diarrhea, stop vaginal discharge, benefit the kidney and secure essence, nourish the heart and calm the spirit',c:'Starch, raffinose, liensinine (in the lotus plumule)',w:'Use with caution in constipation with dry stools',ix:[],note:''},
+    lingzhi:{n:'Reishi Mushroom (Lingzhi)',g:'Tonify qi and calm the spirit, stop cough and calm wheezing',c:'Ganoderma triterpenes (ganoderic acids), beta-glucans',w:'Use with caution in excess patterns',ix:['Anticoagulant / antihypertensive / antidiabetic drugs: effects may be additive'],note:''},
+    honghua:{n:'Safflower (Honghua)',g:'Invigorate blood and unblock menstruation, disperse stasis and relieve pain',c:'Hydroxysafflor yellow A, carthamin',w:'Contraindicated in pregnancy; use with caution in heavy menstruation or bleeding tendency',ix:['Anticoagulant / antiplatelet drugs: bleeding risk'],note:''},
+    chaye:{n:'Green Tea (Lvcha)',g:'Clear the head and eyes, relieve irritability and thirst, promote digestion, promote urination',c:'Caffeine, tea polyphenols (EGCG), L-theanine',w:'Use with caution in insomnia, palpitations, or gastric ulcer; avoid strong tea on an empty stomach',ix:['Iron supplements: tea polyphenols reduce iron absorption; take 2 hours apart','Stimulants / some asthma drugs (theophylline): additive caffeine effects'],note:''},
+    jiegeng:{n:'Platycodon Root (Jiegeng)',g:'Diffuse the lung, soothe the throat, expel phlegm, expel pus',c:'Platycodin D, platycodon polysaccharides',w:'Not suitable for chronic yin-deficiency cough or coughing of blood; large doses easily cause nausea and vomiting',ix:[],note:''},
+    sharen:{n:'Amomum Fruit (Sharen)',g:'Resolve dampness and stimulate the appetite, warm the spleen and stop diarrhea, regulate qi and calm the fetus',c:'Bornyl acetate, camphor (volatile oil)',w:'Use with caution in yin deficiency with blood dryness',ix:[],note:''},
+    baizhu:{n:'White Atractylodes (Baizhu)',g:'Strengthen the spleen and augment qi, dry dampness and promote urination, stop sweating, calm the fetus',c:'Atractylon, atractylenolides I-III',w:'Use with caution in yin deficiency with dryness and thirst',ix:[],note:''},
+    chuanxiong:{n:'Sichuan Lovage Root (Chuanxiong)',g:'Invigorate blood and move qi, dispel wind and relieve pain',c:'Ligustrazine (tetramethylpyrazine), ligustilide, ferulic acid',w:'Use with caution in yin deficiency with effulgent fire, profuse sweating, or heavy menstruation; caution in pregnancy',ix:['Anticoagulants: increased bleeding risk'],note:''},
+    haizao:{n:'Sargassum Seaweed (Haizao)',g:'Dissolve phlegm, soften hardness and dissipate nodules, promote urination and reduce edema',c:'Alginic acid, mannitol, iodine',w:'Those with thyroid disease must follow medical advice (contains iodine); caution in spleen-stomach deficiency cold',ix:[],note:'Incompatible with Licorice (Gancao)'},
+    dingxiang:{n:'Clove (Dingxiang)',g:'Warm the middle and direct rebellious qi downward, tonify the kidney and assist yang',c:'Eugenol (volatile oil)',w:'Contraindicated in febrile disease and yin deficiency with internal heat',ix:['Anticoagulants: eugenol inhibits platelet aggregation'],note:'Antagonized by Curcuma Tuber (Yujin)'},
+    yujin:{n:'Curcuma Tuber (Yujin)',g:'Invigorate blood and relieve pain, move qi and relieve constraint, clear the heart and cool blood, benefit the gallbladder and relieve jaundice',c:'Curcuminoids, curcumol (volatile oil)',w:'Use with caution in pregnancy; caution in biliary obstruction',ix:[],note:'Clove is antagonized by it (Nineteen Antagonisms: clove fears curcuma)'},
+    laifuzi:{n:'Radish Seed (Laifuzi)',g:'Promote digestion and relieve distension, direct qi downward and resolve phlegm',c:'Raphanin (sulforaphene), sinapine, fatty oil',w:'Use with caution in qi deficiency without food accumulation or phlegm stagnation',ix:[],note:'Mutually inhibiting with Ginseng (Renshen)'},
+    wumei:{n:'Smoked Plum (Wumei)',g:'Astringe the lung, bind the intestines, generate fluids, calm roundworms',c:'Citric acid, malic acid, ursolic acid',w:'Not suitable with an unresolved exterior pathogen, or internal excess heat with accumulation',ix:[],note:''},
+    chixiaodou:{n:'Rice Bean (Chixiaodou)',g:'Promote urination and reduce edema, resolve toxicity and expel pus',c:'Triterpenoid saponins, flavonoids, dietary fiber',w:'Use with caution in yin deficiency with fluid damage; prolonged use causes weight loss',ix:[],note:''},
+    hongtang:{n:'Brown Sugar (Hongtang)',g:'Tonify the middle and relax the liver, harmonize blood and resolve stasis',c:'Sucrose, iron, calcium, polyphenols (non-centrifugal sugar)',w:'Use with caution in diabetes or damp-heat with middle fullness',ix:[],note:''},
+    bingtang:{n:'Rock Sugar (Bingtang)',g:'Tonify the middle and harmonize the stomach, moisten the lung and stop cough',c:'Sucrose (purity >99%)',w:'Use with caution in diabetes or phlegm-damp',ix:[],note:''},
+    guihua:{n:'Osmanthus Flower (Guihua)',g:'Warm the lung and resolve fluid retention, disperse cold and relieve pain',c:'Linalool, ionones (volatile oil), flavonoids',w:'Use sparingly in dry-heat constitutions',ix:[],note:''},
+    luoshen:{n:'Roselle (Luoshenhua)',g:'Clear heat and generate fluids, relieve summer-heat and thirst (roselle; nature and flavor per local herbal standards)',c:'Anthocyanins (delphinidin), hibiscus acid, organic acids',w:'Use with caution in hyperacidity or low blood pressure; caution in pregnancy',ix:['Antihypertensives: effects may be additive'],note:''},
+    lvdou:{n:'Mung Bean (Lvdou)',g:'Clear heat and resolve toxicity, relieve summer-heat, promote urination',c:'Vitexin, isovitexin (flavonoids), plant protein',w:'Use with caution in spleen-stomach deficiency cold or diarrhea; not suitable while taking warming tonics',ix:[],note:''},
+    xiakucao:{n:'Prunella Spike (Xiakucao)',g:'Clear the liver and drain fire, brighten the eyes, dissipate nodules and reduce swelling',c:'Rosmarinic acid, ursolic acid, prunella polysaccharides',w:'Use with caution in a weak spleen and stomach',ix:[],note:''},
+    lianqiao:{n:'Forsythia Fruit (Lianqiao)',g:'Clear heat and resolve toxicity, reduce swelling and dissipate nodules, disperse wind-heat',c:'Phillyrin (forsythin), forsythoside A, volatile oil',w:'Not suitable for spleen-stomach deficiency cold, or qi-deficient sores with thin pus',ix:[],note:''},
+    xingren:{n:'Bitter Apricot Kernel (Kuxingren)',g:'Direct qi downward, stop cough and calm wheezing, moisten the intestines and unblock the bowels',c:'Amygdalin (hydrolyzes to hydrocyanic acid), fatty oil',w:'Mildly toxic: do not take in excess internally; caution in infants; must be decocted, not used raw or steeped in water',ix:[],note:''},
+    lugen:{n:'Reed Rhizome (Lugen)',g:'Clear heat and drain fire, generate fluids and stop thirst, relieve irritability, stop vomiting, promote urination',c:'Coixol, polysaccharides, asparagine',w:'Use with caution in spleen-stomach deficiency cold',ix:[],note:''},
+    xuanshen:{n:'Scrophularia Root (Xuanshen)',g:'Clear heat and cool blood, nourish yin and descend fire, resolve toxicity and dissipate nodules',c:'Harpagoside, harpagide (iridoids), phenylpropanoid glycosides',w:'Not suitable for spleen-stomach deficiency cold with poor appetite and loose stools',ix:[],note:'Incompatible with Veratrum (Lilu)'},
+    zisuye:{n:'Perilla Leaf (Zisuye)',g:'Release the exterior and disperse cold, move qi and harmonize the stomach',c:'Perillaldehyde, perilla ketone, rosmarinic acid',w:'Use with caution in qi deficiency, or exterior deficiency with profuse sweating',ix:[],note:''},
+    congbai:{n:'Scallion Stalk (Congbai)',g:'Induce sweating and release the exterior, disperse cold and unblock yang',c:'Sulfur compounds (allicin-type), volatile oil',w:'Contraindicated in exterior deficiency with profuse sweating',ix:[],note:''},
+    foshou:{n:'Buddha\'s Hand (Foshou)',g:'Soothe the liver and regulate qi, harmonize the stomach and relieve pain, dry dampness and resolve phlegm',c:'Limettin (citropten), hesperidin, volatile oil',w:'Use with caution in yin deficiency with fire, or without qi stagnation',ix:[],note:''},
+    hehuanhua:{n:'Albizia Flower (Hehuanhua)',g:'Relieve constraint and calm the spirit',c:'Quercitrin, linalool',w:'Use with caution in pregnancy',ix:['Sedative-hypnotics: additive effects'],note:''},
+    moli:{n:'Jasmine Flower (Molihua)',g:'Regulate qi and relieve constraint, dispel foulness and harmonize the middle',c:'Linalool, benzyl acetate (volatile oil)',w:'Use with caution in yin deficiency with effulgent fire',ix:[],note:''},
+    xiaomai:{n:'Wheat (Xiaomai)',g:'Nourish the heart and relieve irritability (Huai wheat is used in Gan Mai Da Zao Tang)',c:'Starch, protein, B vitamins',w:'Contraindicated in gluten allergy',ix:[],note:''},
+    qianshi:{n:'Euryale Seed (Qianshi)',g:'Benefit the kidney and secure essence, tonify the spleen and stop diarrhea, eliminate dampness and stop vaginal discharge',c:'Starch, polyphenols, tocopherols',w:'Not suitable for difficult urination or defecation, or constipation',ix:[],note:''},
+    maiya:{n:'Germinated Barley (Maiya)',g:'Move qi and promote digestion, strengthen the spleen and stimulate the appetite, stop lactation and relieve distension',c:'Amylase, maltose, hordenine',w:'Contraindicated during breastfeeding (suppresses lactation)',ix:[],note:''},
+    shenqu:{n:'Medicated Leaven (Shenqu)',g:'Promote digestion and harmonize the stomach',c:'Yeasts, amylase, B vitamins',w:'Use with caution in spleen yin deficiency or exuberant stomach fire',ix:[],note:''},
+    yumixu:{n:'Corn Silk (Yumixu)',g:'Promote urination and reduce edema, drain dampness and relieve jaundice',c:'Flavonoids, saponins, polysaccharides, potassium salts',w:'Use with caution in low blood pressure or polyuria',ix:['Diuretic / antihypertensive / antidiabetic drugs: effects may be additive'],note:''},
+    shashen:{n:'Glehnia Root (Beishashen)',g:'Nourish yin and clear the lung, benefit the stomach and generate fluids',c:'Psoralen and other coumarins, polysaccharides',w:'Contraindicated in wind-cold cough or middle cold with loose stools',ix:[],note:'Incompatible with Veratrum (Lilu)'},
+    yuzhu:{n:'Solomon\'s Seal (Yuzhu)',g:'Nourish yin and moisten dryness, generate fluids and stop thirst',c:'Polygonatum odoratum polysaccharides, steroidal saponins, flavonoids',w:'Use with caution in phlegm-damp with qi stagnation, or spleen deficiency with loose stools',ix:[],note:''},
+    pipaye:{n:'Loquat Leaf (Pipaye)',g:'Clear the lung and stop cough, direct rebellious qi downward and stop vomiting',c:'Ursolic acid, amygdalin (small amount), volatile oil',w:'Use with caution in wind-cold cough or stomach-cold vomiting; brush off the fine hairs or decoct wrapped in cloth',ix:[],note:''},
+    ejiao:{n:'Donkey-hide Gelatin (Ejiao)',g:'Tonify blood and nourish yin, moisten dryness, stop bleeding',c:'Gelatin (collagen hydrolysate), various amino acids, calcium',w:'Use with caution in a weak spleen and stomach, poor appetite with loose stools, or indigestion; not suitable during a cold or fever',ix:[],note:''},
+    huanglian:{n:'Coptis Rhizome (Huanglian)',g:'Clear heat and dry dampness, drain fire and resolve toxicity',c:'Berberine, palmatine, coptisine',w:'Extremely bitter and cold, it easily injures the spleen and stomach: contraindicated in spleen-stomach deficiency cold, caution in yin deficiency with fluid damage; contraindicated in newborns and G6PD deficiency (berberine can cause hemolysis and jaundice)',ix:['Antidiabetic drugs: berberine lowers blood glucose; watch for hypoglycemia','Cyclosporine, statins and other CYP3A4/2D6 substrates: may raise blood levels'],note:''},
+    baimaogen:{n:'Imperata Rhizome (Baimaogen)',g:'Cool blood and stop bleeding, clear heat and promote urination',c:'Arundoin, cylindrin (triterpenes), potassium salts, sugars',w:'Contraindicated in spleen-stomach deficiency cold, or copious urination without thirst',ix:[],note:''},
+    huangqin:{n:'Baical Skullcap Root (Huangqin)',g:'Clear heat and dry dampness, drain fire and resolve toxicity, stop bleeding, calm the fetus',c:'Baicalin, baicalein, wogonin',w:'Not suitable for spleen-stomach deficiency cold',ix:[],note:''},
+    zhimu:{n:'Anemarrhena Rhizome (Zhimu)',g:'Clear heat and drain fire, nourish yin and moisten dryness',c:'Timosaponin BII, mangiferin',w:'Use with caution in spleen deficiency with loose stools',ix:[],note:''},
+    tianma:{n:'Gastrodia Tuber (Tianma)',g:'Extinguish wind and stop spasms, calm liver yang, dispel wind and unblock the collaterals',c:'Gastrodin, p-hydroxybenzyl alcohol',w:'Use with caution in severe qi and blood deficiency',ix:[],note:''},
+    yimucao:{n:'Motherwort (Yimucao)',g:'Invigorate blood and regulate menstruation, promote urination and reduce edema, clear heat and resolve toxicity',c:'Leonurine, stachydrine',w:'Contraindicated in pregnancy; caution in blood deficiency without stasis; caution in renal insufficiency',ix:[],note:''},
+    taoren:{n:'Peach Kernel (Taoren)',g:'Invigorate blood and dispel stasis, moisten the intestines and unblock the bowels, stop cough and calm wheezing',c:'Amygdalin, fatty oil',w:'Contraindicated in pregnancy; mildly toxic, do not take in excess; caution with loose stools',ix:[],note:''},
+    jineijin:{n:'Chicken Gizzard Lining (Jineijin)',g:'Strengthen the stomach and promote digestion, secure essence and stop enuresis, unblock painful urination and dissolve stones',c:'Ventriculin (gastric hormone), keratin, amylase (small amount)',w:'Use with caution in spleen deficiency without food accumulation',ix:[],note:''},
+    fengmi:{n:'Honey (Fengmi)',g:'Tonify the middle, moisten dryness, relieve pain, resolve toxicity',c:'Fructose, glucose, enzymes, polyphenols',w:'Contraindicated for infants under 1 year (botulinum spores); caution in diabetes, dampness obstructing the middle, or loose stools',ix:[],note:''},
+    heizhima:{n:'Black Sesame (Heizhima)',g:'Tonify the liver and kidney, replenish essence and blood, moisten intestinal dryness',c:'Sesamin, sesamol, linoleic acid, calcium',w:'Use with caution with loose stools',ix:[],note:''},
+    yuxingcao:{n:'Houttuynia (Yuxingcao)',g:'Clear heat and resolve toxicity, reduce abscesses and expel pus, promote urination and relieve painful urination',c:'Decanoyl acetaldehyde (houttuynin), methyl n-nonyl ketone, quercitrin',w:'Use with caution in deficiency-cold patterns; do not decoct for long',ix:[],note:''},
+    banlangen:{n:'Isatis Root (Banlangen)',g:'Clear heat and resolve toxicity, cool blood and soothe the throat',c:'Indigo, indirubin, (R,S)-goitrin',w:'Contraindicated in weak constitutions without excess fire or heat toxin; caution in spleen-stomach deficiency cold; not for long-term "preventive" drinking',ix:[],note:''},
+    yinyanghuo:{n:'Epimedium (Yinyanghuo)',g:'Tonify kidney yang, strengthen sinews and bones, dispel wind-damp',c:'Icariin, baohuoside I and other flavonoids',w:'Not suitable in yin deficiency with effulgent fire; case reports of liver injury',ix:[],note:''},
+    tusizi:{n:'Cuscuta Seed (Tusizi)',g:'Tonify the liver and kidney, secure essence and reduce urination, calm the fetus, brighten the eyes, stop diarrhea',c:'Hyperoside, quercetin, cuscuta polysaccharides',w:'Use with caution in yin deficiency with effulgent fire, or dry constipation',ix:[],note:''},
+    nvzhenzi:{n:'Privet Fruit (Nvzhenzi)',g:'Nourish and tonify the liver and kidney, brighten the eyes and darken the hair',c:'Specnuezhenide, oleanolic acid',w:'Use with caution in spleen-stomach deficiency cold with diarrhea, or yang deficiency',ix:[],note:''},
+    mohanlian:{n:'Eclipta (Mohanlian)',g:'Nourish and tonify the liver and kidney, cool blood and stop bleeding',c:'Wedelolactone, ecliptasaponins',w:'Not suitable for spleen-stomach deficiency cold with diarrhea',ix:[],note:''},
+    taizishen:{n:'Pseudostellaria Root (Taizishen)',g:'Augment qi and strengthen the spleen, generate fluids and moisten the lung (a gentle, clearing tonic commonly used for children)',c:'Heterophyllin cyclopeptides, polysaccharides, saponins',w:'Use with caution when a pathogenic excess is present',ix:[],note:''},
+    baibiandou:{n:'White Hyacinth Bean (Baibiandou)',g:'Strengthen the spleen and resolve dampness, harmonize the middle and relieve summer-heat',c:'Protein, phytohemagglutinin (lectins), trypsin inhibitors',w:'The raw bean contains lectins and must be thoroughly cooked; not suitable for steeping',ix:[],note:''},
+    huoxiang:{n:'Patchouli (Huoxiang)',g:'Aromatically transform turbidity, harmonize the middle and stop vomiting, release the exterior and relieve summer-heat',c:'Patchouli alcohol (patchoulol), pogostone (volatile oil)',w:'Not suitable in yin deficiency with blood dryness',ix:[],note:''},
+    niuxi:{n:'Achyranthes Root (Niuxi)',g:'Expel stasis and unblock menstruation, tonify the liver and kidney, strengthen sinews and bones, promote urination and relieve painful urination, guide blood downward',c:'Ecdysterone, achyranthes saponins',w:'Contraindicated in pregnancy; contraindicated in heavy menstruation',ix:[],note:''},
+    heshouwu:{n:'Prepared Fleeceflower Root (Zhiheshouwu)',g:'Tonify the liver and kidney, replenish essence and blood, darken the hair and beard, strengthen sinews and bones',c:'Stilbene glucoside, anthraquinones, lecithin',w:'Drug-induced liver injury has been reported: contraindicated in liver disease, monitor liver function during use; not for long-term high doses; caution with loose stools',ix:[],note:''},
+  },
+  presets:{
+    '四君子汤':{n:'Four Gentlemen Decoction (Si Jun Zi Tang)',src:'Taiping Huimin Hejiju Fang',d:'Augment qi and strengthen the spleen; the foundational qi tonic (Dangshen substituted for Renshen)'},
+    '当归补血汤':{n:'Angelica Blood-Tonifying Decoction (Danggui Buxue Tang)',src:'Neiwaishang Bianhuo Lun',d:'Tonify qi to generate blood; Huangqi : Danggui = 5:1'},
+    '八珍汤':{n:'Eight Treasures Decoction (Ba Zhen Tang)',src:'Zhengti Leiyao',d:'Tonify both qi and blood; Four Gentlemen combined with Four Substances'},
+    '黄芪枸杞红枣茶':{n:'Astragalus, Goji and Jujube Tea',src:'Folk wellness formula',d:'Tonify qi and nourish blood, augment qi and consolidate the exterior; for those who tire easily'},
+    '五红汤':{n:'Five Reds Soup (Wu Hong Tang)',src:'Folk medicinal cuisine',d:'Tonify blood and nourish the heart, strengthen the spleen and promote urination'},
+    '桂圆红枣茶':{n:'Longan and Jujube Tea',src:'Folk wellness formula',d:'Tonify the heart and spleen, nourish blood and calm the spirit'},
+    '阿胶红枣枸杞饮':{n:'Ejiao, Jujube and Goji Drink',src:'Folk wellness formula',d:'Tonify blood and nourish yin; melt the Ejiao separately and stir in'},
+    '太子参红枣茶':{n:'Pseudostellaria and Jujube Tea',src:'Folk wellness formula',d:'Gently tonify the spleen and lung; common for children and the frail'},
+    '二至丸茶':{n:'Two Solstices Tea (Er Zhi Wan)',src:'Yifang Jijie: Er Zhi Wan',d:'Tonify the liver and kidney, nourish yin and stop bleeding'},
+    '黑芝麻蜂蜜饮':{n:'Black Sesame and Honey Drink',src:'Folk wellness formula',d:'Nourish blood and moisten dryness, moisten the intestines and unblock the bowels'},
+    '生脉饮':{n:'Generate the Pulse Drink (Sheng Mai Yin)',src:'Yixue Qiyuan',d:'Augment qi and generate fluids, preserve yin and stop sweating; for summer damage to qi and yin'},
+    '西洋参生脉茶':{n:'American Ginseng Sheng Mai Tea',src:'Modified Sheng Mai Yin',d:'Gently tonify qi and yin; for those prone to internal heat'},
+    '沙参麦冬饮':{n:'Glehnia and Ophiopogon Drink',src:'Simplified Shashen Maidong Tang (Wenbing Tiaobian)',d:'Clear and nourish the lung and stomach, generate fluids and moisten dryness; for autumn-dryness dry cough'},
+    '石斛麦冬茶':{n:'Dendrobium and Ophiopogon Tea',src:'Folk wellness formula',d:'Benefit the stomach and generate fluids, nourish yin and clear heat'},
+    '百合麦冬饮':{n:'Lily Bulb and Ophiopogon Drink',src:'Folk wellness formula',d:'Moisten the lung and clear the heart, nourish yin and calm the spirit'},
+    '桑椹枸杞茶':{n:'Mulberry and Goji Tea',src:'Folk wellness formula',d:'Nourish the liver and kidney, nourish blood and moisten dryness'},
+    '姜枣茶':{n:'Ginger and Jujube Tea',src:'Folk wellness formula',d:'Warm the middle and harmonize the stomach, harmonize the nutritive and defensive qi'},
+    '肉桂红枣茶':{n:'Cinnamon and Jujube Tea',src:'Folk wellness formula',d:'Warm yang and disperse cold, warm the stomach; for cold hands and feet'},
+    '红糖姜茶':{n:'Brown Sugar Ginger Tea',src:'Folk wellness formula',d:'Warm the middle and disperse cold, harmonize blood; for menstrual abdominal pain from cold'},
+    '杜仲枸杞茶':{n:'Eucommia and Goji Tea',src:'Folk wellness formula',d:'Tonify the liver and kidney, strengthen sinews and bones; for sore, weak lower back and knees'},
+    '淫羊藿枸杞茶':{n:'Epimedium and Goji Tea',src:'Folk wellness formula',d:'Warm and tonify kidney yang, strengthen sinews and bones; for cold aversion and sore lower back'},
+    '桑菊饮':{n:'Mulberry Leaf and Chrysanthemum Drink (Sang Ju Yin)',src:'Wenbing Tiaobian',d:'Light acrid-cool formula: early-stage wind-heat cough'},
+    '姜糖苏叶饮':{n:'Ginger, Sugar and Perilla Drink',src:'Folk empirical formula',d:'Acrid-warm exterior release: wind-cold common cold with stomach discomfort'},
+    '葱白生姜饮':{n:'Scallion and Ginger Drink',src:'Modified Cong Chi Tang (Zhouhou Fang)',d:'Induce sweating and disperse cold: early chill, nasal congestion'},
+    '薄荷菊花茶':{n:'Mint and Chrysanthemum Tea',src:'Folk wellness formula',d:'Disperse wind-heat, clear the head and eyes'},
+    '酸梅汤':{n:'Sour Plum Drink (Suan Mei Tang)',src:'Derived from a Qing imperial kitchen recipe',d:'Generate fluids and stop thirst, relieve summer-heat and stimulate the appetite'},
+    '绿豆汤':{n:'Mung Bean Soup',src:'Bencao Gangmu',d:'Clear heat and resolve toxicity, relieve summer-heat and promote urination'},
+    '夏桑菊':{n:'Prunella, Mulberry Leaf and Chrysanthemum (Xia Sang Ju)',src:'Lingnan herbal tea',d:'Clear the liver and brighten the eyes, disperse wind and heat'},
+    '竹叶芦根茶':{n:'Lophatherum and Reed Rhizome Tea',src:'Folk wellness formula',d:'Clear heat and relieve irritability, generate fluids and stop thirst'},
+    '金银花菊花茶':{n:'Honeysuckle and Chrysanthemum Tea',src:'Folk wellness formula',d:'Clear heat and resolve toxicity, disperse wind; for internal heat with sore throat'},
+    '茅根芦根饮':{n:'Imperata and Reed Rhizome Drink',src:'Lingnan "Two Roots Decoction"',d:'Clear heat and generate fluids, cool blood and promote urination'},
+    '黄连清心饮':{n:'Coptis Heart-Clearing Drink',src:'Folk empirical formula',d:'Clear the heart and drain fire; for mouth and tongue sores (short-term use)'},
+    '鱼腥草桔梗茶':{n:'Houttuynia and Platycodon Tea',src:'Folk empirical formula',d:'Clear the lung and resolve phlegm; for cough with yellow phlegm'},
+    '罗汉果利咽茶':{n:'Monk Fruit Throat Tea',src:'Folk wellness formula',d:'Clear the lung, soothe the throat and restore the voice'},
+    '桔梗甘草茶':{n:'Platycodon and Licorice Tea',src:'Jiegeng Tang (Shang Han Lun)',d:'Diffuse the lung, soothe the throat and expel phlegm; Jiegeng : Gancao = 1:2'},
+    '玄麦甘桔茶':{n:'Xuan Mai Gan Jie Tea',src:'Modified Jiegeng Tang',d:'Nourish yin, clear heat and soothe the throat; for voice overuse'},
+    '枇杷叶冰糖饮':{n:'Loquat Leaf and Rock Sugar Drink',src:'Folk empirical formula',d:'Clear the lung and stop cough, direct rebellious qi downward'},
+    '甘麦大枣汤':{n:'Licorice, Wheat and Jujube Decoction (Gan Mai Da Zao Tang)',src:'Jingui Yaolue',d:'Nourish the heart and calm the spirit, harmonize the middle and relax urgency; for emotional restlessness'},
+    '酸枣仁安神饮':{n:'Sour Jujube Seed Calming Drink',src:'Modified Suanzaoren Tang',d:'Nourish blood and calm the spirit; for deficiency irritability and insomnia'},
+    '玫瑰疏肝茶':{n:'Rose Liver-Soothing Tea',src:'Folk wellness formula',d:'Soothe the liver and relieve constraint, regulate qi and harmonize the stomach'},
+    '佛手玫瑰茶':{n:'Buddha\'s Hand and Rose Tea',src:'Folk wellness formula',d:'Soothe the liver and regulate qi; for chest and flank distension, stomach bloating'},
+    '合欢茉莉茶':{n:'Albizia and Jasmine Tea',src:'Folk wellness formula',d:'Relieve constraint and calm the spirit, regulate qi'},
+    '灵芝红枣茶':{n:'Reishi and Jujube Tea',src:'Folk wellness formula',d:'Tonify qi and calm the spirit'},
+    '交泰丸茶':{n:'Jiao Tai Wan Tea (Heart-Kidney Harmony)',src:'Jiao Tai Wan (Hanshi Yitong)',d:'Restore heart-kidney communication; insomnia from hyperactive heart fire with heart-kidney disharmony; Huanglian : Rougui = 10:1'},
+    '黄连阿胶饮':{n:'Coptis and Ejiao Drink',src:'Huanglian Ejiao Tang (Shang Han Lun), without egg yolk',d:'Nourish yin and descend fire; for deficiency irritability and inability to sleep'},
+    '天麻川芎茶':{n:'Gastrodia and Chuanxiong Tea',src:'Modified Da Chuanxiong Wan',d:'Calm the liver and extinguish wind, stop headache'},
+    '藿香陈皮饮':{n:'Patchouli and Tangerine Peel Drink',src:'Modified Huoxiang Zhengqi San',d:'Aromatically resolve dampness, harmonize the middle and stop vomiting; for summer-damp colds'},
+    '扁豆山药薏米汤':{n:'Hyacinth Bean, Yam and Coix Soup',src:'Modified Shen Ling Bai Zhu San',d:'Strengthen the spleen, resolve dampness and stop diarrhea'},
+    '四神汤':{n:'Four Spirits Soup (Si Shen Tang)',src:'Fujian-Taiwan medicinal cuisine',d:'Strengthen the spleen and dispel dampness, consolidate the kidney and stop diarrhea'},
+    '赤小豆薏米茶':{n:'Adzuki Bean and Coix Tea',src:'Folk wellness formula',d:'Promote urination and drain dampness, strengthen the spleen'},
+    '玉米须茶':{n:'Corn Silk Tea',src:'Folk wellness formula',d:'Promote urination and reduce edema'},
+    '陈皮茯苓茶':{n:'Tangerine Peel and Poria Tea',src:'Modified Er Chen Tang',d:'Regulate qi and strengthen the spleen, dry dampness and resolve phlegm'},
+    '山楂消食饮':{n:'Hawthorn Digestive Drink',src:'Modified Bao He Wan',d:'Promote digestion and relieve distension, move qi'},
+    '焦三仙':{n:'Three Charred Immortals (Jiao San Xian)',src:'Traditional digestive combination',d:'Dissolve all food stagnation from meat, flour and grains'},
+    '陈皮山楂麦芽茶':{n:'Tangerine Peel, Hawthorn and Barley Sprout Tea',src:'Folk wellness formula',d:'Strengthen the spleen, stimulate the appetite and promote digestion'},
+    '鸡内金山楂饮':{n:'Gizzard Lining and Hawthorn Drink',src:'Folk wellness formula',d:'Strengthen the stomach and promote digestion; common for food stagnation in children'},
+    '杞菊明目茶':{n:'Goji and Chrysanthemum Eye Tea',src:'Herb pair from Qi Ju Di Huang Wan',d:'Nourish the kidney and liver, brighten the eyes; for eye strain'},
+    '决明子菊花茶':{n:'Cassia Seed and Chrysanthemum Tea',src:'Folk wellness formula',d:'Clear the liver and brighten the eyes, moisten the intestines'},
+    '桑叶菊花枸杞茶':{n:'Mulberry Leaf, Chrysanthemum and Goji Tea',src:'Folk wellness formula',d:'Disperse wind and clear the liver, nourish the kidney and brighten the eyes'},
+    '山楂荷叶茶':{n:'Hawthorn and Lotus Leaf Tea',src:'Folk wellness formula',d:'Transform turbidity and lower lipids, promote digestion'},
+    '丹参山楂茶':{n:'Salvia and Hawthorn Tea',src:'Folk wellness formula',d:'Invigorate blood and resolve stasis, promote digestion (contraindicated for those on anticoagulants)'},
+    '葛根丹参饮':{n:'Kudzu and Salvia Drink',src:'Modern wellness formula',d:'Generate fluids and unblock the collaterals, invigorate blood (follow medical advice)'},
+    '甘草 + 海藻':{n:'Licorice + Sargassum',src:'Eighteen Incompatibilities',d:'Demonstrates the "Sargassum, Euphorbia, Kansui and Genkwa all oppose Licorice" rule'},
+    '丁香 + 郁金':{n:'Clove + Curcuma Tuber',src:'Nineteen Antagonisms',d:'Demonstrates the "Clove must not meet Curcuma" rule'},
+    '人参 + 莱菔子':{n:'Ginseng + Radish Seed',src:'Mutual inhibition',d:'Demonstrates how the qi-tonifying power is weakened'},
+    '苦杏仁泡水':{n:'Bitter Apricot Kernel Steeped in Water',src:'Misuse of a toxic herb',d:'Demonstrates the preparation risk of toxic herbs'},
+  },
+  combos:{
+    '当归补血汤':{n:'Angelica Blood-Tonifying Decoction (Danggui Buxue Tang)',t:'A Li Dongyuan formula. A large dose of Huangqi strongly tonifies spleen and lung qi to support the source of blood production ("tangible blood is born from intangible qi"), paired with Danggui to nourish blood and harmonize the nutritive level. Original ratio Huangqi : Danggui = 5:1 (30g : 6g).'},
+    '生脉饮':{n:'Generate the Pulse Drink (Sheng Mai Yin)',t:'From Yixue Qiyuan: ginseng tonifies qi, Maidong nourishes yin and clears heat, Wuweizi preserves yin and stops sweating; one tonifies, one moistens, one astringes, together augmenting qi and generating fluids. Using American Ginseng gives a gentler, cooler tonic suited to summer damage of both qi and yin.'},
+    '四君子汤':{n:'Four Gentlemen Decoction (Si Jun Zi Tang)',t:'The foundational qi tonic from Taiping Huimin Hejiju Fang. Ginseng is the chief, tonifying original qi; Baizhu is the deputy, strengthening the spleen and drying dampness; Fuling is the assistant, draining dampness; Gancao is the envoy, harmonizing the middle.'},
+    '四物汤':{n:'Four Substances Decoction (Si Wu Tang)',t:'The foundational blood-tonifying and blood-regulating formula. Shudi and Baishao are "blood herbs within the blood"; Danggui and Chuanxiong are "qi herbs within the blood", so it tonifies without causing stagnation.'},
+    '玉屏风散（缺防风）':{n:'Jade Windscreen Powder (Yu Ping Feng San), missing Fangfeng',t:'Huangqi augments qi and consolidates the exterior, Baizhu strengthens the spleen; these form the core of Yu Ping Feng San. The original formula also includes Fangfeng (Saposhnikovia) to disperse wind.'},
+    '杞菊药对':{n:'Goji-Chrysanthemum Pair',t:'Goji nourishes the kidney and liver (water), Chrysanthemum clears the liver and brightens the eyes (wood), embodying "nourishing water to moisten wood"; this is the core pair of Qi Ju Di Huang Wan.'},
+    '桑菊药对':{n:'Mulberry Leaf-Chrysanthemum Pair',t:'The chief herbs of Sang Ju Yin: disperse wind-heat, clear the lung and brighten the eyes; commonly used for early-stage wind-heat cough.'},
+    '银菊药对':{n:'Honeysuckle-Chrysanthemum Pair',t:'Combines clearing heat and resolving toxicity with dispersing wind and brightening the eyes; suited to wind-heat with internal heat, sore throat and red eyes.'},
+    '姜枣药对':{n:'Ginger-Jujube Pair',t:'Fresh Ginger (acrid, warm) moves the defensive level; Jujube (sweet, warm) tonifies the nutritive level. Together they harmonize the nutritive and defensive qi, harmonize the stomach and stop vomiting; commonly used in Gui Zhi Tang and other formulas.'},
+    '桔梗汤':{n:'Platycodon Decoction (Jiegeng Tang)',t:'From Shang Han Lun: diffuses the lung and soothes the throat, expels phlegm and pus; commonly used for sore throat.'},
+    '酸枣仁汤意':{n:'Suanzaoren Tang (variant)',t:'Suanzaoren Tang from Jingui Yaolue without Zhimu: nourishes blood and calms the spirit, clears heat and relieves irritability; indicated for "deficiency taxation with deficiency irritability and inability to sleep".'},
+    '二陈汤意':{n:'Two Aged Herbs Decoction (Er Chen Tang, variant)',t:'Er Chen Tang lacking Banxia (Pinellia): regulates qi, dries dampness and resolves phlegm.'},
+    '熟地配砂仁':{n:'Shudi with Amomum',t:'Sharen awakens the spleen and moves qi, countering the cloying, stomach-hindering nature of Shudihuang; an old method is "Shudi mixed with Sharen".'},
+    '熟地配陈皮':{n:'Shudi with Tangerine Peel',t:'Chenpi regulates qi and strengthens the spleen so that tonification does not cause congestion.'},
+    '山楂配陈皮':{n:'Hawthorn with Tangerine Peel',t:'Promotes digestion and dissolves accumulation, moves qi and harmonizes the stomach; commonly used for post-meal food stagnation.'},
+    '玫瑰配陈皮':{n:'Rose with Tangerine Peel',t:'Soothes the liver and relieves constraint, regulates qi and harmonizes the stomach; suited to emotional constraint with stomach bloating.'},
+    '罗汉果配胖大海':{n:'Monk Fruit with Sterculia',t:'Clears the lung, soothes the throat and restores the voice; can be taken short-term as a tea for voice overuse.'},
+    '桂圆配大枣':{n:'Longan with Jujube',t:'Tonifies the heart and spleen, nourishes blood and calms the spirit.'},
+    '菊花配决明子':{n:'Chrysanthemum with Cassia Seed',t:'Clears the liver and brightens the eyes, and also moistens the intestines to unblock the bowels.'},
+    '葛根配丹参':{n:'Kudzu with Salvia',t:'Combines generating fluids and unblocking the collaterals with invigorating blood and resolving stasis; commonly used in modern cardio-cerebrovascular wellness approaches (follow medical advice).'},
+    '百合配酸枣仁':{n:'Lily Bulb with Sour Jujube Seed',t:'Clears the heart and moistens the lung, nourishes the liver and calms the spirit; suited to deficiency irritability and insomnia.'},
+    '八珍汤':{n:'Eight Treasures Decoction (Ba Zhen Tang)',t:'From Zhengti Leiyao: Four Gentlemen Decoction combined with Four Substances Decoction, tonifying both qi and blood.'},
+    '桑菊饮':{n:'Mulberry Leaf and Chrysanthemum Drink (Sang Ju Yin)',t:'The "light acrid-cool formula" of Wenbing Tiaobian: disperses wind and clears heat, diffuses the lung and stops cough. Original doses are very light (Sangye 7.5g, Juhua 3g), reflecting "treat the upper burner like a feather; only lightness can lift".'},
+    '甘麦大枣汤':{n:'Licorice, Wheat and Jujube Decoction (Gan Mai Da Zao Tang)',t:'From Jingui Yaolue, indicated for "visceral agitation in women, with a tendency to sorrow and weeping": nourishes the heart and calms the spirit, harmonizes the middle and relaxes urgency.'},
+    '玄麦甘桔':{n:'Xuan Mai Gan Jie',t:'Jiegeng Tang with Xuanshen and Maidong added: nourishes yin, clears heat and soothes the throat; suited to yin-deficient dry throat and voice overuse.'},
+    '四神汤':{n:'Four Spirits Soup (Si Shen Tang)',t:'A famous Fujian-Taiwan medicinal cuisine formula: strengthens the spleen and dispels dampness, consolidates the kidney and stops diarrhea; neutral in nature and suitable for regular use.'},
+    '焦三仙':{n:'Three Charred Immortals (Jiao San Xian)',t:'Shanzha excels at digesting meat, Maiya at flour and starches, Shenqu at grain accumulation; together they dissolve all kinds of food stagnation.'},
+    '酸梅汤':{n:'Sour Plum Drink (Suan Mei Tang)',t:'Derived from a Qing imperial kitchen recipe: Wumei generates fluids and astringes the lung, Shanzha promotes digestion; sour and sweet combine to transform into yin. A traditional drink for relieving summer-heat and thirst.'},
+    '夏桑菊':{n:'Prunella, Mulberry Leaf and Chrysanthemum (Xia Sang Ju)',t:'A classic Lingnan herbal tea: clears the liver and brightens the eyes, disperses wind and heat.'},
+    '五红汤':{n:'Five Reds Soup (Wu Hong Tang)',t:'A folk blood-nourishing formula, "using red to nourish red": tonifies blood and nourishes the heart, strengthens the spleen and promotes urination.'},
+    '赤小豆薏米':{n:'Adzuki Bean with Coix',t:'Promotes urination, drains dampness and strengthens the spleen; commonly used for heavy dampness. Both are draining, so not suitable for prolonged use in those with fluid deficiency.'},
+    '姜糖苏叶':{n:'Ginger, Sugar and Perilla',t:'Acrid-warm exterior release, moves qi and harmonizes the stomach; commonly used for early wind-cold common cold with stomach discomfort.'},
+    '交泰丸':{n:'Grand Communication Pill (Jiao Tai Wan)',t:'From Hanshi Yitong: Huanglian clears heart fire, Rougui warms kidney yang and guides fire back to its source; using cold and hot together to restore heart-kidney communication. Original ratio Huanglian : Rougui approx. 10:1.'},
+    '黄连阿胶汤':{n:'Coptis and Ejiao Decoction (Huanglian Ejiao Tang)',t:'From Shang Han Lun (the original also contains egg yolk): Huanglian and Huangqin clear heart fire, Ejiao and Baishao nourish yin and blood; indicated for "vexation in the heart with inability to lie down (sleep)".'},
+    '二至丸':{n:'Two Solstices Pill (Er Zhi Wan)',t:'From Yifang Jijie: Nvzhenzi is harvested at the winter solstice and Mohanlian at the summer solstice, hence the name. Tonifies the liver and kidney, nourishes yin and stops bleeding; mild in nature.'},
+    '茅根芦根':{n:'Imperata with Reed Rhizome',t:'Baimaogen cools blood and promotes urination, Lugen clears heat and generates fluids; the two roots together clear heat without damaging fluids.'},
+    '天麻川芎':{n:'Gastrodia with Chuanxiong',t:'The composition of Da Chuanxiong Wan: Chuanxiong invigorates blood, dispels wind and relieves pain, Tianma calms the liver and extinguishes wind; treats head-wind and dizziness.'},
+    '阿胶配陈皮/砂仁':{n:'Ejiao with Tangerine Peel / Amomum',t:'Qi-regulating herbs counter the cloying, stomach-hindering nature of Ejiao.'},
+  },
+  conflicts:{
+    'gancao|haizao':{ty:'Eighteen Incompatibilities',t:'"Sargassum, Euphorbia, Kansui and Genkwa all oppose Licorice": Licorice is incompatible with Sargassum; using them together may increase toxicity or cause adverse reactions, and they should not be combined in a wellness formula.'},
+    'dingxiang|yujin':{ty:'Nineteen Antagonisms',t:'"Clove must not meet Curcuma": Clove is antagonized by Curcuma Tuber; traditionally they are not used together.'},
+    'renshen|laifuzi':{ty:'Mutual inhibition',t:'Ginseng is inhibited by Radish Seed: Laifuzi directs qi downward and dissolves accumulation, weakening the qi-tonifying power of Ginseng.'},
+    'xiyangshen|laifuzi':{ty:'Mutual inhibition',t:'When ginseng-type herbs are used with Radish Seed, their qi-tonifying power is weakened by its qi-descending, digestive action.'},
+    'dangshen|laifuzi':{ty:'Mutual inhibition (mild)',t:'Dangshen tonifies and Laifuzi disperses, so the tonifying effect is reduced; may be kept if intended deliberately to "tonify without causing stagnation".'},
+  },
+  lt:{
+    renshen:'Long-term use can cause insomnia, irritability and elevated blood pressure (ginseng abuse syndrome)',
+    xiyangshen:'Prolonged use of tonics easily causes congestion; take intermittently',
+    juemingzi:'Long-term use of anthraquinones can cause melanosis coli and laxative dependence',
+    pangdahai:'Not for long-term use as a daily tea; easily causes spleen-stomach deficiency cold and loose stools',
+    xingren:'Mildly toxic; not for prolonged use',
+    honghua:'Strongly invigorates blood; prolonged use depletes and stirs the blood',
+    danshen:'Prolonged use affects coagulation; monitoring needed',
+    sanqi:'Prolonged use affects coagulation; monitoring needed',
+    chuanxiong:'Acrid, warm and dispersing; prolonged use consumes qi and damages yin',
+    jinyinhua:'Cold, heat-clearing herb; prolonged use damages spleen-stomach yang qi',
+    pugongying:'Cold, heat-clearing herb; prolonged use damages spleen-stomach yang qi',
+    xiakucao:'Bitter and cold liver-clearing herb; prolonged use damages the spleen and stomach',
+    lvdou:'Cold in nature; prolonged use damages spleen-stomach yang qi',
+    lianqiao:'Bitter and cold; prolonged use damages the spleen and stomach',
+    danzhuye:'Cold and diuretic; prolonged use damages yin',
+    bohe:'Acrid and dispersing; prolonged use consumes qi and damages yin',
+    zisuye:'Acrid, warm and dispersing; stop once the cold has resolved',
+    congbai:'Induces sweating to release the exterior; stop once the cold has resolved',
+    haizao:'Contains iodine; long-term use affects thyroid function',
+    yumixu:'Prolonged use of diuretic herbs damages fluids and affects electrolytes',
+    chixiaodou:'Prolonged use of diuretic herbs damages fluids and causes weight loss',
+    yiyiren:'Draining herb; prolonged use damages fluids',
+    rougui:'Acrid and hot, prolonged use damages yin; long-term coumarin accumulation carries a risk of liver injury',
+    dingxiang:'Acrid and warm; prolonged use fuels fire',
+    shanzha:'Fairly acidic; prolonged use injures the stomach and damages teeth',
+    laifuzi:'Breaks up qi and promotes digestion; prolonged use consumes qi',
+    maiya:'Digestive herb; stop once the stagnation has cleared',
+    shenqu:'Digestive herb; stop once the stagnation has cleared',
+    wumei:'Sour and astringent; prolonged use easily traps pathogens',
+    huanglian:'Extremely bitter and cold; prolonged use injures and weakens the stomach, and its bitter dryness damages yin',
+    huangqin:'Bitter and cold; prolonged use damages the spleen and stomach',
+    zhimu:'Bitter, cold and lubricating to the intestines; prolonged use damages the spleen',
+    banlangen:'Bitter and cold; not suitable for long-term "preventive" drinking',
+    yuxingcao:'Cold, heat-clearing herb; prolonged use damages the spleen and stomach',
+    baimaogen:'Sweet, cold and diuretic; prolonged use damages yang and fluids',
+    yinyanghuo:'Acrid and warm, assists yang; prolonged use damages yin; case reports of liver injury',
+    heshouwu:'Drug-induced liver injury has been reported; prolonged use requires liver function monitoring',
+    ejiao:'Cloying and hinders the stomach; for prolonged use, combine with qi-regulating herbs such as Chenpi',
+    yimucao:'Invigorates blood and promotes urination; prolonged use depletes blood',
+    taoren:'Mildly toxic; not for prolonged use',
+    niuxi:'Invigorates blood and guides it downward; prolonged use depletes blood',
+    gancao_hi:'Accumulation of glycyrrhizic acid causes pseudoaldosteronism (hypokalemia, edema, hypertension)',
+    gancao_mid:'Accumulation of glycyrrhizic acid causes pseudoaldosteronism',
+  },
+};
+/* ---------- 语言 / i18n ---------- */
+const ED=(typeof EN_DATA!=='undefined')?EN_DATA:{herbs:{},presets:{},combos:{},conflicts:{},lt:{}};
+const isEN=()=>S.lang==='en';
+const L=(zh,en)=>isEN()?en:zh;
+const NAT_EN={大寒:'Very cold',寒:'Cold',凉:'Cool',微寒:'Slightly cold',微凉:'Slightly cool',平:'Neutral',微温:'Slightly warm',温:'Warm',热:'Hot',大热:'Very hot'};
+const FL_EN={酸:'Sour',苦:'Bitter',甘:'Sweet',辛:'Pungent',咸:'Salty',涩:'Astringent',淡:'Bland'};
+const MER_EN={肝:'Liver',胆:'Gallbladder',心:'Heart',小肠:'Small Int.',心包:'Pericardium',三焦:'San Jiao',脾:'Spleen',胃:'Stomach',肺:'Lung',大肠:'Large Int.',肾:'Kidney',膀胱:'Bladder'};
+const EL_EN={木:'Wood',火:'Fire',土:'Earth',金:'Metal',水:'Water'};
+const ORG_EN={木:'Liver & Gallbladder',火:'Heart & Small Intestine',土:'Spleen & Stomach',金:'Lung & Large Intestine',水:'Kidney & Bladder'};
+const SHENG_EN={木:'Wood generates Fire: the liver stores blood to nourish the heart, so soothing the liver also settles the spirit',火:'Fire generates Earth: heart yang warms the spleen and aids digestion',土:'Earth generates Metal: “bank up earth to generate metal” — strengthening the spleen boosts lung qi',金:'Metal generates Water: lung and kidney support each other from above and below',水:'Water generates Wood: “enrich water to nourish wood” — kidney water nourishes the liver (the logic behind brightening the eyes and calming the liver)'};
+const CHENG_EN={木:'Wood overacting on Earth — excess liver qi invades the spleen and stomach: bloating, poor appetite',火:'Fire overacting on Metal — excess heart fire scorches lung fluids: dry throat, dry cough',土:'Earth overacting on Water — congested spleen earth obstructs fluid metabolism: heaviness, puffiness',金:'Metal overacting on Wood — excess lung metal restrains the liver’s free flow: chest tightness, low mood',水:'Water overacting on Fire — excess cold water damages heart yang: palpitations, feeling cold'};
+const WU_EN={木:'insult Metal in reverse (wood-fire scorching the lung)',火:'insult Water in reverse',土:'insult Wood in reverse (congested earth stagnating wood)',金:'insult Fire in reverse',水:'insult Earth in reverse (kidney water flooding the spleen)'};
+const PROTECT={土:['健脾（甘味）','spleen-strengthening (sweet)'],水:['补肾（咸/入肾）','kidney-supporting'],火:['温通（苦/温）','warming, unblocking'],金:['润肺（入肺）','lung-moistening'],木:['柔肝（酸味）','liver-softening (sour)']};
+const PART_EN={flower:'flower',leaf:'leaf',herb:'aerial part',peel:'peel',fruit:'fruit',seed:'seed',root:'root',slice:'slices',bark:'bark',fungus:'fungus',bulb:'bulb',stem:'stem',algae:'seaweed',sugar:'sugar',gel:'gelatin'};
+const CAT_EN={全部:'All',补益:'Tonics',清热:'Clear heat',解表:'Release exterior',理气:'Move qi',活血:'Move blood',安神:'Calming',平肝:'Calm liver',祛湿:'Resolve damp',消食:'Digestive',收涩:'Astringent',化痰:'Phlegm',温里:'Warm interior'};
+const PCAT_EN={补气养血:'Qi & Blood',滋阴润燥:'Nourish Yin',温阳散寒:'Warm & Dispel Cold',感冒初起:'Early Cold / Flu',清热解暑:'Clear Heat & Summer',润肺利咽:'Lung & Throat',疏肝安神:'Mood & Sleep',健脾祛湿:'Spleen & Damp',消食化积:'Digestion',明目养肝:'Eyes & Liver',活血降脂:'Circulation',配伍反例:'Counter-examples'};
+const BODY_EN={平和:['Balanced','yin–yang, qi and blood in harmony'],气虚:['Qi-deficient','tires easily, short of breath, catches colds'],阳虚:['Yang-deficient','feels cold, cold hands and feet'],阴虚:['Yin-deficient','dry mouth and throat, hot palms and soles'],血虚:['Blood-deficient','sallow complexion, dizziness, pale lips and nails'],痰湿:['Phlegm-damp','heavy build, sluggish, greasy tongue coat'],湿热:['Damp-heat','oily skin, bitter taste, yellow greasy coat'],血瘀:['Blood-stasis','dull complexion, bruises easily'],气郁:['Qi-stagnant','low mood, tense, chest tightness'],特禀:['Allergic','allergic constitution']};
+const ROLE_EN={君:'Sovereign',臣:'Minister',佐:'Assistant',使:'Envoy'};
+const TAG_EN={
+  补气:['Tonify qi','tonifying spleen and lung qi','fatigue, shortness of breath'],养血:['Nourish blood','nourishing blood','sallow complexion, dizziness, palpitations, pale lips and nails'],
+  滋阴:['Nourish yin','nourishing yin fluids','dry mouth and throat, hot palms and soles, night sweats'],温阳:['Warm yang','warming and tonifying yang','aversion to cold, cold limbs, cold aching lower back'],
+  温中:['Warm middle','warming the spleen and stomach','cold stomach pain, vomiting or loose stools after a chill'],清热:['Clear heat','clearing heat and draining fire','“internal heat”, bitter taste, sore throat, red eyes'],
+  解毒:['Detoxify','clearing heat and resolving toxicity','swollen sore throat, boils'],疏风:['Disperse wind','dispersing wind-heat','early wind-heat colds, headache, red eyes'],
+  解表:['Release exterior','releasing the exterior','early colds with chills and fever'],明目:['Brighten eyes','clearing the liver and brightening the eyes','dry tired eyes, blurred vision, heavy screen use'],
+  平肝:['Calm liver','calming rising liver yang','distending headache, dizziness, irritability'],安神:['Calm spirit','calming the heart and spirit','insomnia, vivid dreams, restlessness, palpitations'],
+  理气:['Move qi','moving qi and harmonizing the middle','bloating, belching'],疏肝:['Soothe liver','soothing the liver and relieving stagnation','low mood, rib-side distension'],
+  活血:['Move blood','invigorating blood and resolving stasis','dull complexion, fixed pain, sluggish menses'],止血:['Stop bleeding','resolving stasis and stopping bleeding','bleeding with stasis'],
+  祛湿:['Resolve damp','strengthening the spleen and resolving dampness','heaviness, fatigue, thick greasy tongue coat'],利水:['Drain water','promoting urination and draining dampness','edema, scanty urination'],
+  健脾:['Fortify spleen','fortifying the spleen and stomach','poor appetite, loose stools'],消食:['Digest food','relieving food stagnation','food stagnation, heavy meals not digesting'],
+  化痰:['Resolve phlegm','resolving phlegm','cough with copious phlegm'],润肺:['Moisten lung','moistening the lung and stopping cough','dry cough, autumn dryness'],
+  宣肺:['Open lung','diffusing the lung and expelling phlegm','cough, chest tightness, phlegm hard to bring up'],利咽:['Soothe throat','benefiting the throat','dry throat, hoarse voice'],
+  生津:['Generate fluids','generating fluids and quenching thirst','thirst, fluid depletion'],润肠:['Moisten bowels','moistening the intestines','dry constipation'],
+  收敛:['Astringe','astringing and securing','chronic cough, spontaneous sweating, chronic diarrhea'],固表:['Secure exterior','securing the exterior with defensive qi','spontaneous sweating, frequent colds'],
+  调和:['Harmonize','harmonizing the formula','—'],缓急:['Relieve spasm','relaxing spasms and relieving pain','cramping abdominal pain'],止呕:['Stop nausea','harmonizing the stomach and stopping nausea','nausea, vomiting'],
+  强筋:['Strengthen bones','tonifying liver and kidney, strengthening sinews and bones','sore, weak lower back and knees'],软坚:['Soften masses','resolving phlegm and softening hardness','phlegm nodules (see a doctor for diagnosis)']
+};
+const STATIC={
+  sub:['保健草药配伍模拟 · 以克为度 · 性味归经与五行推演','Herbal wellness formula simulator · dosed to the gram · nature, flavor, meridians & Five Phases'],
+  disc:['本工具依据《中国药典》常用量与中医药性理论做教学推演，不能替代医师辨证。慢病、服药中、孕期及儿童请先咨询医师或药师。','An educational model based on Chinese Pharmacopoeia dose ranges and TCM materia medica theory. It does not replace diagnosis by a qualified practitioner. With a chronic condition, current medication, pregnancy, or for children, consult a physician or pharmacist first.'],
+  cab:['药柜','Herb Cabinet'],lgCold:['寒凉','Cold / cool'],lgNeu:['平','Neutral'],lgHot:['温热','Warm / hot'],lgTip:['点击抽屉加入药方','Click a drawer to add it'],
+  lib:['方库','Formula Library'],formula:['药方','Formula'],doseG:['剂量 · 克','dose · grams'],clear:['清空','Clear'],
+  infuse:['泡水','Steep'],boil:['煮','Decoct'],water:['水量','Water'],temp:['水温','Water temp'],body:['体质','Constitution'],
+  perDay:['每日剂数','Doses per day'],days:['连续服用','Course length'],weight:['体重','Body weight'],
+  soak:['煎前冷水浸泡 30 分钟','Soak in cold water 30 min first'],preg:['孕期 / 备孕','Pregnant / trying to conceive'],
+  foot:['药性数值化规则：寒 −2、凉 −1.2、微寒 −1、平 0、微温 +1、温 +1.5、热 +2、大热 +3；药力 = 实际克数 ÷ 常用量中值 × 估算溶出率。五行按“五味入五脏”（酸木、苦火、甘土、辛金、咸水）与归经脏腑各半折算。溶出率为教学估算，受药材切制、产地和器具影响很大。','How the numbers work: nature is scored Cold −2, Cool −1.2, Slightly cold −1, Neutral 0, Slightly warm +1, Warm +1.5, Hot +2, Very hot +3. Potency = grams ÷ midpoint of the usual dose × estimated extraction rate. Five-Phase shares combine the five flavors (sour→Wood, bitter→Fire, sweet→Earth, pungent→Metal, salty→Water) and the meridian organs, half each. Extraction rates are teaching estimates and vary widely with cut, origin and cookware.']
+};
+/* 药材文本 */
+const EH=h=>ED.herbs[h.id]||{};
+const hn=h=>isEN()?(EH(h).n||h.n):h.n;
+const hnShort=h=>isEN()?hn(h).replace(/\s*\(.*\)\s*$/,''):h.n;
+const hpy=h=>{const m=(EH(h).n||'').match(/\(([^)]*)\)/);return m?m[1]:h.py};
+const hg=h=>isEN()?(EH(h).g||h.g):h.g;
+const hc=h=>isEN()?(EH(h).c||h.c):h.c;
+const hw=h=>isEN()?(EH(h).w||h.w):h.w;
+const hix=h=>isEN()?(EH(h).ix||h.ix):h.ix;
+const hnote=h=>isEN()?(EH(h).note!=null?EH(h).note:h.note):h.note;
+const natT=k=>L(k,NAT_EN[k]||k);
+const flavT=f=>isEN()?[...f].map(c=>FL_EN[c]||c).join('/'):f;
+const merT=h=>isEN()?h.mer.map(m=>MER_EN[m]).join(', '):h.m;
+const merN=m=>L(m,MER_EN[m]);
+const elN=e=>L(e,EL_EN[e]);
+const orgN=e=>L(ORG[e],ORG_EN[e]);
+const tagN=k=>L(k,TAG_EN[k][0]);
+const tagD=k=>L(TAGS[k][0],TAG_EN[k][1]);
+const tagF=k=>L(TAGS[k][1],TAG_EN[k][2]);
+const catN=c=>L(c,CAT_EN[c]||c);
+const pcatN=c=>L(c,PCAT_EN[c]||c);
+const bodyN=k=>L(k,BODY_EN[k][0]);
+const bodyD=k=>L(BODIES[k].d,BODY_EN[k][1]);
+const roleN=r=>L(r,ROLE_EN[r]);
+const partN=p=>L(PART[p].lab,PART_EN[p]);
+const pName=p=>isEN()?((ED.presets[p.n]||{}).n||p.n):p.n;
+const pSrc=p=>isEN()?((ED.presets[p.n]||{}).src||p.src):p.src;
+const pDesc=p=>isEN()?((ED.presets[p.n]||{}).d||p.d):p.d;
+const cName=x=>isEN()?((ED.combos[x.n]||{}).n||x.n):x.n;
+const cText=x=>isEN()?((ED.combos[x.n]||{}).t||x.t):x.t;
+const LIST=L=>L.join(isEN()?', ':'、');
+const SEP=()=>L('；','; ');
+const COLON=()=>L('：',': ');
+function applyStatic(){
+  document.documentElement.lang=isEN()?'en':'zh-CN';
+  document.title=L('百草衡','Baicao Heng — Herbal Formula Simulator');
+  document.querySelectorAll('[data-i]').forEach(el=>{const v=STATIC[el.dataset.i];if(v)el.textContent=v[isEN()?1:0]});
+  $('#q').placeholder=L('搜药名、拼音或功效，如：明目、安神','Search name, pinyin or action, e.g. sleep, eyes');
+  $('#lang').innerHTML=isEN()?'中文 <span>/ EN</span>':'English <span>/ 中</span>';
+  $('#lang').setAttribute('aria-label',L('切换到英文','Switch to Chinese'));
+  $('#libToggle').textContent=$('#libBody').hidden?L('展开','Show'):L('收起','Hide');
+  [...$('#perDay').options].forEach(o=>o.textContent=L(`每日 ${o.value} 剂`,`${o.value} dose${o.value>1?'s':''} / day`));
+  $('#body').innerHTML=Object.keys(BODIES).map(k=>`<option value="${k}">${bodyN(k)} · ${bodyD(k)}</option>`).join('');
+  $('#body').value=S.body;
+}
+
+/* ---------- 状态 ---------- */
+let S={items:[],method:'boil',water:700,temp:95,minutes:30,soak:true,body:'平和',preg:false,perDay:1,days:14,weight:60,lang:'zh'};
+let cat='全部';
+const KEY='baicaoheng-v1';
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
+function load(){try{const r=localStorage.getItem(KEY);if(r){const o=JSON.parse(r);if(o&&Array.isArray(o.items)){S=Object.assign(S,o);S.items=S.items.filter(i=>BY[i.id]);return true}}}catch(e){}return false}
+function defFlags(h){return {late:h.sp.includes('late'),first:h.sp.includes('first'),crush:h.sp.includes('crush'),melt:h.sp.includes('melt'),honey:h.sp.includes('honey')}}
+function applyPreset(p){
+  S.method=p.m;S.water=p.w;S.minutes=p.mi;S.temp=p.t||95;S.soak=!!p.soak;
+  S.items=p.items.map(([id,g])=>({id,g,fl:defFlags(BY[id])}));
+  S.pn=p.n;
+}
+let libCat=null;
+function renderLib(){
+  if(!libCat){const cur=PRESETS.find(p=>p.n===S.pn);libCat=cur?cur.c:PCATS[0]}
+  $('#libCount').textContent=L(`${PRESETS.length} 方 · ${PCATS.length} 类`,`${PRESETS.length} formulas · ${PCATS.length} groups`);
+  $('#libcats').innerHTML=PCATS.map(c=>`<button class="chip" aria-pressed="${c===libCat}" data-c="${c}">${pcatN(c)} <span class="num">${PRESETS.filter(p=>p.c===c).length}</span></button>`).join('');
+  $('#lib').innerHTML=PRESETS.map((p,i)=>p.c!==libCat?'':`<button class="recipe${p.c==='配伍反例'?' bad':''}" data-i="${i}" aria-current="${p.n===S.pn}">
+    <span class="rt"><b>${pName(p)}</b><span class="mth">${p.m==='infuse'?L('泡水','Steep'):L('煮','Decoct')} · ${p.mi} ${L('分','min')}</span></span>
+    <small>${pDesc(p)}</small><span class="hs">${p.items.map(([id,g])=>`${hnShort(BY[id])} ${g}g`).join(isEN()?', ':' ')}</span></button>`).join('');
+}
+function renderPnote(){
+  const p=PRESETS.find(x=>x.n===S.pn);const el=$('#pnote');
+  el.hidden=!p;if(p)el.innerHTML=`<b>${pName(p)}</b> <span class="muted">${pSrc(p)}</span> — ${pDesc(p)}`;
+}
+
+/* ---------- 计算 ---------- */
+const $=s=>document.querySelector(s);
+const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+const r1=v=>Math.round(v*10)/10;
+function mid(h){return (h.d[0]+h.d[1])/2}
+
+function extraction(h,it){
+  const P=PART[h.p];let e;
+  it.fl=it.fl||defFlags(h);
+  if(h.sp.includes('melt'))return it.fl.melt?.95:(S.method==='boil'?.55:.3);
+  if(S.method==='infuse'){
+    const tf=clamp(.72+(S.temp-80)*.014,.6,1);
+    const time=1-Math.exp(-S.minutes/P.ti);
+    e=P.inf*tf*Math.min(1,time/.85);
+    if(h.sp.includes('crush'))e*=it.fl.crush?1.3:.8;
+  }else{
+    let min=S.minutes,loss=1,tb=P.tb;
+    if(h.sp.includes('late')){
+      if(it.fl.late){min=Math.min(min,5);tb=3}
+      else loss=Math.exp(-Math.max(0,min-8)/20);
+    }
+    if(h.sp.includes('first')&&it.fl.first)min+=30;
+    const time=1-Math.exp(-min/tb);
+    e=Math.min(1,time/.85)*loss;
+    if(!S.soak&&['root','bark','stem','fungus','seed','bulb','slice'].includes(h.p))e*=.88;
+    if(h.sp.includes('crush')&&!it.fl.crush)e*=.75;
+  }
+  return clamp(e,0,.98);
+}
+
+function natLabel(T){
+  if(T<=-1.6)return '寒';if(T<=-.6)return '凉';if(T<=-.2)return '微凉';
+  if(T<.2)return '平';if(T<.6)return '微温';if(T<1.6)return '温';return '热';
+}
+function natColor(t){return t<-.2?'var(--cold)':t>.2?'var(--hot)':'var(--muted)'}
+
+function compute(){
+  const rows=S.items.map(it=>{
+    const h=BY[it.id],e=extraction(h,it),g=+it.g||0;
+    return {it,h,g,e,s:g/mid(h)*e,ex:g*e};
+  }).filter(r=>r.g>0);
+  const S0=rows.reduce((a,r)=>a+r.s,0)||1;
+  const G=rows.reduce((a,r)=>a+r.g,0);
+  const T=rows.reduce((a,r)=>a+r.s*r.h.t,0)/S0;
+  const fl=Object.fromEntries(FL5.map(k=>[k,0]));
+  const el=Object.fromEntries(EL.map(k=>[k,0]));
+  const mer={};const tags={};
+  let ni=0;
+  rows.forEach(r=>{
+    const fs=[...r.h.f].map(c=>c==='涩'?'酸':c==='淡'?'甘':c);
+    fs.forEach(c=>{fl[c]+=r.s/fs.length;el[FL2EL[c]]+=.5*r.s/fs.length});
+    r.h.mer.forEach(m=>{mer[m]=(mer[m]||0)+r.s/r.h.mer.length;el[MER2EL[m]]+=.5*r.s/r.h.mer.length});
+    if(r.h.t>0)el['火']+=r.s*r.h.t*.06; if(r.h.t<0)el['水']+=r.s*-r.h.t*.06;
+    Object.entries(r.h.fx).forEach(([k,v])=>{tags[k]=(tags[k]||0)+v*r.s});
+    ni+=r.h.ni*r.s;
+  });
+  const sum=o=>Object.values(o).reduce((a,b)=>a+b,0)||1;
+  const norm=o=>{const t=sum(o);return Object.fromEntries(Object.entries(o).map(([k,v])=>[k,v/t]))};
+  const exTotal=rows.reduce((a,r)=>a+r.ex,0);
+  let out,evap=0;
+  if(S.method==='infuse'){out=S.water-G*1.2}
+  else{evap=S.minutes*2.5+(rows.some(r=>r.h.sp.includes('first')&&r.it.fl.first)?30*2.5:0);out=S.water-evap-G*2.5}
+  out=Math.max(0,Math.round(out));
+  const conc=out>0?exTotal/out*100:99;
+  return {rows,S0,G,T,fl:norm(fl),el:norm(el),mer:norm(mer),tags,tagN:norm(tags),ni:ni/S0,exTotal,out,evap,conc};
+}
+
+/* ---------- 药柜 ---------- */
+function renderCats(){
+  $('#cats').innerHTML=CATS.map(c=>`<button class="chip" aria-pressed="${c===cat}" data-c="${c}">${catN(c)}</button>`).join('');
+}
+function renderDrawers(){
+  const q=$('#q').value.trim().toLowerCase();
+  const ins=new Set(S.items.map(i=>i.id));
+  const hit=h=>!q||h.n.includes(q)||h.py.includes(q)||h.g.includes(q)||h.id.includes(q)||Object.keys(h.fx).some(k=>k.includes(q)||TAG_EN[k][0].toLowerCase().includes(q)||TAG_EN[k][2].toLowerCase().includes(q))||(EH(h).n||'').toLowerCase().includes(q)||(EH(h).g||'').toLowerCase().includes(q);
+  const list=HERBS.filter(h=>(cat==='全部'||h.cat===cat)&&hit(h));
+  $('#cabCount').textContent=L(`${list.length} / ${HERBS.length} 味`,`${list.length} / ${HERBS.length} herbs`);
+  $('#drawers').innerHTML=list.map(h=>`<button class="drawer${ins.has(h.id)?' in':''}" data-id="${h.id}" title="${hg(h)}" style="--c:${natColor(h.t)}"><span class="knob"></span><b>${hnShort(h)}</b><small>${isEN()?`${hpy(h)} · ${natT(h.tl)}`:`${h.tl} · ${h.f}`}</small></button>`).join('')||`<p class="muted" style="grid-column:1/-1">${L('没有匹配的药材','No matching herbs')}</p>`;
+}
+
+/* ---------- 药方行 ---------- */
+function roleMap(c){
+  const map={};const rs=[...c.rows].sort((a,b)=>b.s-a.s);
+  if(!rs.length)return map;
+  let jun=rs[0];
+  if((jun.h.fx.调和||0)>=3&&rs.length>1)jun=rs[1];
+  const ids=new Set(rs.map(r=>r.h.id));
+  const cb=COMBOS.find(x=>x.jun&&matchCombo(x,ids));
+  if(cb){const j=rs.find(r=>cb.jun.includes(r.h.id));if(j)jun=j}
+  map[jun.h.id]='君';
+  const jt=Object.entries(jun.h.fx).sort((a,b)=>b[1]-a[1]).slice(0,3).map(x=>x[0]).filter(k=>k!=='调和');
+  rs.forEach(r=>{
+    if(r===jun)return;
+    if((r.h.fx.调和||0)>=3||(r.h.id==='dazao'&&rs.some(x=>x.h.id==='shengjiang'))||(r.h.id==='shengjiang'&&rs.some(x=>x.h.id==='dazao')&&jun.h.id!=='shengjiang'))map[r.h.id]='使';
+    else if(Object.entries(r.h.fx).some(([k,v])=>jt.includes(k)&&v>=2))map[r.h.id]='臣';
+    else map[r.h.id]='佐';
+  });
+  return map;
+}
+function flagsHTML(h,it){
+  const out=[];
+  h.sp.forEach(k=>{
+    if(k==='late'&&S.method==='boil')out.push(`<button class="flag" data-f="late" aria-pressed="${it.fl.late}">${L('后下','Add last')}</button>`);
+    if(k==='first'&&S.method==='boil')out.push(`<button class="flag" data-f="first" aria-pressed="${it.fl.first}">${L('先煎','Cook first')}</button>`);
+    if(k==='crush')out.push(`<button class="flag" data-f="crush" aria-pressed="${it.fl.crush}">${h.id==='dazao'?L('掰开','Split open'):L('捣碎','Crush')}</button>`);
+    if(k==='separate')out.push(`<span class="flag note">${L('宜另煎兑服','Best simmered separately')}</span>`);
+    if(k==='powder')out.push(`<span class="flag note">${L('宜研粉冲服 1–3g','Best taken as powder, 1–3 g')}</span>`);
+    if(k==='wrap')out.push(`<span class="flag note">${L('包煎','Cook in a bag')}</span>`);
+    if(k==='melt')out.push(`<button class="flag" data-f="melt" aria-pressed="${it.fl.melt}">${L('烊化','Melt separately')}</button>`);
+    if(k==='honey')out.push(`<button class="flag" data-f="honey" aria-pressed="${it.fl.honey}">${L('温水调服','Stir in when warm')}</button>`);
+  });
+  return out.join('');
+}
+function doseBar(h,g){
+  const top=Math.max(h.d[1]*1.6,g*1.05);
+  const Lf=h.d[0]/top*100,W=(h.d[1]-h.d[0])/top*100,M=clamp(g/top*100,0,100);
+  return `<div class="track"><div class="zone" style="left:${Lf}%;width:${W}%"></div><div class="mark${g>h.d[1]?' over':''}" style="left:${M}%"></div></div><small>${L('常用量','Usual dose')} ${h.d[0]}–${h.d[1]} g</small>`;
+}
+function renderRows(){
+  const box=$('#rows');
+  if(!S.items.length){box.innerHTML=`<div class="empty">${L('药方为空。从左侧药柜点选药材，或从上方方库载入一个经典方。','The formula is empty. Pick herbs from the cabinet, or load a classic formula from the library above.')}</div>`;$('#total').innerHTML='';return}
+  box.innerHTML=S.items.map(it=>{
+    const h=BY[it.id];
+    return `<div class="row" data-id="${h.id}">
+      <div class="rname"><div class="t"><span class="natdot" style="--c:${natColor(h.t)}"></span><b>${hn(h)}</b><span class="role" data-role></span><span class="flags">${flagsHTML(h,it)}</span></div>
+      <small>${natT(h.tl)} · ${flavT(h.f)} · ${isEN()?`enters ${merT(h)}`:`归${h.m}经`} · ${partN(h.p)}</small></div>
+      <div class="stepper"><button data-act="dec" aria-label="${L('减 1 克','Minus 1 g')}">−</button><input type="number" id="g-${h.id}" min="0" max="120" step="0.5" value="${it.g}" aria-label="${hn(h)} ${L('克数','grams')}"><span>g</span><button data-act="inc" aria-label="${L('加 1 克','Plus 1 g')}">+</button></div>
+      <div class="dose" data-dose>${doseBar(h,it.g)}</div>
+      <div class="eff" data-eff></div>
+      <button class="rm" aria-label="${L('移除','Remove')} ${hn(h)}">×</button>
+    </div>`}).join('');
+}
+function updateRowLive(c){
+  const roles=roleMap(c);
+  S.items.forEach(it=>{
+    const row=document.querySelector(`.row[data-id="${it.id}"]`);if(!row)return;
+    const h=BY[it.id],e=extraction(h,it);
+    row.querySelector('[data-dose]').innerHTML=doseBar(h,+it.g||0);
+    row.querySelector('[data-eff]').innerHTML=`<b>${Math.round(e*100)}%</b>${L('溶出','extracted')}`;
+    const rl=row.querySelector('[data-role]');const r=roles[it.id];
+    rl.textContent=r?roleN(r):'';rl.hidden=!r;rl.className='role'+(r==='君'?' jun':'');
+  });
+  const n=S.items.length,G=r1(c.G),D=r1(c.G*S.perDay),C=r1(c.G*S.perDay*S.days);
+  $('#total').innerHTML=n?L(
+    `<span>共 <b class="num">${n}</b> 味 · 每剂 <b class="num">${G}</b> g${S.perDay>1?` · 每日 <b class="num">${D}</b> g`:''} · 连服 ${S.days} 天共 <b class="num">${C}</b> g</span><span>估算溶入汤液 <b class="num">${r1(c.exTotal*0.3)}</b> g 可溶物</span>`,
+    `<span><b class="num">${n}</b> herbs · <b class="num">${G}</b> g per dose${S.perDay>1?` · <b class="num">${D}</b> g per day`:''} · <b class="num">${C}</b> g over ${S.days} days</span><span>≈ <b class="num">${r1(c.exTotal*0.3)}</b> g solids dissolved</span>`):'';
+}
+
+/* ---------- 烹制 ---------- */
+function syncBrewUI(){
+  $('#m-infuse').setAttribute('aria-pressed',S.method==='infuse');
+  $('#m-boil').setAttribute('aria-pressed',S.method==='boil');
+  $('#tempF').hidden=S.method!=='infuse';
+  $('#soakF').hidden=S.method!=='boil';
+  $('#minL').textContent=S.method==='infuse'?L('焖泡时间','Steeping time'):L('文火煎煮时间（沸后计）','Simmer time (after boiling)');
+  $('#minutes').max=S.method==='infuse'?40:90;
+  $('#minutes').min=S.method==='infuse'?2:5;
+  S.minutes=clamp(S.minutes,+$('#minutes').min,+$('#minutes').max);
+  $('#water').value=S.water;$('#temp').value=S.temp;$('#minutes').value=S.minutes;
+  $('#soak').checked=S.soak;$('#preg').checked=S.preg;$('#body').value=S.body;
+  $('#perDay').value=S.perDay;$('#days').value=S.days;$('#weight').value=S.weight;
+  $('#daysO').textContent=S.days+L(' 天',' days');$('#weightO').textContent=S.weight+' kg';
+  $('#waterO').textContent=S.water+' ml';$('#tempO').textContent=S.temp+' °C';$('#minO').textContent=S.minutes+L(' 分钟',' min');
+  $('#mhint').textContent=S.method==='infuse'?L('适合花、叶、薄片类；根茎溶出有限','Suits flowers, leaves and thin slices; roots extract poorly'):L('适合根茎、果实、种子；芳香药宜后下','Suits roots, fruits and seeds; add aromatic herbs last');
+}
+function hex2rgb(h){const n=parseInt(h.slice(1),16);return [n>>16&255,n>>8&255,n&255]}
+function brewColor(c){
+  const base=getComputedStyle(document.documentElement).getPropertyValue('--brew-base').trim()||'#F3F1E4';
+  if(!c.rows.length)return base;
+  let w=0,rgb=[0,0,0];
+  c.rows.forEach(r=>{const k=r.ex;const x=hex2rgb(r.h.col);rgb=rgb.map((v,i)=>v+x[i]*k);w+=k});
+  rgb=rgb.map(v=>v/(w||1));
+  const k=1-Math.exp(-c.conc/4);const b=hex2rgb(base.length===7?base:'#F3F1E4');
+  const m=rgb.map((v,i)=>Math.round(b[i]*(1-k)+v*k));
+  return `rgb(${m.join(',')})`;
+}
+function renderCup(c){
+  const col=brewColor(c);
+  const fillH=c.out<=0?2:clamp(c.out/Math.max(S.water,1)*62,6,62);
+  const y=96-fillH;
+  const cup=S.method==='infuse'
+    ?`<path d="M22 30 H98 L90 100 Q88 106 82 106 H38 Q32 106 30 100 Z" fill="none" stroke="var(--muted)" stroke-width="2"/>
+       <clipPath id="cc"><path d="M22 30 H98 L90 100 Q88 106 82 106 H38 Q32 106 30 100 Z"/></clipPath>
+       <rect x="0" y="${y+8}" width="120" height="120" fill="${col}" clip-path="url(#cc)"/>
+       <path d="M98 44 Q114 46 110 64 Q106 78 93 78" fill="none" stroke="var(--muted)" stroke-width="2"/>`
+    :`<path d="M14 34 H106 V96 Q106 106 96 106 H24 Q14 106 14 96 Z" fill="none" stroke="var(--muted)" stroke-width="2"/>
+       <clipPath id="cc"><path d="M14 34 H106 V96 Q106 106 96 106 H24 Q14 106 14 96 Z"/></clipPath>
+       <rect x="0" y="${y+8}" width="120" height="120" fill="${col}" clip-path="url(#cc)"/>
+       <path d="M6 40 H14 M106 40 H114" stroke="var(--muted)" stroke-width="3" stroke-linecap="round"/>
+       <path d="M10 30 H110" stroke="var(--muted)" stroke-width="2"/>`;
+  const steam=`<path d="M46 22 q-6 -6 0 -12 q6 -6 0 -12 M62 22 q-6 -6 0 -12 q6 -6 0 -12 M78 22 q-6 -6 0 -12 q6 -6 0 -12" fill="none" stroke="var(--muted)" stroke-width="1.5" opacity=".45"/>`;
+  $('#cup').innerHTML=steam+cup;
+}
+function concLabel(x){const i=x<1?0:x<2.5?1:x<6?2:x<10?3:4;return L(['很淡','清淡','适中','浓','很浓'][i],['Very light','Light','Medium','Strong','Very strong'][i])}
+function tasteText(c){
+  const ord=Object.entries(c.fl).sort((a,b)=>b[1]-a[1]),parts=[];
+  const zh={酸:'酸',苦:'苦',甘:'甘甜',辛:'辛香',咸:'微咸'},en={酸:'sour',苦:'bitter',甘:'sweet',辛:'spicy-aromatic',咸:'slightly salty'};
+  ord.forEach(([k,v])=>{if(v>.35)parts.push(L(zh[k]+'为主','mainly '+en[k]));else if(v>.15)parts.push(L('带'+zh[k],'a hint of '+en[k]))});
+  return parts.join(L('，',', '))||L('味淡','mild');
+}
+function renderBrew(c){
+  renderCup(c);
+  const G=c.G;
+  const sug=S.method==='boil'?Math.round((G*8+S.minutes*2.5+200)/50)*50:Math.max(250,Math.round(G*25/50)*50);
+  const st=[];
+  st.push([L('出汤量','Yield'),`<span class="num">${c.out}</span> ml`+(S.method==='boil'?` <span class="muted">${L(`（蒸发约 ${Math.round(c.evap)} ml）`,`(≈${Math.round(c.evap)} ml evaporated)`)}</span>`:'')]);
+  st.push([L('浓度','Strength'),`${concLabel(c.conc)} <span class="muted num">${r1(c.conc)} g/100ml ${L('溶出物','extract')}</span>`]);
+  st.push([L('口感','Taste'),c.rows.length?tasteText(c):'—']);
+  st.push([L('汤色','Color'),`<span style="display:inline-block;width:12px;height:12px;border-radius:2px;border:1px solid var(--line);vertical-align:-1px;background:${brewColor(c)}"></span>`]);
+  $('#brewStats').innerHTML=st.map(([a,b])=>`<dt>${a}</dt><dd>${b}</dd>`).join('');
+  $('#waterHint').textContent=c.rows.length?(S.method==='boil'
+    ?L(`按本方药量，建议加水约 ${sug} ml（没过药面 2–3 cm，武火煮沸后转文火）。`,`For this amount of herbs, use about ${sug} ml of water (2–3 cm above the herbs; bring to a boil on high, then simmer on low).`)
+    :L(`按本方药量，建议加水约 ${sug} ml，可续水冲泡。`,`For this amount of herbs, use about ${sug} ml of water; you can top up and re-steep.`)):'';
+}
+
+/* ---------- 分析 ---------- */
+function bars(entries,colorFn,labFn=k=>k,fmt=v=>Math.round(v*100)+'%'){
+  const mx=Math.max(...entries.map(e=>e[1]),.0001);
+  return `<div class="bars">${entries.map(([k,v])=>`<div class="bar"><span class="lab">${labFn(k)}</span><span class="tr"><span class="fl" style="display:block;width:${v/mx*100}%;--c:${colorFn(k)}"></span></span><span class="v">${fmt(v)}</span></div>`).join('')}</div>`;
+}
+function radarSVG(el){
+  const cx=120,cy=118,R=86;
+  const pt=(i,r)=>{const a=-Math.PI/2+i*2*Math.PI/5;return [cx+r*Math.cos(a),cy+r*Math.sin(a)]};
+  const mx=Math.max(.4,...Object.values(el));
+  const outer=EL.map((_,i)=>pt(i,R).join(',')).join(' ');
+  const rings=[.33,.66].map(f=>`<polygon points="${EL.map((_,i)=>pt(i,R*f).join(',')).join(' ')}" fill="none" stroke="var(--line)"/>`).join('');
+  const star=[0,2,4,1,3,0].map(i=>pt(i,R).join(',')).join(' ');
+  const val=EL.map((e,i)=>pt(i,R*el[e]/mx).join(',')).join(' ');
+  const dots=EL.map((e,i)=>{const [x,y]=pt(i,R*el[e]/mx);return `<circle cx="${x}" cy="${y}" r="3.5" fill="var(${ELVAR[e]})"/>`}).join('');
+  const labs=EL.map((e,i)=>{const [x,y]=pt(i,R+18);return `<text x="${x}" y="${y+5}" text-anchor="middle" font-family="${isEN()?'var(--sans)':'var(--serif)'}" font-size="${isEN()?12:15}" font-weight="700" fill="var(${ELVAR[e]})">${elN(e)}</text><text x="${x}" y="${y+19}" text-anchor="middle" font-size="10" fill="var(--muted)" font-family="var(--mono)">${Math.round(el[e]*100)}%</text>`}).join('');
+  return `<svg viewBox="0 0 240 250" role="img" aria-label="${L('五行分布','Five Phases distribution')}">
+    <polygon points="${outer}" fill="none" stroke="var(--muted)" stroke-opacity=".5"/>${rings}
+    <polyline points="${star}" fill="none" stroke="var(--muted)" stroke-dasharray="3 3" stroke-opacity=".35"/>
+    <polygon points="${val}" fill="var(--accent)" fill-opacity=".18" stroke="var(--accent)" stroke-width="2"/>${dots}${labs}
+    <text x="120" y="246" text-anchor="middle" font-size="9.5" fill="var(--muted)">${L('外环顺时针为相生 · 虚线五角为相克','Outer ring clockwise: generating · dashed star: controlling')}</text></svg>`;
+}
+function wuxingText(el){
+  const o=Object.entries(el).sort((a,b)=>b[1]-a[1]);
+  const [e1,p1]=o[0],[e5,p5]=o[4];const R=[];
+  if(p1-p5<.12)R.push(L('五行分布较均衡，药力平和，适合日常调养。','The Five Phases are fairly balanced; the formula is gentle and suited to everyday maintenance.'));
+  else R.push(L(`以<b style="color:var(${ELVAR[e1]})">${e1}</b>为主（${Math.round(p1*100)}%），药力重在${ORG[e1]}。`,`<b style="color:var(${ELVAR[e1]})">${EL_EN[e1]}</b> dominates (${Math.round(p1*100)}%); the formula acts mainly on the ${ORG_EN[e1]}.`));
+  if(p1>.36)R.push(L(`${e1}气偏盛，长期单用时需防相乘：${CHENG_TXT[e1]}；过盛时还可能${WU_TXT[e1]}。可酌加${PROTECT[KE[e1]][0]}之品以护${ORG[KE[e1]]}。`,
+    `${EL_EN[e1]} is strong. With long-term use alone, watch for overacting: ${CHENG_EN[e1]}. In excess it may also ${WU_EN[e1]}. Consider adding ${PROTECT[KE[e1]][1]} herbs to protect the ${ORG_EN[KE[e1]]}.`));
+  EL.forEach(m=>{const ch=SHENG[m];if(el[m]>.17&&el[ch]>.17)R.push(L(SHENG_TXT[m]+'。',SHENG_EN[m]+'.'))});
+  if(p5<.06&&p1-p5>=.12)R.push(L(`${e5}（${ORG[e5]}）几乎未涉及。`,`${EL_EN[e5]} (${ORG_EN[e5]}) is barely addressed.`));
+  return R.map(x=>`<p>${x}</p>`).join('');
+}
+function topTags(c,n=4){return Object.entries(c.tagN).filter(([k])=>k!=='调和').sort((a,b)=>b[1]-a[1]).slice(0,n)}
+
+/* ---------- 每日总量 · 疗程累积 ---------- */
+/* 单味药久服上限（天）与理由 */
+const LT={
+  renshen:[28,'长期服用可出现失眠、烦躁、血压升高（人参滥用综合征）'],
+  xiyangshen:[42,'补益药久服易壅滞，宜间歇'],
+  juemingzi:[28,'蒽醌类长期服用可致结肠黑变病、泻下依赖'],
+  pangdahai:[7,'不宜长期代茶，易致脾胃虚寒、便溏'],
+  xingren:[7,'有小毒，不宜久服'],
+  honghua:[14,'活血力强，久服耗血动血'],
+  danshen:[28,'久服影响凝血，需监测'],sanqi:[28,'久服影响凝血，需监测'],chuanxiong:[28,'辛温走窜，久服耗气伤阴'],
+  jinyinhua:[14,'寒凉清热药，久服伤脾胃阳气'],pugongying:[14,'寒凉清热药，久服伤脾胃阳气'],xiakucao:[14,'苦寒清肝，久服伤脾胃'],
+  lvdou:[30,'性寒，久服伤脾胃阳气'],lianqiao:[14,'苦寒，久服伤脾胃'],danzhuye:[21,'寒凉利尿，久服伤阴'],
+  bohe:[14,'辛散之品，久服耗气伤阴'],zisuye:[10,'辛温发散，感冒愈后即停'],congbai:[7,'发汗解表，感冒愈后即停'],
+  haizao:[14,'含碘，长期服用影响甲状腺功能'],
+  yumixu:[30,'利水药久服伤津、影响电解质'],chixiaodou:[30,'利水药久服伤津，令人消瘦'],yiyiren:[42,'渗利之品，久服伤津'],
+  rougui:[14,'辛热久服伤阴；香豆素长期累积有肝损伤风险'],dingxiang:[14,'辛温久服助火'],
+  shanzha:[28,'酸性较强，久服伤胃、损齿'],laifuzi:[14,'破气消导，久服耗气'],maiya:[21,'消导之品，积消即停'],shenqu:[21,'消导之品，积消即停'],
+  wumei:[28,'酸涩收敛，久服易敛邪'],
+  huanglian:[14,'大苦大寒，久服伤胃败胃、苦燥伤阴'],huangqin:[21,'苦寒，久服伤脾胃'],zhimu:[21,'苦寒滑肠，久服伤脾'],
+  banlangen:[7,'苦寒，不宜作长期预防饮用'],yuxingcao:[14,'寒凉清热，久服伤脾胃'],baimaogen:[21,'甘寒利尿，久服伤阳伤津'],
+  yinyanghuo:[28,'辛温助阳，久服伤阴；有肝损伤个案'],heshouwu:[28,'有药物性肝损伤报道，久服需监测肝功能'],
+  ejiao:[42,'滋腻碍胃，久服宜配陈皮等理气'],yimucao:[14,'活血利水，久服耗血'],taoren:[7,'有小毒，不宜久服'],niuxi:[28,'活血下行，久服耗血'],
+};
+function ltReason(id,zh,key){return isEN()?(ED.lt[key||id]||zh):zh}
+function dosing(c){
+  const pd=S.perDay,days=S.days;
+  const rows=c.rows.map(r=>{
+    const daily=r.g*pd;let lt=LT[r.h.id]?[LT[r.h.id][0],ltReason(r.h.id,LT[r.h.id][1])]:null;
+    if(r.h.id==='gancao')lt=daily>6?[14,ltReason('gancao','甘草酸累积致假性醛固酮增多（低钾、水肿、高血压）','gancao_hi')]:daily>3?[28,ltReason('gancao','甘草酸累积致假性醛固酮增多','gancao_mid')]:null;
+    if(!lt&&r.h.t<=-2)lt=[21,L('性寒，久服伤脾胃阳气','cold in nature; prolonged use damages spleen–stomach yang')];
+    return {r,daily,total:daily*days,lt};
+  });
+  const dailyTotal=rows.reduce((a,x)=>a+x.daily,0);
+  /* 关键成分每日摄入估算（含量 × 溶出率） */
+  const I=[];const f=id=>rows.find(x=>x.r.h.id===id);
+  const gc=f('gancao');if(gc)I.push({k:L('甘草酸','Glycyrrhizin'),v:gc.daily*30*gc.r.e,lim:100,u:'mg',n:L('按含量约 3% 估算；欧盟 SCF 建议长期摄入不超过 100 mg/日','Assumes ~3% content; the EU SCF advises no more than 100 mg/day for regular intake')});
+  const rg=f('rougui');if(rg)I.push({k:L('香豆素','Coumarin'),v:rg.daily*4*rg.r.e,lim:.1*S.weight,u:'mg',n:L(`中国肉桂约 0.4% 估算；EFSA 可耐受摄入 0.1 mg/kg·日（按 ${S.weight} kg）`,`Assumes ~0.4% in cassia; EFSA tolerable intake 0.1 mg/kg/day (at ${S.weight} kg)`)});
+  const ch=f('chaye');if(ch)I.push({k:L('咖啡因','Caffeine'),v:ch.daily*30*ch.r.e,lim:S.preg?200:400,u:'mg',n:L(`绿茶约 3% 估算；成人上限 ${S.preg?'200（孕期）':'400'} mg/日，另需计入咖啡、可乐`,`Assumes ~3% in green tea; adult limit ${S.preg?'200 (pregnancy)':'400'} mg/day — count coffee and cola too`)});
+  const SUG={hongtang:.95,bingtang:1,fengmi:.8,longyan:.65,dazao:.6};
+  const sug=rows.filter(x=>SUG[x.r.h.id]);
+  if(sug.length)I.push({k:L('糖','Sugar'),v:sug.reduce((a,x)=>a+x.daily*SUG[x.r.h.id]*x.r.e,0),lim:25,u:'g',n:L('红糖、冰糖、蜂蜜、龙眼肉、大枣中溶入汤液的糖；WHO 建议游离糖最好 < 25 g/日','Sugar dissolved from brown sugar, rock sugar, honey, longan and jujube; WHO suggests free sugars ideally < 25 g/day')});
+  /* 建议最长连服天数 */
+  const lim=[];
+  const aT=Math.abs(c.T);
+  lim.push([aT>1.2?14:aT>.6?28:56,aT>.6?L(`全方药性${natLabel(c.T)}，偏性${aT>1.2?'明显':'较明显'}`,`formula is ${NAT_EN[natLabel(c.T)].toLowerCase()}, a ${aT>1.2?'strong':'noticeable'} bias`):L('全方药性平和','formula is mild in nature')]);
+  if(c.ni>.6)lim.push([28,L('滋腻药比重大，久服碍胃','many rich, cloying tonics; prolonged use burdens digestion')]);
+  rows.forEach(x=>{if(x.lt)lim.push([x.lt[0],`${hnShort(x.r.h)}${COLON()}${x.lt[1]}`])});
+  I.forEach(x=>{if(x.v>x.lim)lim.push([7,L(`${x.k}每日摄入超过参考上限`,`daily ${x.k.toLowerCase()} exceeds the reference limit`)])});
+  const maxDays=Math.min(...lim.map(x=>x[0]));
+  const binding=lim.filter(x=>x[0]===maxDays).map(x=>x[1]);
+  const rest=Math.max(3,Math.round(maxDays/4));
+  const A=[];
+  if(days>maxDays)A.push([days>maxDays*2?'red':'amber',L('疗程过长','Course too long'),L(`计划连服 ${days} 天，超过建议的 ${maxDays} 天。限制因素：${binding.join('；')}。`,`You plan ${days} days in a row, beyond the suggested ${maxDays}. Limiting factor: ${binding.join('; ')}.`)]);
+  const capDay=S.method==='infuse'?60:150;
+  if(dailyTotal>capDay)A.push(['amber',L('每日总量偏大','High daily total'),L(`每日总药量 ${r1(dailyTotal)} g，超过${S.method==='infuse'?'代茶饮':'保健汤剂'}一般上限约 ${capDay} g。`,`Daily total ${r1(dailyTotal)} g exceeds the usual ceiling of about ${capDay} g for a ${S.method==='infuse'?'herbal tea':'wellness decoction'}.`)]);
+  I.forEach(x=>{if(x.v>x.lim)A.push([days>14?'red':'amber',L(`${x.k}超量`,`${x.k} over limit`),L(`估算每日 ${r1(x.v)} ${x.u}，超过参考上限 ${r1(x.lim)} ${x.u}${days>14?`，连服 ${days} 天累积风险较高`:''}。`,`Estimated ${r1(x.v)} ${x.u}/day, above the reference limit of ${r1(x.lim)} ${x.u}${days>14?`; over ${days} days the cumulative risk is higher`:''}.`)])});
+  return {rows,I,dailyTotal,courseTotal:dailyTotal*days,maxDays,binding,rest,A};
+}
+function dosingCard(d){
+  const scale=Math.max(S.days,d.maxDays)*1.15;
+  const Z=d.maxDays/scale*100,M=S.days/scale*100;
+  const over=S.days>d.maxDays;
+  const DY=L(' 天',' d');
+  const tbl=d.rows.map(x=>{
+    const h=x.r.h,st=x.daily>h.d[1]?['amber',L('超日量','Over daily')]:(x.lt&&S.days>x.lt[0])?['amber',L('超久服','Too long')]:['ok',L('正常','OK')];
+    return `<tr><td>${hnShort(h)}</td><td class="num">${r1(x.r.g)}</td><td class="num">${r1(x.daily)}</td><td class="num muted">${h.d[0]}–${h.d[1]}</td><td class="num">${r1(x.total)}</td><td class="num">${x.lt?x.lt[0]+DY:'—'}</td><td><span class="st ${st[0]}">${st[1]}</span></td></tr>`}).join('');
+  const intake=d.I.map(x=>{const p=x.v/x.lim;return `<div class="intake"><div class="ih"><b>${x.k}</b><span class="num">${r1(x.v)} / ${r1(x.lim)} ${x.u} ${L('· 日','/ day')}</span></div>
+    <div class="tr2"><span style="width:${clamp(p,0,1.5)/1.5*100}%;background:var(${p>1?'--red':p>.7?'--amber':'--ok'})"></span><i style="left:${1/1.5*100}%"></i></div><small>${x.n}</small></div>`}).join('');
+  return `<section class="card wide">
+    <h3>${L('每日总量与疗程累积','Daily Total & Course')} <small>DAILY &amp; COURSE</small></h3>
+    <div class="dstat">
+      <div><span class="eyebrow">${L('每日总药量','Daily total')}</span><b class="num">${r1(d.dailyTotal)} g</b><small>${L(`${S.perDay} 剂 / 日`,`${S.perDay} dose${S.perDay>1?'s':''} / day`)}</small></div>
+      <div><span class="eyebrow">${L('疗程合计','Course total')}</span><b class="num">${r1(d.courseTotal)} g</b><small>${L(`${S.days} 天 · 备药参考`,`${S.days} days · shopping list`)}</small></div>
+      <div><span class="eyebrow">${L('建议最长连服','Max. continuous use')}</span><b class="num" style="color:var(${over?'--amber':'--ok'})">${d.maxDays}${DY}</b><small>${L(`之后停 ${d.rest} 天再评估`,`then pause ${d.rest} days and reassess`)}</small></div>
+    </div>
+    <div class="course"><div class="ctrack"><span class="cz" style="width:${Z}%"></span><span class="cm${over?' over':''}" style="left:${M}%"></span></div>
+      <div class="clab"><span>${L('第 1 天','Day 1')}</span><span style="position:absolute;left:${Z}%;transform:translateX(-50%)">${d.maxDays}${DY}</span><span>${L(`计划 ${S.days} 天`,`plan: ${S.days} days`)}</span></div>
+      <p class="hint" style="margin:0">${L('限制因素：','Limiting factor: ')}${d.binding.join(SEP())}</p></div>
+    <div class="cols2">
+      <div style="overflow-x:auto"><table class="dt"><thead><tr><th>${L('药材','Herb')}</th><th>${L('每剂 g','g / dose')}</th><th>${L('每日 g','g / day')}</th><th>${L('常用日量','Usual / day')}</th><th>${L('疗程 g','Course g')}</th><th>${L('久服上限','Max. days')}</th><th></th></tr></thead><tbody>${tbl}</tbody></table></div>
+      <div class="kv"><h4>${L('关键成分每日摄入估算','Estimated daily intake of key compounds')}</h4>${intake||`<p class="muted" style="margin:0">${L('方中没有需要按成分累计的药材（甘草、肉桂、绿茶、糖类）。','No herbs here need compound tracking (licorice, cinnamon, green tea, sugars).')}</p>`}</div>
+    </div>
+  </section>`;
+}
+
+function buildAlerts(c,d){
+  const A=[...d.A];const ids=new Set(c.rows.map(r=>r.h.id));
+  CONFLICTS.forEach(x=>{if(ids.has(x.a)&&ids.has(x.b)){const e=ED.conflicts[`${x.a}|${x.b}`]||{};A.push([x.lv,L(x.ty,e.ty||x.ty),`${hnShort(BY[x.a])} × ${hnShort(BY[x.b])}${COLON()}${L(x.t,e.t||x.t)}`])}});
+  if(S.preg)c.rows.forEach(r=>{if(r.h.preg===2)A.push(['red',L('孕期禁用','Avoid in pregnancy'),`${hnShort(r.h)}${COLON()}${hw(r.h)}`]);else if(r.h.preg===1)A.push(['amber',L('孕期慎用','Caution in pregnancy'),L(`${r.h.n}：孕期须在医师指导下使用。`,`${hnShort(r.h)}: use in pregnancy only under medical supervision.`)])});
+  c.rows.forEach(r=>{
+    const h=r.h,n=hnShort(h);
+    const daily=r1(r.g*S.perDay),pdTxt=S.perDay>1?L(`每剂 ${r.g} g × ${S.perDay} 剂 = 每日 ${daily} g`,`${r.g} g × ${S.perDay} doses = ${daily} g/day`):L(`每日 ${daily} g`,`${daily} g/day`);
+    if(daily>h.d[1]*2)A.push(['red',L('日量过大','Daily dose too high'),L(`${n} ${pdTxt}，超过常用日量上限 ${h.d[1]} g 的两倍。`,`${n} ${pdTxt} — more than twice the usual daily maximum of ${h.d[1]} g.`)]);
+    else if(daily>h.d[1])A.push(['amber',L('超日常用量','Above usual dose'),L(`${n} ${pdTxt}，高于常用日量 ${h.d[0]}–${h.d[1]} g。`,`${n} ${pdTxt} — above the usual daily range of ${h.d[0]}–${h.d[1]} g.`)]);
+    else if(daily<h.d[0]*.5)A.push(['info',L('量偏小','Low dose'),L(`${n} ${pdTxt}，低于常用量下限一半，作用轻微。`,`${n} ${pdTxt} — under half the usual minimum; effect will be slight.`)]);
+    if(S.method==='infuse'&&r.e<.3)A.push(['info',L('溶出偏低','Poor extraction'),L(`${n}（${PART[h.p].lab}）泡水估算溶出仅 ${Math.round(r.e*100)}%，建议切薄片、延长焖泡，或改用煮。`,`${n} (${PART_EN[h.p]}) extracts only ~${Math.round(r.e*100)}% when steeped. Slice thinly, steep longer, or decoct instead.`)]);
+    if(S.method==='boil'&&h.sp.includes('late')&&!r.it.fl.late&&S.minutes>10)A.push(['info',L('宜后下','Add last'),L(`${n}含挥发性成分，久煎 ${S.minutes} 分钟损失明显，建议关火前 5 分钟放入。`,`${n} contains volatile oils that are largely lost over ${S.minutes} minutes. Add it in the last 5 minutes.`)]);
+    if(S.method==='boil'&&h.sp.includes('first')&&!r.it.fl.first)A.push(['info',L('宜先煎','Cook first'),L(`${n}质地坚硬，宜先煎 30 分钟再下其他药。`,`${n} is hard; simmer it 30 minutes before adding the other herbs.`)]);
+    if(h.sp.includes('crush')&&!r.it.fl.crush)A.push(['info',h.id==='dazao'?L('宜掰开','Split open'):L('宜捣碎','Crush first'),L(`${n}${h.id==='dazao'?'整枚':'完整'}使用时有效成分难以溶出。`,`Used whole, ${n} releases little of its active content.`)]);
+    if(h.sp.includes('separate'))A.push(['info',L('另煎','Simmer separately'),L(`${n}贵重，宜单独小火另煎 1–2 小时后兑入，或切薄片含服/泡服。`,`${n} is costly; simmer it alone on low heat for 1–2 hours and add the liquid, or hold thin slices in the mouth / steep them.`)]);
+    if(h.tox){
+      if(S.method==='infuse')A.push(['red',L('不宜泡水','Do not steep'),L(`${n}含苦杏仁苷，泡水无法经高温破坏其毒性成分，须煎煮使用。`,`${n} contains amygdalin. Steeping does not destroy its toxic component; it must be boiled.`)]);
+      if(r.g>h.d[1])A.push(['red',L('有毒药超量','Toxic herb overdose'),L(`${n}有小毒，${r.g} g 超过常用上限 ${h.d[1]} g，过量可致氰化物中毒。`,`${n} is mildly toxic. ${r.g} g exceeds the usual maximum of ${h.d[1]} g; overdose can cause cyanide poisoning.`)]);
+    }
+    if(h.sp.includes('powder'))A.push(['info',L('研粉','Take as powder'),h.id==='jineijin'?L('鸡内金研末吞服（每次 1.5–3 g）效果优于入汤剂，其消化酶不耐高温。','Chicken gizzard lining works better swallowed as powder (1.5–3 g per dose); its enzymes do not survive boiling.'):L(`${n}研粉吞服（每次 1–3 g）效果为佳，入汤剂效力降低。`,`${n} works best swallowed as powder (1–3 g per dose); decocting weakens it.`)]);
+    if(h.sp.includes('melt')&&!r.it.fl.melt)A.push(['amber',L('宜烊化','Melt separately'),L(`${n}与群药同${S.method==='boil'?'煎易粘锅、包裹他药':'泡难以溶化'}。应隔水蒸化或用热药液溶化后兑服。`,`${S.method==='boil'?`Cooked with the other herbs, ${n} sticks to the pot and coats them.`:`${n} will not dissolve by steeping.`} Melt it over a water bath or in the hot strained liquid, then stir in.`)]);
+    if(h.sp.includes('honey')&&!r.it.fl.honey)A.push(['info',L('蜂蜜宜温调','Add honey warm'),L('蜂蜜不宜久煮或沸水冲，待汤液降至 60 °C 以下再调入，以保留酶类、减少 5-羟甲基糠醛生成。','Do not boil honey or add it to boiling water. Stir it in once the liquid is below 60 °C to keep its enzymes and limit HMF formation.')]);
+    if(h.raw&&S.method==='infuse')A.push(['red',L('必须煮熟','Must be cooked'),L(`${n}生品含植物凝集素，泡水不能使其失活，可致恶心呕吐，须充分煮熟。`,`Raw ${n} contains lectins that steeping cannot deactivate; it can cause nausea and vomiting. Boil thoroughly.`)]);
+  });
+  if(c.T<=-1.5)A.push(['amber',L('整体寒凉','Overall cold'),L(`全方药性偏寒（${r1(c.T)}），脾胃虚寒、经期女性不宜久服，可加生姜 2–3 片或大枣佐之。`,`The formula is cold overall (${r1(c.T)}). Not for long-term use with a weak, cold digestion or during menstruation; add 2–3 slices of ginger or a few jujubes to balance it.`)]);
+  if(c.T>=1.8)A.push(['amber',L('整体温热','Overall hot'),L(`全方药性偏热（${r1(c.T)}），易上火、口干者慎用，夏季慎用。`,`The formula is hot overall (${r1(c.T)}). Use with care if you tend toward “internal heat” or dry mouth, and in summer.`)]);
+  if(c.ni>.9)A.push(['amber',L('滋腻碍胃','Heavy on digestion'),L('滋腻药比重较大，可能导致腹胀纳呆，建议加陈皮 3–6 g 或砂仁 3 g 理气醒脾。','Rich, cloying tonics dominate and may cause bloating and poor appetite. Add 3–6 g tangerine peel or 3 g amomum to keep things moving.')]);
+  const cold=c.rows.filter(r=>r.h.t<=-1).length,hot=c.rows.filter(r=>r.h.t>=1.5).length;
+  if(cold&&hot)A.push(['info',L('寒热并用','Hot and cold combined'),L('方中寒凉与温热药同用，彼此制约偏性。若非有意配伍，整体效果可能相互抵消。','Cold and hot herbs are used together and temper each other. If this is not intentional, their effects may cancel out.')]);
+  if(S.method==='infuse'&&c.G>40)A.push(['info',L('药量偏大','Too much to steep'),L(`泡水总量 ${r1(c.G)} g 偏多，溶出不完全，建议改为煮或分次冲泡。`,`${r1(c.G)} g is a lot to steep and will not extract fully. Decoct instead, or split it into several brews.`)]);
+  if(c.out<80&&c.rows.length)A.push(['red',L('水量不足','Not enough water'),L(`估算出汤仅 ${c.out} ml，有煮干糊锅风险，请加水或缩短时间。`,`Estimated yield is only ${c.out} ml — the pot may boil dry and scorch. Add water or shorten the time.`)]);
+  if(!A.length)A.push(['ok',L('未见明显问题','No issues found'),L('配伍、剂量与烹制方式均在常规范围内。','Combination, doses and preparation are all within normal ranges.')]);
+  const rank={red:0,amber:1,info:2,ok:3};
+  return A.sort((a,b)=>rank[a[0]]-rank[b[0]]);
+}
+function bodyFit(c){
+  const b=BODIES[S.body];const R=[];
+  if(!b.want.length)return {score:null,notes:[L('平和体质无明显偏颇，保健方以平性、小剂量、不长期单一为原则。','A balanced constitution has no marked tendency. Wellness drinks should be mild, low-dose and varied rather than one formula long-term.')+(Math.abs(c.T)>1?L('本方偏性较明显，不宜长期饮用。',' This formula has a clear bias and is not for long-term use.'):'')]};
+  const sc=b.want.reduce((a,k)=>a+(c.tagN[k]||0),0);
+  const T=c.T,bn=bodyN(S.body);
+  if(['阳虚','气虚'].includes(S.body)&&T<-.3)R.push(L(`方性偏凉（${r1(T)}），${S.body}者久服易伤脾阳。`,`The formula is cool (${r1(T)}); with a ${bn.toLowerCase()} constitution, prolonged use can damage spleen yang.`));
+  if(['阴虚','湿热'].includes(S.body)&&T>.5)R.push(L(`方性偏温（${r1(T)}），${S.body==='阴虚'?'恐助热伤阴':'易助湿热'}。`,`The formula is warm (${r1(T)}) and may ${S.body==='阴虚'?'add heat and deplete yin':'aggravate damp-heat'}.`));
+  if(S.body==='阴虚'&&c.fl['辛']>.35)R.push(L('辛味偏多，辛散易耗伤阴液。','Pungent flavor is high; its dispersing action can deplete yin fluids.'));
+  if(['痰湿','湿热','气郁'].includes(S.body)&&c.ni>.6)R.push(L('滋腻药偏多，易助湿碍气。','Many cloying tonics; they can breed dampness and block qi.'));
+  if(S.body==='气虚'&&(c.tagN['理气']||0)>.3)R.push(L('理气药比重大，久服耗气。','Qi-moving herbs dominate; long-term use can drain qi.'));
+  if(S.body==='血瘀'&&(c.tagN['收敛']||0)>.25)R.push(L('收涩药较多，不利血行。','Many astringent herbs, which do not help blood flow.'));
+  if(S.body==='特禀')R.push(L('过敏体质首次饮用宜从小剂量试服，花类（菊花、金银花等）尤需留意。','With allergies, start with a small test amount, especially with flowers such as chrysanthemum and honeysuckle.'));
+  const pct=Math.round(sc*100);
+  const i=pct>=45?0:pct>=25?1:pct>=10?2:3;
+  const lab=L(['很契合','较契合','一般','针对性弱'][i],['a strong match','a good match','a partial match','a weak match'][i]);
+  R.unshift(L(`${S.body}（${b.d}）宜侧重：${b.want.join('、')}。本方相关功效占 ${pct}%，${lab}。`,`${bn} (${bodyD(S.body)}) benefits most from: ${b.want.map(tagN).join(', ').toLowerCase()}. These make up ${pct}% of this formula’s actions — ${lab}.`));
+  return {score:pct,lab,notes:R,bad:R.length>1};
+}
+function advice(c,d){
+  const t=topTags(c,1)[0];const k=t?t[0]:'';
+  let when=L('温服','Drink warm');
+  if(['补气','养血','滋阴','温阳','健脾','固表','强筋'].includes(k))when=L('饭前约 1 小时温服，补益药空腹吸收较好','Drink warm about 1 hour before meals; tonics absorb better on an empty stomach');
+  else if(k==='消食')when=L('饭后 30 分钟服','Drink 30 minutes after meals');
+  else if(k==='安神')when=L('睡前 30–60 分钟服','Drink 30–60 minutes before bed');
+  else if(['清热','疏风','解毒','利咽','明目'].includes(k))when=L('饭后温服，或代茶少量频饮','Drink warm after meals, or sip through the day like tea');
+  const how=S.method==='infuse'
+    ?(c.rows.some(r=>['root','bark','stem','fungus','seed'].includes(r.h.p))?L('可续水冲泡 1–2 次，味淡即止，当日饮完。','Re-steep 1–2 times until the taste fades; finish within the day.'):L('可续水冲泡 2–3 次，味淡即止，当日饮完。','Re-steep 2–3 times until the taste fades; finish within the day.'))
+    :L('每日 1 剂，药渣可加水复煎一次（约 20 分钟），两次药液合并，分早晚 2 次服。','One batch per day. Re-boil the dregs once (about 20 minutes), combine both liquids, and drink in two portions, morning and evening.');
+  const cycle=L(`按当前配方，建议连续服用不超过 ${d.maxDays} 天，之后停 ${d.rest} 天观察身体反应再决定是否续服。`,`With this formula, take it for no more than ${d.maxDays} days in a row, then pause ${d.rest} days and see how you feel before continuing.`);
+  return [when,how,cycle];
+}
+function unsuitable(c){
+  const R=[];
+  if(c.T<=-.6)R.push(L('脾胃虚寒、畏寒便溏者','People with a weak, cold digestion, who feel cold or have loose stools'));
+  if(c.T>=.6)R.push(L('阴虚火旺、易上火、口舌生疮者','People prone to “internal heat”, dry mouth or mouth ulcers'));
+  if(c.ni>.6)R.push(L('湿阻中满、舌苔厚腻、消化不良者','People with bloating, a thick greasy tongue coat or poor digestion'));
+  if((c.tagN['活血']||0)>.15)R.push(L('月经过多、有出血倾向或术前术后者','Heavy periods, bleeding tendency, or around surgery'));
+  if((c.tagN['润肠']||0)>.12)R.push(L('大便溏泄者','People with loose stools'));
+  if((c.tagN['收敛']||0)>.15)R.push(L('外感初起、内有实邪者','At the start of a cold or with an acute excess condition'));
+  if((c.tagN['补气']||0)+(c.tagN['温阳']||0)>.35)R.push(L('感冒发热期间（宜暂停补益）','During a cold or fever (pause tonics)'));
+  if(c.rows.some(r=>r.h.id==='chaye'))R.push(L('失眠、心律失常者（含咖啡因）','Insomnia or heart-rhythm problems (contains caffeine)'));
+  if(c.rows.some(r=>r.h.preg))R.push(L('孕妇（方中有孕期慎用或禁用药）','Pregnancy (contains herbs to use with caution or avoid)'));
+  return R.length?R:[L('无明显偏性禁忌，但感冒发热、急性病期间宜暂停','No specific contraindication, but pause during colds, fevers or acute illness')];
+}
+
+function renderAnalysis(c){
+  const box=$('#analysis');
+  if(!c.rows.length){box.innerHTML=`<div class="card wide"><p class="muted" style="margin:0">${L('加入药材并设置克数后，这里会推演药性、五行、归经、功效与注意事项。','Add herbs and set their grams to see nature, Five Phases, meridians, actions and cautions here.')}</p></div>`;return}
+  const tt=topTags(c,4);
+  const nat=natLabel(c.T);
+  const fls=Object.entries(c.fl).sort((a,b)=>b[1]-a[1]).filter(x=>x[1]>.12).map(x=>x[0]).slice(0,2);
+  const mers=Object.entries(c.mer).sort((a,b)=>b[1]-a[1]).slice(0,3).map(x=>x[0]);
+  const elTop=Object.entries(c.el).sort((a,b)=>b[1]-a[1])[0][0];
+  const [t1,t2,t3]=tt;
+  const summary=L(
+    `本方共 <b class="num">${c.rows.length}</b> 味，总重 <b class="num">${r1(c.G)}</b> g，以<em>${S.method==='infuse'?'泡水':'煎煮'}</em>法取汁约 ${c.out} ml。整体药性<em>${nat}</em>，味以${fls.join('、')||'甘'}为主，主入${mers.join('、')}经，五行偏${elTop}。功效以<em>${TAGS[t1[0]][0]}</em>${t2?`、<em>${TAGS[t2[0]][0]}</em>`:''}为主${t3?`，兼能${TAGS[t3[0]][0]}`:''}。`,
+    `This formula has <b class="num">${c.rows.length}</b> herbs weighing <b class="num">${r1(c.G)}</b> g in total, <em>${S.method==='infuse'?'steeped':'decocted'}</em> to about ${c.out} ml. Overall nature is <em>${NAT_EN[nat].toLowerCase()}</em>; the taste is mainly ${(fls.length?fls:['甘']).map(f=>FL_EN[f].toLowerCase()).join(' and ')}; it enters mainly the ${mers.map(m=>MER_EN[m]).join(', ')} channels and leans toward ${EL_EN[elTop]} in the Five Phases. Its main actions are <em>${TAG_EN[t1[0]][1]}</em>${t2?` and <em>${TAG_EN[t2[0]][1]}</em>`:''}${t3?`, with secondary ${TAG_EN[t3[0]][1]}`:''}.`);
+  const fits=tt.slice(0,3).map(([k])=>tagF(k)).filter(x=>x!=='—');
+  const dz=dosing(c);
+  const adv=advice(c,dz);
+  const fit=bodyFit(c);
+  const roles=roleMap(c);
+  const roleTxt={君:L('针对主证、药力最大','addresses the main pattern; strongest'),臣:L('辅助君药加强主效','reinforces the sovereign’s main action'),佐:L('兼顾次要方面或制约偏性','covers secondary aspects or checks side effects'),使:L('调和诸药、引经和胃','harmonizes the formula and protects the stomach')};
+  const jun=c.rows.find(r=>roles[r.h.id]==='君');
+  const roleRows=['君','臣','佐','使'].map(k=>{
+    const hs=c.rows.filter(r=>roles[r.h.id]===k);if(!hs.length)return '';
+    const extra=k==='佐'&&jun?hs.filter(r=>Math.sign(r.h.t)!==Math.sign(jun.h.t)&&Math.abs(r.h.t)>=1&&Math.abs(jun.h.t)>=1).map(r=>hnShort(r.h)):[];
+    return `<div><span class="rk${k==='君'?' j':''}">${roleN(k)}</span><span><b>${hs.map(r=>`${hnShort(r.h)} <span class="num muted">${r.g}g</span>`).join(L('、',', '))}</b><br><span class="muted">${roleTxt[k]}${extra.length?L(`；${extra.join('、')}药性与君药相反，有“佐制”之意`,`; ${extra.join(', ')} has the opposite nature to the sovereign and acts as a counterbalance`):''}</span></span></div>`}).join('');
+
+  const ids=new Set(c.rows.map(r=>r.h.id));
+  const combos=COMBOS.filter(x=>matchCombo(x,ids)).map(x=>{
+    let extra='';
+    if(x.ratio){const a=c.rows.find(r=>r.h.id===x.ratio[0]),b=c.rows.find(r=>r.h.id===x.ratio[1]);const r=a.g/b.g;const ok=Math.abs(r-x.ratio[2])/x.ratio[2]<=.25;
+      const dev=x.ratio[0]==='huangqi'?(r<x.ratio[2]?L('补血活血力增而补气生血之意减弱','more blood-nourishing, less of the “qi generates blood” intent'):L('益气之力更专','more focused on tonifying qi')):(r<x.ratio[2]?L(`${hnShort(b.h)}比重偏大`,`${hnShort(b.h)} is proportionally heavier`):L(`${hnShort(a.h)}比重偏大`,`${hnShort(a.h)} is proportionally heavier`));
+      extra=`<br><span class="num">${L('当前比例','Current ratio')} ${r1(r)} : 1</span> — ${ok?`<b style="color:var(--ok)">${L('符合原方比例','matches the classical ratio')}</b>`:`<b style="color:var(--amber)">${L(`偏离原方 ${x.ratio[2]}:1`,`deviates from the classical ${x.ratio[2]}:1`)}</b>${L('，',', ')}${dev}`}`}
+    return `<div class="combo"><b>${cName(x)}</b><br>${cText(x)}${extra}</div>`}).join('');
+  const alerts=buildAlerts(c,dz).map(([lv,ty,t])=>`<div class="alert ${lv}"><span class="pill">${ty}</span><span>${t}</span></div>`).join('');
+
+  const ixAll=[];c.rows.forEach(r=>hix(r.h).forEach(x=>ixAll.push(`<li><b>${hnShort(r.h)}</b>${COLON()}${x}</li>`)));
+  const herbsInfo=c.rows.map(r=>{const nt=hnote(r.h);return `<details class="herb"><summary>${hn(r.h)} <span class="muted num" style="font-size:12px">${r.g} g · ${L('药力','potency')} ${r1(r.s)}</span></summary>
+     <p><span class="lbl">${L('功效　','Actions: ')}</span>${hg(r.h)}</p><p><span class="lbl">${L('主要成分　','Constituents: ')}</span>${hc(r.h)}</p><p><span class="lbl">${L('注意　','Cautions: ')}</span>${hw(r.h)}${nt?L(`（${nt}）`,` (${nt})`):''}</p></details>`}).join('');
+
+  const nticks=c.rows.map(r=>`<span class="gtick" style="left:${(clamp(r.h.t,-3,3)+3)/6*100}%" title="${hnShort(r.h)} ${natT(r.h.tl)}"></span>`).join('');
+  const merE=Object.entries(c.mer).sort((a,b)=>b[1]-a[1]);
+  const gl=isEN()?['V. cold','Cold','Cool','Neutral','Warm','Hot','V. hot']:['大寒','寒','凉','平','温','热','大热'];
+
+  box.innerHTML=`
+  <section class="card wide">
+    <h3>${L('综合评估','Overall Assessment')} <small>SYNTHESIS</small></h3>
+    <p class="summary">${summary}</p>
+    <div class="cols2">
+      <div class="kv"><h4>${L('适合人群','Suited to')}</h4><ul>${fits.map(x=>`<li>${x}</li>`).join('')}</ul></div>
+      <div class="kv"><h4>${L('不宜人群','Not suited to')}</h4><ul>${unsuitable(c).map(x=>`<li>${x}</li>`).join('')}</ul></div>
+      <div class="kv"><h4>${L('服用建议','How to take')}</h4><ul>${adv.map(x=>`<li>${x}</li>`).join('')}</ul></div>
+    </div>
+  </section>
+
+  ${dosingCard(dz)}
+
+  <section class="card">
+    <h3>${L('注意事项','Cautions')} <small>CAUTIONS</small></h3>
+    <div class="alerts">${alerts}</div>
+  </section>
+
+  <section class="card">
+    <h3>${L('四气 · 五味','Nature · Flavor')} <small>NATURE &amp; FLAVOR</small></h3>
+    <div style="display:flex;align-items:baseline;gap:10px"><span class="bignat" style="color:${natColor(c.T)}">${natT(nat)}</span><span class="muted num">${L('药性指数','Nature index')} ${c.T>0?'+':''}${r1(c.T)}</span></div>
+    <div><div class="gauge"><div class="gbar"></div>${nticks}<span class="gmark" style="left:${(clamp(c.T,-3,3)+3)/6*100}%"></span></div>
+    <div class="glabels">${gl.map(x=>`<span>${x}</span>`).join('')}</div></div>
+    ${bars(FL5.map(k=>[k,c.fl[k]]),k=>`var(${ELVAR[FL2EL[k]]})`,k=>L(k,FL_EN[k]))}
+    <p class="hint" style="margin:0">${L('五味入五脏：酸入肝、苦入心、甘入脾、辛入肺、咸入肾。短竖线为各药的单味药性。','Each flavor enters an organ: sour → liver, bitter → heart, sweet → spleen, pungent → lung, salty → kidney. Small ticks show each herb’s own nature.')}</p>
+  </section>
+
+  <section class="card">
+    <h3>${L('五行推演','Five Phases')} <small>WU XING</small></h3>
+    <div class="radar">${radarSVG(c.el)}<div class="txt">${wuxingText(c.el)}</div></div>
+  </section>
+
+  <section class="card">
+    <h3>${L('功效构成','Actions')} <small>ACTIONS</small></h3>
+    ${bars(Object.entries(c.tagN).filter(([k])=>k!=='调和').sort((a,b)=>b[1]-a[1]).slice(0,8),()=> 'var(--accent)',tagN)}
+  </section>
+
+  <section class="card">
+    <h3>${L('归经','Meridians')} <small>MERIDIANS</small></h3>
+    ${bars(merE.slice(0,8),k=>`var(${ELVAR[MER2EL[k]]})`,merN)}
+  </section>
+
+  <section class="card">
+    <h3>${L('君臣佐使','Formula Roles')} <small>ROLES</small></h3>
+    <div class="roles">${roleRows}</div>
+    <p class="hint" style="margin:0">${L('按“药力 = 克数 ÷ 常用量中值 × 溶出率”排序推定，仅供理解组方思路。','Ranked by potency = grams ÷ usual-dose midpoint × extraction rate. A guide to formula logic only.')}</p>
+  </section>
+
+  <section class="card">
+    <h3>${L('体质契合','Constitution Fit')} <small>CONSTITUTION</small></h3>
+    ${fit.score!=null?`<div class="fit"><span class="score" style="color:${fit.bad?'var(--amber)':'var(--ok)'}">${fit.score}%</span><span>${fit.lab}${fit.bad?L('，但有需留意之处',', with points to watch'):''}</span></div>`:''}
+    <ul style="margin:0;padding-left:18px">${fit.notes.map(x=>`<li>${x}</li>`).join('')}</ul>
+  </section>
+
+  <section class="card">
+    <h3>${L('经典配伍','Classic Pairings')} <small>CLASSICS</small></h3>
+    ${combos||`<p class="muted" style="margin:0">${L('未识别到经典药对或成方。可试试“黄芪 + 当归”“枸杞 + 菊花”“生姜 + 大枣”。','No classic pairing or formula recognized. Try astragalus + angelica, goji + chrysanthemum, or ginger + jujube.')}</p>`}
+  </section>
+
+  <section class="card wide">
+    <h3>${L('现代药理 · 西医视角','Modern Pharmacology')} <small>PHARMACOLOGY</small></h3>
+    <div class="cols2">
+      <div class="kv"><h4>${L('可能的药物相互作用','Possible drug interactions')}</h4>${ixAll.length?`<ul>${ixAll.join('')}</ul>`:`<p class="muted" style="margin:0">${L('方中药材未见常见的显著相互作用记录。','No commonly reported significant interactions for these herbs.')}</p>`}
+        <p class="hint">${L('正在服用抗凝、降糖、降压、免疫抑制或精神类药物者，饮用前请告知医师或药师。','If you take anticoagulants, diabetes, blood-pressure, immunosuppressant or psychiatric medication, tell your doctor or pharmacist before drinking.')}</p></div>
+      <div class="kv"><h4>${L('药材档案（点击展开）','Herb profiles (click to expand)')}</h4>${herbsInfo}</div>
+    </div>
+  </section>`;
+}
+
+/* ---------- 刷新 ---------- */
+function refresh(){
+  const c=compute();
+  updateRowLive(c);renderBrew(c);renderAnalysis(c);save();
+}
+function fullRender(){applyStatic();syncBrewUI();renderCats();renderRows();renderDrawers();renderLib();renderPnote();refresh()}
+function detach(){if(S.pn){S.pn=null;renderLib();renderPnote()}}
+
+/* ---------- 事件 ---------- */
+function addHerb(id){
+  const ex=S.items.find(i=>i.id===id);
+  if(ex){const row=document.querySelector(`.row[data-id="${id}"]`);if(row){row.classList.remove('flash');void row.offsetWidth;row.classList.add('flash');row.querySelector('input').focus()}return}
+  const h=BY[id];let g=Math.round(mid(h)*2)/2;if(g>=6)g=Math.round(g);
+  S.items.push({id,g,fl:defFlags(h)});
+  detach();renderRows();renderDrawers();refresh();
+}
+$('#drawers').addEventListener('click',e=>{const b=e.target.closest('.drawer');if(b)addHerb(b.dataset.id)});
+$('#cats').addEventListener('click',e=>{const b=e.target.closest('.chip');if(!b)return;cat=b.dataset.c;renderCats();renderDrawers()});
+$('#q').addEventListener('input',renderDrawers);
+$('#rows').addEventListener('click',e=>{
+  const row=e.target.closest('.row');if(!row)return;const it=S.items.find(i=>i.id===row.dataset.id);
+  if(e.target.closest('.rm')){S.items=S.items.filter(i=>i!==it);detach();renderRows();renderDrawers();refresh();return}
+  const act=e.target.closest('[data-act]');
+  if(act){const inp=row.querySelector('input');it.g=clamp(r1((+it.g||0)+(act.dataset.act==='inc'?1:-1)),0,120);inp.value=it.g;refresh();return}
+  const f=e.target.closest('[data-f]');
+  if(f){const k=f.dataset.f;it.fl[k]=!it.fl[k];f.setAttribute('aria-pressed',it.fl[k]);refresh()}
+});
+$('#rows').addEventListener('input',e=>{
+  if(e.target.tagName!=='INPUT')return;const row=e.target.closest('.row');const it=S.items.find(i=>i.id===row.dataset.id);
+  it.g=clamp(+e.target.value||0,0,120);refresh();
+});
+document.querySelectorAll('.seg button').forEach(b=>b.addEventListener('click',()=>{
+  if(S.method===b.dataset.m)return;S.method=b.dataset.m;
+  if(S.method==='infuse'){S.minutes=Math.min(S.minutes,12);S.temp=95;if(S.water>600)S.water=500}else{S.minutes=Math.max(S.minutes,20)}
+  syncBrewUI();renderRows();refresh();
+}));
+[['water','water'],['temp','temp'],['minutes','minutes']].forEach(([id,k])=>$('#'+id).addEventListener('input',e=>{S[k]=+e.target.value;syncBrewUI();refresh()}));
+$('#soak').addEventListener('change',e=>{S.soak=e.target.checked;refresh()});
+$('#perDay').addEventListener('change',e=>{S.perDay=+e.target.value;refresh()});
+[['days','days'],['weight','weight']].forEach(([id,k])=>$('#'+id).addEventListener('input',e=>{S[k]=+e.target.value;syncBrewUI();refresh()}));
+$('#preg').addEventListener('change',e=>{S.preg=e.target.checked;refresh()});
+$('#body').addEventListener('change',e=>{S.body=e.target.value;refresh()});
+$('#libcats').addEventListener('click',e=>{const b=e.target.closest('.chip');if(!b)return;libCat=b.dataset.c;renderLib()});
+$('#lib').addEventListener('click',e=>{const b=e.target.closest('.recipe');if(!b)return;applyPreset(PRESETS[+b.dataset.i]);fullRender()});
+$('#libToggle').addEventListener('click',e=>{const body=$('#libBody');body.hidden=!body.hidden;e.target.textContent=body.hidden?L('展开','Show'):L('收起','Hide');e.target.setAttribute('aria-expanded',!body.hidden)});
+$('#clear').addEventListener('click',()=>{S.items=[];detach();renderRows();renderDrawers();refresh()});
+$('#lang').addEventListener('click',()=>{S.lang=isEN()?'zh':'en';fullRender()});
+
+/* ---------- 初始化 ---------- */
+if(!load()||!S.items.length)applyPreset(PRESETS[0]);
+if(!['zh','en'].includes(S.lang))S.lang='zh';
+fullRender();
+</script>
