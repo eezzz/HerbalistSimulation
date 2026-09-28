@@ -99,7 +99,7 @@ main{display:flex;flex-direction:column;gap:18px;min-width:0}
 .pre select,.btn{border:1px solid var(--line);background:var(--bg);border-radius:4px;padding:4px 10px}
 .btn.primary{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
 .rows{display:flex;flex-direction:column}
-.row{display:grid;grid-template-columns:minmax(150px,1.3fr) auto minmax(120px,1fr) 72px 28px;gap:12px;align-items:center;padding:9px 14px;border-bottom:1px solid var(--line)}
+.row{display:grid;grid-template-columns:minmax(150px,1.3fr) auto minmax(120px,1fr) 84px 28px;gap:12px;align-items:center;padding:9px 14px;border-bottom:1px solid var(--line)}
 .row:last-child{border-bottom:0}
 .row.flash{animation:flash .9s}
 @keyframes flash{from{background:var(--accent-soft)}to{background:transparent}}
@@ -126,7 +126,7 @@ main{display:flex;flex-direction:column;gap:18px;min-width:0}
 .mark{position:absolute;top:-4px;width:3px;height:14px;background:var(--ink);border-radius:1px;transform:translateX(-1px)}
 .mark.over{background:var(--red)}
 .dose small{font-size:11px;color:var(--muted)}
-.eff{text-align:right;font-size:12px;color:var(--muted);line-height:1.3}
+.eff{text-align:right;font-size:11px;color:var(--muted);line-height:1.3}
 .eff b{display:block;font-family:var(--mono);font-size:14px;color:var(--ink);font-weight:500}
 .rm{border:0;background:transparent;color:var(--muted);font-size:18px;line-height:1}
 .rm:hover{color:var(--red)}
@@ -231,7 +231,23 @@ details.herb .lbl{color:var(--muted);font-size:12px}
 .fit .score{font-family:var(--mono);font-size:22px}
 .muted{color:var(--muted)}
 footer{font-size:12px;color:var(--muted);border-top:1px solid var(--line);padding-top:12px;max-width:90ch}
-@media (prefers-reduced-motion:reduce){.row.flash{animation:none}}
+.brew>.phead{grid-column:1/-1}
+.fold{flex:none;border:0;background:transparent;width:30px;height:30px;border-radius:4px;color:var(--muted);display:inline-grid;place-items:center;padding:0;margin-left:2px}
+.fold:hover{background:var(--panel2);color:var(--ink)}
+.fold svg{width:16px;height:16px;transition:transform .2s}
+.collapsed .fold svg{transform:rotate(-90deg)}
+.panel.collapsed>:not(.phead){display:none!important}
+.panel.collapsed>.phead{border-bottom:0}
+.card.collapsed>:not(h3){display:none!important}
+.card h3{justify-content:flex-start;align-items:center;cursor:pointer;user-select:none}
+.card h3 small{margin-left:auto}
+.phead .fold{margin-left:auto}
+.phead h2+.fold,.phead .eyebrow+.fold{margin-left:auto}
+.phead .pre{margin-left:auto}
+.phead .pre+.fold{margin-left:2px}
+.foldall{display:flex;align-items:center;gap:8px;justify-content:flex-end;margin-bottom:-8px}
+.foldall .eyebrow{margin-right:auto}
+@media (prefers-reduced-motion:reduce){.row.flash{animation:none}.fold svg{transition:none}}
 </style>
 
 <div class="wrap">
@@ -265,7 +281,7 @@ html[lang="en"] .seg button{font-family:var(--sans);font-size:14px}
   </header>
 
   <div class="app">
-    <aside class="panel cabinet" aria-label="药柜">
+    <aside class="panel cabinet" aria-label="药柜" data-fold="cabinet">
       <div class="phead"><h2 data-i="cab">药柜</h2><span class="eyebrow" id="cabCount"></span></div>
       <div class="cab-tools">
         <input class="search" id="q" type="search" autocomplete="off">
@@ -281,10 +297,9 @@ html[lang="en"] .seg button{font-family:var(--sans);font-size:14px}
     </aside>
 
     <main>
-      <section class="panel" aria-label="方库">
+      <section class="panel" aria-label="方库" data-fold="library">
         <div class="phead">
           <h2><span data-i="lib">方库</span> <span class="eyebrow" id="libCount"></span></h2>
-          <button class="btn" id="libToggle" aria-expanded="true"></button>
         </div>
         <div id="libBody">
           <div class="chips libcats" id="libcats"></div>
@@ -292,7 +307,7 @@ html[lang="en"] .seg button{font-family:var(--sans);font-size:14px}
         </div>
       </section>
 
-      <section class="panel" aria-label="药方">
+      <section class="panel" aria-label="药方" data-fold="formula">
         <div class="phead">
           <h2><span data-i="formula">药方</span> <span class="eyebrow" data-i="doseG">剂量 · 克</span></h2>
           <div class="pre">
@@ -304,7 +319,8 @@ html[lang="en"] .seg button{font-family:var(--sans);font-size:14px}
         <div class="total" id="total"></div>
       </section>
 
-      <section class="panel brew" aria-label="烹制">
+      <section class="panel brew" aria-label="烹制" data-fold="brew">
+        <div class="phead"><h2 data-i="brewH">烹制与服用</h2></div>
         <div class="brew-ctl">
           <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap">
             <div class="seg" role="group" aria-label="烹制方式">
@@ -348,12 +364,13 @@ html[lang="en"] .seg button{font-family:var(--sans);font-size:14px}
         </div>
       </section>
 
+      <div class="foldall"><span class="eyebrow" data-i="anaH">分析</span><button class="btn" id="unfoldAll" data-i="unfoldAll">全部展开</button><button class="btn" id="foldAll" data-i="foldAll">全部收起</button></div>
       <div class="grid" id="analysis"></div>
     </main>
   </div>
 
   <footer data-i="foot">
-    药性数值化规则：寒 −2、凉 −1.2、微寒 −1、平 0、微温 +1、温 +1.5、热 +2、大热 +3；药力 = 实际克数 ÷ 常用量中值 × 估算溶出率。五行按“五味入五脏”（酸木、苦火、甘土、辛金、咸水）与归经脏腑各半折算。溶出率为教学估算，受药材切制、产地和器具影响很大。
+    药性数值化规则：寒 −2、凉 −1.2、微寒 −1、平 0、微温 +1、温 +1.5、热 +2、大热 +3；溶出率指单次煎/泡中有效成分转移到汤液的比例：受固液平衡限制，规范头煎一般只有 30–55%，复煎后合计约 50–70%。药力 = 实际克数 ÷ 常用量中值 × （本次溶出率 ÷ 标准煎煮溶出率），因为药典常用量按规范汤剂计。五行按“五味入五脏”（酸木、苦火、甘土、辛金、咸水）与归经脏腑各半折算。溶出率为教学估算，受药材切制、产地和器具影响很大。
   </footer>
 </div>
 
@@ -372,13 +389,15 @@ const SHENG_TXT={木:'木生火：肝藏血以养心，疏肝亦助心神',火:'
 const CHENG_TXT={木:'木旺乘土——肝气偏盛易犯脾胃，可见脘胀、食欲减退',火:'火旺刑金——心火偏盛易灼肺津，可见咽干、干咳',土:'土壅制水——脾土壅滞易碍水液运行，可见困重、浮肿',金:'金旺乘木——肺金过盛易抑肝木疏泄，可见胸闷、情绪不舒',水:'水旺乘火——寒水偏盛易损心阳，可见心悸、畏寒'};
 const WU_TXT={木:'肝木过旺反侮肺金（木火刑金）',火:'心火过旺反侮肾水',土:'脾土壅盛反侮肝木（土壅木郁）',金:'肺金过盛反侮心火',水:'肾水泛滥反侮脾土'};
 
-/* 药材部位 → 溶出参数：inf 泡水上限，ti 泡水时间常数(min)，tb 煮时间常数(min) */
+/* 药材部位 → 溶出参数
+   E  单次煎煮（充分浸泡、火候到位）有效成分最大转移率，受固液平衡限制，远达不到 100%
+   inf 泡水相对煎煮的系数；ti / tb 泡水、煎煮的时间常数（分钟） */
 const PART={
-  flower:{inf:.9,ti:5,tb:4,lab:'花'}, leaf:{inf:.85,ti:6,tb:5,lab:'叶'}, herb:{inf:.6,ti:10,tb:8,lab:'全草'},
-  peel:{inf:.6,ti:10,tb:8,lab:'果皮'}, fruit:{inf:.45,ti:15,tb:12,lab:'果实'}, seed:{inf:.3,ti:20,tb:15,lab:'种子'},
-  root:{inf:.3,ti:25,tb:18,lab:'根/根茎'}, slice:{inf:.6,ti:12,tb:10,lab:'薄片'}, bark:{inf:.28,ti:25,tb:20,lab:'树皮'},
-  fungus:{inf:.2,ti:30,tb:25,lab:'菌类'}, bulb:{inf:.4,ti:20,tb:15,lab:'鳞茎'}, stem:{inf:.15,ti:30,tb:30,lab:'茎'},
-  algae:{inf:.35,ti:20,tb:12,lab:'藻'}, sugar:{inf:1,ti:1,tb:1,lab:'糖'}, gel:{inf:.3,ti:30,tb:20,lab:'胶'}
+  flower:{E:.70,inf:.9,ti:5,tb:4,lab:'花'}, leaf:{E:.65,inf:.85,ti:6,tb:5,lab:'叶'}, herb:{E:.60,inf:.6,ti:10,tb:8,lab:'全草'},
+  peel:{E:.55,inf:.6,ti:10,tb:8,lab:'果皮'}, fruit:{E:.50,inf:.45,ti:15,tb:12,lab:'果实'}, seed:{E:.40,inf:.3,ti:20,tb:15,lab:'种子'},
+  root:{E:.50,inf:.3,ti:25,tb:18,lab:'根/根茎'}, slice:{E:.55,inf:.6,ti:12,tb:10,lab:'薄片'}, bark:{E:.45,inf:.28,ti:25,tb:20,lab:'树皮'},
+  fungus:{E:.30,inf:.2,ti:30,tb:25,lab:'菌类'}, bulb:{E:.50,inf:.4,ti:20,tb:15,lab:'鳞茎'}, stem:{E:.40,inf:.15,ti:30,tb:30,lab:'茎'},
+  algae:{E:.55,inf:.35,ti:20,tb:12,lab:'藻'}, sugar:{E:1,inf:1,ti:1,tb:1,lab:'糖'}, gel:{E:.95,inf:.3,ti:30,tb:20,lab:'胶'}
 };
 const SPLAB={late:'后下',first:'先煎',crush:'捣碎',separate:'另煎',powder:'研粉冲服'};
 
@@ -958,11 +977,11 @@ const STATIC={
   sub:['保健草药配伍模拟 · 以克为度 · 性味归经与五行推演','Herbal wellness formula simulator · dosed to the gram · nature, flavor, meridians & Five Phases'],
   disc:['本工具依据《中国药典》常用量与中医药性理论做教学推演，不能替代医师辨证。慢病、服药中、孕期及儿童请先咨询医师或药师。','An educational model based on Chinese Pharmacopoeia dose ranges and TCM materia medica theory. It does not replace diagnosis by a qualified practitioner. With a chronic condition, current medication, pregnancy, or for children, consult a physician or pharmacist first.'],
   cab:['药柜','Herb Cabinet'],lgCold:['寒凉','Cold / cool'],lgNeu:['平','Neutral'],lgHot:['温热','Warm / hot'],lgTip:['点击抽屉加入药方','Click a drawer to add it'],
-  lib:['方库','Formula Library'],formula:['药方','Formula'],doseG:['剂量 · 克','dose · grams'],clear:['清空','Clear'],
+  lib:['方库','Formula Library'],brewH:['烹制与服用','Preparation & Dosing'],anaH:['分析','Analysis'],foldAll:['全部收起','Collapse all'],unfoldAll:['全部展开','Expand all'],formula:['药方','Formula'],doseG:['剂量 · 克','dose · grams'],clear:['清空','Clear'],
   infuse:['泡水','Steep'],boil:['煮','Decoct'],water:['水量','Water'],temp:['水温','Water temp'],body:['体质','Constitution'],
   perDay:['每日剂数','Doses per day'],days:['连续服用','Course length'],weight:['体重','Body weight'],
   soak:['煎前冷水浸泡 30 分钟','Soak in cold water 30 min first'],preg:['孕期 / 备孕','Pregnant / trying to conceive'],
-  foot:['药性数值化规则：寒 −2、凉 −1.2、微寒 −1、平 0、微温 +1、温 +1.5、热 +2、大热 +3；药力 = 实际克数 ÷ 常用量中值 × 估算溶出率。五行按“五味入五脏”（酸木、苦火、甘土、辛金、咸水）与归经脏腑各半折算。溶出率为教学估算，受药材切制、产地和器具影响很大。','How the numbers work: nature is scored Cold −2, Cool −1.2, Slightly cold −1, Neutral 0, Slightly warm +1, Warm +1.5, Hot +2, Very hot +3. Potency = grams ÷ midpoint of the usual dose × estimated extraction rate. Five-Phase shares combine the five flavors (sour→Wood, bitter→Fire, sweet→Earth, pungent→Metal, salty→Water) and the meridian organs, half each. Extraction rates are teaching estimates and vary widely with cut, origin and cookware.']
+  foot:['药性数值化规则：寒 −2、凉 −1.2、微寒 −1、平 0、微温 +1、温 +1.5、热 +2、大热 +3；溶出率指单次煎/泡中有效成分转移到汤液的比例：受固液平衡限制，规范头煎一般只有 30–55%，复煎后合计约 50–70%。药力 = 实际克数 ÷ 常用量中值 × （本次溶出率 ÷ 标准煎煮溶出率），因为药典常用量按规范汤剂计。五行按“五味入五脏”（酸木、苦火、甘土、辛金、咸水）与归经脏腑各半折算。溶出率为教学估算，受药材切制、产地和器具影响很大。','How the numbers work: nature is scored Cold −2, Cool −1.2, Slightly cold −1, Neutral 0, Slightly warm +1, Warm +1.5, Hot +2, Very hot +3. Extraction rate is the share of active constituents transferred to the liquid in one pass. Solid–liquid equilibrium caps it: a proper first decoction typically reaches 30–55%, and about 50–70% after a second boil. Potency = grams ÷ usual-dose midpoint × (this extraction ÷ standard-decoction extraction), because pharmacopoeia doses assume a standard decoction. Five-Phase shares combine the five flavors (sour→Wood, bitter→Fire, sweet→Earth, pungent→Metal, salty→Water) and the meridian organs, half each. Extraction rates are teaching estimates and vary widely with cut, origin and cookware.']
 };
 /* 药材文本 */
 const EH=h=>ED.herbs[h.id]||{};
@@ -1004,7 +1023,6 @@ function applyStatic(){
   $('#q').placeholder=L('搜药名、拼音或功效，如：明目、安神','Search name, pinyin or action, e.g. sleep, eyes');
   $('#lang').innerHTML=isEN()?'中文 <span>/ EN</span>':'English <span>/ 中</span>';
   $('#lang').setAttribute('aria-label',L('切换到英文','Switch to Chinese'));
-  $('#libToggle').textContent=$('#libBody').hidden?L('展开','Show'):L('收起','Hide');
   [...$('#perDay').options].forEach(o=>o.textContent=L(`每日 ${o.value} 剂`,`${o.value} dose${o.value>1?'s':''} / day`));
   $('#body').innerHTML=Object.keys(BODIES).map(k=>`<option value="${k}">${bodyN(k)} · ${bodyD(k)}</option>`).join('');
   $('#body').value=S.body;
@@ -1042,29 +1060,38 @@ const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
 const r1=v=>Math.round(v*10)/10;
 function mid(h){return (h.d[0]+h.d[1])/2}
 
-function extraction(h,it){
+/* 单次溶出率：该次煎/泡中有效成分转移到汤液的比例（绝对值）
+   cfg 为烹制条件，默认取当前设置；R = 加水量 ÷ 药量（液固比） */
+function extraction(h,it,cfg){
   const P=PART[h.p];let e;
   it.fl=it.fl||defFlags(h);
-  if(h.sp.includes('melt'))return it.fl.melt?.95:(S.method==='boil'?.55:.3);
-  if(S.method==='infuse'){
-    const tf=clamp(.72+(S.temp-80)*.014,.6,1);
-    const time=1-Math.exp(-S.minutes/P.ti);
-    e=P.inf*tf*Math.min(1,time/.85);
+  const c=cfg||{method:S.method,minutes:S.minutes,temp:S.temp,soak:S.soak,R:curRatio()};
+  if(h.sp.includes('melt'))return it.fl.melt?.95:(c.method==='boil'?.4:.1);
+  if(h.p==='sugar')return .98;
+  if(c.method==='infuse'){
+    const tf=clamp(.72+(c.temp-80)*.014,.6,1);
+    const time=1-Math.exp(-c.minutes/P.ti);
+    e=P.E*P.inf*tf*time;
     if(h.sp.includes('crush'))e*=it.fl.crush?1.3:.8;
   }else{
-    let min=S.minutes,loss=1,tb=P.tb;
+    let min=c.minutes,loss=1,tb=P.tb;
     if(h.sp.includes('late')){
       if(it.fl.late){min=Math.min(min,5);tb=3}
       else loss=Math.exp(-Math.max(0,min-8)/20);
     }
     if(h.sp.includes('first')&&it.fl.first)min+=30;
-    const time=1-Math.exp(-min/tb);
-    e=Math.min(1,time/.85)*loss;
-    if(!S.soak&&['root','bark','stem','fungus','seed','bulb','slice'].includes(h.p))e*=.88;
+    e=P.E*(1-Math.exp(-min/tb))*loss;
+    if(!c.soak&&['root','bark','stem','fungus','seed','bulb','slice'].includes(h.p))e*=.88;
     if(h.sp.includes('crush')&&!it.fl.crush)e*=.75;
   }
-  return clamp(e,0,.98);
+  e*=clamp(Math.pow(c.R/10,.25),.7,1.08); /* 水少则平衡浓度高、转移率低 */
+  return clamp(e,0,.95);
 }
+function curRatio(){const G=S.items.reduce((a,i)=>a+(+i.g||0),0);return G>0?S.water/G:10}
+/* 标准煎煮下的参照溶出率：药典常用量默认按规范汤剂（浸泡、沸后文火 30 分钟、特殊处理到位）计 */
+function eRef(h){return extraction(h,{fl:defFlags(h)},{method:'boil',minutes:30,temp:100,soak:true,R:10})}
+/* 当日实际喝进去的累计溶出：煮=头煎+复煎（复煎约为头煎效率的 70%）；泡=首泡+续泡 */
+function eTotal(e){return Math.max(e,clamp(e+(1-e)*e*(S.method==='boil'?.7:.6),0,.97))}
 
 function natLabel(T){
   if(T<=-1.6)return '寒';if(T<=-.6)return '凉';if(T<=-.2)return '微凉';
@@ -1074,8 +1101,8 @@ function natColor(t){return t<-.2?'var(--cold)':t>.2?'var(--hot)':'var(--muted)'
 
 function compute(){
   const rows=S.items.map(it=>{
-    const h=BY[it.id],e=extraction(h,it),g=+it.g||0;
-    return {it,h,g,e,s:g/mid(h)*e,ex:g*e};
+    const h=BY[it.id],e=extraction(h,it),g=+it.g||0,rel=e/eRef(h);
+    return {it,h,g,e,rel,et:eTotal(e),s:g/mid(h)*Math.min(rel,1.2),ex:g*e};
   }).filter(r=>r.g>0);
   const S0=rows.reduce((a,r)=>a+r.s,0)||1;
   const G=rows.reduce((a,r)=>a+r.g,0);
@@ -1174,7 +1201,8 @@ function updateRowLive(c){
     const row=document.querySelector(`.row[data-id="${it.id}"]`);if(!row)return;
     const h=BY[it.id],e=extraction(h,it);
     row.querySelector('[data-dose]').innerHTML=doseBar(h,+it.g||0);
-    row.querySelector('[data-eff]').innerHTML=`<b>${Math.round(e*100)}%</b>${L('溶出','extracted')}`;
+    row.querySelector('[data-eff]').innerHTML=`<b>${Math.round(e*100)}%</b>${S.method==='boil'?L('头煎','1st boil'):L('首泡','1st steep')}<br>${L('合计','total')} ${Math.round(eTotal(e)*100)}%`;
+    row.querySelector('[data-eff]').title=L('单次溶出率：有效成分转移到汤液的比例。合计含复煎/续泡。','Single-pass extraction: share of active constituents transferred to the liquid. Total includes the second boil / re-steep.');
     const rl=row.querySelector('[data-role]');const r=roles[it.id];
     rl.textContent=r?roleN(r):'';rl.hidden=!r;rl.className='role'+(r==='君'?' jun':'');
   });
@@ -1320,12 +1348,12 @@ function dosing(c){
   const dailyTotal=rows.reduce((a,x)=>a+x.daily,0);
   /* 关键成分每日摄入估算（含量 × 溶出率） */
   const I=[];const f=id=>rows.find(x=>x.r.h.id===id);
-  const gc=f('gancao');if(gc)I.push({k:L('甘草酸','Glycyrrhizin'),v:gc.daily*30*gc.r.e,lim:100,u:'mg',n:L('按含量约 3% 估算；欧盟 SCF 建议长期摄入不超过 100 mg/日','Assumes ~3% content; the EU SCF advises no more than 100 mg/day for regular intake')});
-  const rg=f('rougui');if(rg)I.push({k:L('香豆素','Coumarin'),v:rg.daily*4*rg.r.e,lim:.1*S.weight,u:'mg',n:L(`中国肉桂约 0.4% 估算；EFSA 可耐受摄入 0.1 mg/kg·日（按 ${S.weight} kg）`,`Assumes ~0.4% in cassia; EFSA tolerable intake 0.1 mg/kg/day (at ${S.weight} kg)`)});
-  const ch=f('chaye');if(ch)I.push({k:L('咖啡因','Caffeine'),v:ch.daily*30*ch.r.e,lim:S.preg?200:400,u:'mg',n:L(`绿茶约 3% 估算；成人上限 ${S.preg?'200（孕期）':'400'} mg/日，另需计入咖啡、可乐`,`Assumes ~3% in green tea; adult limit ${S.preg?'200 (pregnancy)':'400'} mg/day — count coffee and cola too`)});
+  const gc=f('gancao');if(gc)I.push({k:L('甘草酸','Glycyrrhizin'),v:gc.daily*30*gc.r.et,lim:100,u:'mg',n:L('按含量约 3% 估算；欧盟 SCF 建议长期摄入不超过 100 mg/日','Assumes ~3% content; the EU SCF advises no more than 100 mg/day for regular intake')});
+  const rg=f('rougui');if(rg)I.push({k:L('香豆素','Coumarin'),v:rg.daily*4*rg.r.et,lim:.1*S.weight,u:'mg',n:L(`中国肉桂约 0.4% 估算；EFSA 可耐受摄入 0.1 mg/kg·日（按 ${S.weight} kg）`,`Assumes ~0.4% in cassia; EFSA tolerable intake 0.1 mg/kg/day (at ${S.weight} kg)`)});
+  const ch=f('chaye');if(ch)I.push({k:L('咖啡因','Caffeine'),v:ch.daily*30*ch.r.et,lim:S.preg?200:400,u:'mg',n:L(`绿茶约 3% 估算；成人上限 ${S.preg?'200（孕期）':'400'} mg/日，另需计入咖啡、可乐`,`Assumes ~3% in green tea; adult limit ${S.preg?'200 (pregnancy)':'400'} mg/day — count coffee and cola too`)});
   const SUG={hongtang:.95,bingtang:1,fengmi:.8,longyan:.65,dazao:.6};
   const sug=rows.filter(x=>SUG[x.r.h.id]);
-  if(sug.length)I.push({k:L('糖','Sugar'),v:sug.reduce((a,x)=>a+x.daily*SUG[x.r.h.id]*x.r.e,0),lim:25,u:'g',n:L('红糖、冰糖、蜂蜜、龙眼肉、大枣中溶入汤液的糖；WHO 建议游离糖最好 < 25 g/日','Sugar dissolved from brown sugar, rock sugar, honey, longan and jujube; WHO suggests free sugars ideally < 25 g/day')});
+  if(sug.length)I.push({k:L('糖','Sugar'),v:sug.reduce((a,x)=>a+x.daily*SUG[x.r.h.id]*x.r.et,0),lim:25,u:'g',n:L('红糖、冰糖、蜂蜜、龙眼肉、大枣中溶入汤液的糖；WHO 建议游离糖最好 < 25 g/日','Sugar dissolved from brown sugar, rock sugar, honey, longan and jujube; WHO suggests free sugars ideally < 25 g/day')});
   /* 建议最长连服天数 */
   const lim=[];
   const aT=Math.abs(c.T);
@@ -1380,7 +1408,7 @@ function buildAlerts(c,d){
     if(daily>h.d[1]*2)A.push(['red',L('日量过大','Daily dose too high'),L(`${n} ${pdTxt}，超过常用日量上限 ${h.d[1]} g 的两倍。`,`${n} ${pdTxt} — more than twice the usual daily maximum of ${h.d[1]} g.`)]);
     else if(daily>h.d[1])A.push(['amber',L('超日常用量','Above usual dose'),L(`${n} ${pdTxt}，高于常用日量 ${h.d[0]}–${h.d[1]} g。`,`${n} ${pdTxt} — above the usual daily range of ${h.d[0]}–${h.d[1]} g.`)]);
     else if(daily<h.d[0]*.5)A.push(['info',L('量偏小','Low dose'),L(`${n} ${pdTxt}，低于常用量下限一半，作用轻微。`,`${n} ${pdTxt} — under half the usual minimum; effect will be slight.`)]);
-    if(S.method==='infuse'&&r.e<.3)A.push(['info',L('溶出偏低','Poor extraction'),L(`${n}（${PART[h.p].lab}）泡水估算溶出仅 ${Math.round(r.e*100)}%，建议切薄片、延长焖泡，或改用煮。`,`${n} (${PART_EN[h.p]}) extracts only ~${Math.round(r.e*100)}% when steeped. Slice thinly, steep longer, or decoct instead.`)]);
+    if(S.method==='infuse'&&r.rel<.4)A.push(['info',L('溶出偏低','Poor extraction'),L(`${n}（${PART[h.p].lab}）泡水估算溶出 ${Math.round(r.e*100)}%，只相当于标准煎煮的 ${Math.round(r.rel*100)}%。建议切薄片、延长焖泡，或改用煮。`,`${n} (${PART_EN[h.p]}) extracts ~${Math.round(r.e*100)}% when steeped — only ${Math.round(r.rel*100)}% of a standard decoction. Slice thinly, steep longer, or decoct instead.`)]);
     if(S.method==='boil'&&h.sp.includes('late')&&!r.it.fl.late&&S.minutes>10)A.push(['info',L('宜后下','Add last'),L(`${n}含挥发性成分，久煎 ${S.minutes} 分钟损失明显，建议关火前 5 分钟放入。`,`${n} contains volatile oils that are largely lost over ${S.minutes} minutes. Add it in the last 5 minutes.`)]);
     if(S.method==='boil'&&h.sp.includes('first')&&!r.it.fl.first)A.push(['info',L('宜先煎','Cook first'),L(`${n}质地坚硬，宜先煎 30 分钟再下其他药。`,`${n} is hard; simmer it 30 minutes before adding the other herbs.`)]);
     if(h.sp.includes('crush')&&!r.it.fl.crush)A.push(['info',h.id==='dazao'?L('宜掰开','Split open'):L('宜捣碎','Crush first'),L(`${n}${h.id==='dazao'?'整枚':'完整'}使用时有效成分难以溶出。`,`Used whole, ${n} releases little of its active content.`)]);
@@ -1536,7 +1564,7 @@ function renderAnalysis(c){
   <section class="card">
     <h3>${L('君臣佐使','Formula Roles')} <small>ROLES</small></h3>
     <div class="roles">${roleRows}</div>
-    <p class="hint" style="margin:0">${L('按“药力 = 克数 ÷ 常用量中值 × 溶出率”排序推定，仅供理解组方思路。','Ranked by potency = grams ÷ usual-dose midpoint × extraction rate. A guide to formula logic only.')}</p>
+    <p class="hint" style="margin:0">${L('按“药力 = 克数 ÷ 常用量中值 × 相对溶出率”排序推定，仅供理解组方思路。','Ranked by potency = grams ÷ usual-dose midpoint × relative extraction. A guide to formula logic only.')}</p>
   </section>
 
   <section class="card">
@@ -1560,12 +1588,49 @@ function renderAnalysis(c){
   </section>`;
 }
 
+/* ---------- 折叠 ---------- */
+const CHEV='<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M4 6l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+function initFoldState(){
+  if(S.col&&typeof S.col==='object')return;
+  S.col={};
+  /* 手机首次打开：分析卡片只展开综合评估与注意事项 */
+  if(matchMedia('(max-width: 640px)').matches)['DAILY & COURSE','NATURE & FLAVOR','WU XING','ACTIONS','MERIDIANS','ROLES','CONSTITUTION','CLASSICS','PHARMACOLOGY'].forEach(k=>S.col[k]=true);
+}
+function setFold(sec,closed){
+  sec.classList.toggle('collapsed',closed);
+  const b=sec.querySelector('.fold');
+  if(b){b.setAttribute('aria-expanded',!closed);b.setAttribute('aria-label',closed?L('展开','Expand'):L('收起','Collapse'));b.title=b.getAttribute('aria-label')}
+}
+function attachFold(sec,head){
+  let b=head.querySelector(':scope > .fold');
+  if(!b){b=document.createElement('button');b.type='button';b.className='fold';b.innerHTML=CHEV;head.appendChild(b)}
+  setFold(sec,!!S.col[sec.dataset.fold]);
+}
+function toggleFold(sec){const k=sec.dataset.fold;S.col[k]=!S.col[k];setFold(sec,S.col[k]);save()}
+function foldPanels(){document.querySelectorAll('.panel[data-fold]').forEach(sec=>attachFold(sec,sec.querySelector('.phead')))}
+function foldCards(){
+  $('#analysis').querySelectorAll('.card').forEach(sec=>{
+    const h=sec.querySelector('h3');if(!h)return;
+    sec.dataset.fold=(h.querySelector('small')||{}).textContent||'card';
+    attachFold(sec,h);
+  });
+}
+document.addEventListener('click',e=>{
+  const b=e.target.closest('.fold');
+  if(b){toggleFold(b.closest('[data-fold]'));return}
+  const h=e.target.closest('.card h3');
+  if(h&&!e.target.closest('button,a'))toggleFold(h.closest('[data-fold]'));
+});
+function foldAllCards(closed){$('#analysis').querySelectorAll('.card[data-fold]').forEach(sec=>{S.col[sec.dataset.fold]=closed;setFold(sec,closed)});save()}
+$('#foldAll').addEventListener('click',()=>foldAllCards(true));
+$('#unfoldAll').addEventListener('click',()=>foldAllCards(false));
+
 /* ---------- 刷新 ---------- */
 function refresh(){
   const c=compute();
-  updateRowLive(c);renderBrew(c);renderAnalysis(c);save();
+  updateRowLive(c);renderBrew(c);renderAnalysis(c);foldCards();save();
 }
-function fullRender(){applyStatic();syncBrewUI();renderCats();renderRows();renderDrawers();renderLib();renderPnote();refresh()}
+function fullRender(){applyStatic();foldPanels();syncBrewUI();renderCats();renderRows();renderDrawers();renderLib();renderPnote();refresh()}
 function detach(){if(S.pn){S.pn=null;renderLib();renderPnote()}}
 
 /* ---------- 事件 ---------- */
@@ -1604,12 +1669,12 @@ $('#preg').addEventListener('change',e=>{S.preg=e.target.checked;refresh()});
 $('#body').addEventListener('change',e=>{S.body=e.target.value;refresh()});
 $('#libcats').addEventListener('click',e=>{const b=e.target.closest('.chip');if(!b)return;libCat=b.dataset.c;renderLib()});
 $('#lib').addEventListener('click',e=>{const b=e.target.closest('.recipe');if(!b)return;applyPreset(PRESETS[+b.dataset.i]);fullRender()});
-$('#libToggle').addEventListener('click',e=>{const body=$('#libBody');body.hidden=!body.hidden;e.target.textContent=body.hidden?L('展开','Show'):L('收起','Hide');e.target.setAttribute('aria-expanded',!body.hidden)});
 $('#clear').addEventListener('click',()=>{S.items=[];detach();renderRows();renderDrawers();refresh()});
 $('#lang').addEventListener('click',()=>{S.lang=isEN()?'zh':'en';fullRender()});
 
 /* ---------- 初始化 ---------- */
 if(!load()||!S.items.length)applyPreset(PRESETS[0]);
 if(!['zh','en'].includes(S.lang))S.lang='zh';
+initFoldState();
 fullRender();
 </script>
