@@ -487,7 +487,7 @@ const TAGS={
 /* ---------- 药材库 ----------
  H(id,名,拼音,类,性,味,归经,[常用量min,max],部位,功效权重,功效,主要成分,注意,汤色,{sp,ix,preg,ni,note})
 */
-function H(id,n,py,cat,tl,f,m,d,p,fx,g,c,w,col,x={}){return {id,n,py,cat,tl,t:TMAP[tl],f,m,mer:parseMer(m),d,p,fx,g,c,w,col,sp:x.sp||[],ix:x.ix||[],preg:x.preg||0,ni:x.ni||0,tox:x.tox||0,raw:x.raw||0,note:x.note||''}}
+function H(id,n,py,cat,tl,f,m,d,p,fx,g,c,w,col,x={}){return {id,n,py,cat,tl,t:TMAP[tl],f,m,mer:parseMer(m),d,p,fx,g,c,w,col,sp:x.sp||[],ix:x.ix||[],preg:x.preg||0,ni:x.ni||0,tox:x.tox||0,raw:x.raw||0,west:x.west||0,warn:x.warn||'',note:x.note||''}}
 function parseMer(s){const two=['小肠','大肠','心包','三焦','膀胱'],o=[];let i=0;while(i<s.length){const t=s.slice(i,i+2);if(two.includes(t)){o.push(t);i+=2}else{o.push(s[i]);i++}}return o}
 
 const HERBS=[
@@ -590,9 +590,39 @@ H('baibiandou','白扁豆','baibiandou','祛湿','微温','甘','脾胃',[9,15],
 H('huoxiang','藿香','huoxiang','祛湿','微温','辛','脾胃肺',[3,10],'herb',{祛湿:3,止呕:2,解表:1,温中:1},'芳香化浊，和中止呕，发表解暑','广藿香醇、百秋李醇(挥发油)','阴虚血燥者不宜','#6F7240',{sp:['late']}),
 H('niuxi','牛膝','niuxi','活血','平','苦甘酸','肝肾',[5,12],'slice',{活血:2,强筋:2,利水:1},'逐瘀通经，补肝肾，强筋骨，利尿通淋，引血下行','蜕皮甾酮、牛膝皂苷','孕妇禁用；月经过多者忌','#B89A70',{preg:2}),
 H('heshouwu','制何首乌','zhiheshouwu','补益','微温','苦甘涩','肝心肾',[6,12],'slice',{养血:3,滋阴:1,强筋:1,收敛:1},'补肝肾，益精血，乌须发，强筋骨','二苯乙烯苷、蒽醌类、卵磷脂','有药物性肝损伤报道：肝病患者禁用，服用期间监测肝功能；不宜长期大量；便溏者慎','#5A3524',{ni:1}),
+/* ---- 西方草药：剂量参照德国 Commission E / EMA 草药专论；west:1 的性味归经为中西结合文献的参考归类，west:2 为《中国药典》亦收载 ---- */
+H('chamomile','洋甘菊','chamomile yangganju','安神','凉','甘苦','肝胃心',[3,12],'flower',{安神:2,缓急:2,理气:1,清热:1,止呕:1},'舒缓镇静，解痉和胃，抗炎（Commission E：胃肠痉挛与炎症）','芹菜素、α-红没药醇、母菊薁(chamazulene)','菊科过敏者忌用','#D9C45A',{west:1,ix:['华法林：有增强抗凝的个案报道','镇静催眠药：作用可能叠加']}),
+H('lavender','薰衣草','lavender xunyicao','安神','凉','辛苦','心肝',[1,4],'flower',{安神:3,疏肝:2,理气:1},'安神助眠，舒缓焦虑，缓解功能性上腹不适（Commission E）','芳樟醇、乙酸芳樟酯(挥发油)、迷迭香酸','孕早期慎用；用量过大可致头痛、便秘','#8E7CC3',{west:1,sp:['late'],preg:1,ix:['镇静催眠药 / 酒精：作用叠加']}),
+H('lemonbalm','香蜂草','lemon balm melissa xiangfengcao','安神','凉','酸辛','心肝胃',[2,9],'leaf',{安神:2,疏肝:2,理气:1,清热:1},'镇静安神，缓解神经性胃肠不适（Commission E：神经性入睡困难）','迷迭香酸、柠檬醛、香茅醛(挥发油)','甲状腺功能减退者慎用（体外研究显示抑制促甲状腺激素）','#A9B85A',{west:1,sp:['late'],ix:['镇静催眠药：作用叠加','甲状腺激素药物：可能干扰']}),
+H('valerian','缬草','valerian xiecao','安神','温','辛苦甘','心肝',[2,6],'root',{安神:4,缓急:2,理气:1},'镇静助眠，缓解紧张不安（Commission E / EMA：轻度神经紧张与睡眠障碍）','缬草烯酸、缬草三酯(valepotriates)、异缬草酸','服后勿驾驶或操作机械；不与酒精同服；少数人反而兴奋；孕期哺乳期不建议','#9A7B4F',{west:1,preg:1,ix:['镇静催眠药 / 酒精 / 麻醉药：中枢抑制叠加，术前两周停用']}),
+H('hops','啤酒花','hops pijiuhua','安神','凉','苦','心肝胃',[0.5,3],'flower',{安神:3,消食:1,利水:1},'镇静安神，健胃（Commission E：不安、焦虑、睡眠障碍）','葎草酮、蛇麻酮(苦味酸)、8-异戊烯基柚皮素(植物雌激素)','抑郁者慎用；雌激素敏感性疾病者慎用','#B9B36A',{west:1,sp:['late'],preg:1,ix:['镇静催眠药 / 酒精：作用叠加']}),
+H('passionflower','西番莲','passionflower xifanlian','安神','凉','苦甘','心肝',[2,8],'herb',{安神:3,缓急:1,平肝:1},'镇静抗焦虑（Commission E：神经性不安）','牡荆素、异牡荆素等黄酮，微量哈尔满类生物碱','孕妇禁用（可能兴奋子宫）；服后勿驾驶','#9AA35C',{west:1,preg:2,ix:['镇静催眠药：作用叠加','MAOI 类抗抑郁药：理论上相互作用']}),
+H('linden','椴树花','linden lime flower duanshuhua','解表','凉','辛甘','肺心肝',[2,4],'flower',{解表:2,安神:2,疏风:1,化痰:1},'发汗解热，镇静（Commission E：感冒及相关咳嗽）','椴树苷(tiliroside)、黏液质、金合欢醇(挥发油)','心脏病患者不宜长期大量饮用（传统告诫）','#D8CF8A',{west:1}),
+H('elderflower','接骨木花','elderflower jiegumuhua','解表','凉','辛苦','肺膀胱',[6,15],'flower',{解表:3,疏风:2,利水:1,化痰:1},'发汗解表，促进支气管分泌（Commission E / EMA：感冒初起）','芦丁、绿原酸、三萜类','只用花；茎、叶及未熟果含生氰苷，不可入茶','#E3DDA8',{west:1}),
+H('elderberry','接骨木果','elderberry jiegumuguo','清热','凉','甘酸','肺',[5,15],'fruit',{清热:1,解毒:1,疏风:1,生津:1},'传统用于感冒流感初起','花青素(矢车菊素-3-葡萄糖苷)、黄酮','生果及种子含生氰苷与凝集素，必须煮熟，不可泡水生饮','#4A1838',{west:1,raw:1,ix:['免疫抑制剂：理论上可能拮抗']}),
+H('echinacea','紫锥菊','echinacea zizhuiju','清热','凉','辛苦','肺胃',[1,4],'root',{清热:2,解毒:3,疏风:1},'短期用于感冒初起的辅助支持（Commission E / EMA）','烷酰胺、菊苣酸、多糖','菊科过敏者忌；自身免疫病、结核、多发性硬化、HIV 等进行性系统疾病者不宜；连续使用不超过 10 天','#B98A9A',{west:1,ix:['免疫抑制剂(环孢素、激素等)：可能拮抗疗效']}),
+H('thyme','百里香','thyme bailixiang','化痰','温','辛','肺脾胃',[3,10],'leaf',{化痰:3,宣肺:2,温中:1,解毒:1},'祛痰镇咳，解痉抗菌（Commission E：支气管炎、百日咳样咳嗽、上呼吸道卡他）','百里酚、香芹酚(挥发油)、黄酮','孕期不宜药用量；唇形科过敏者忌','#8A8F52',{west:1,preg:1}),
+H('sage','鼠尾草','sage shuweicao','化痰','微温','辛苦','肺胃',[3,6],'leaf',{利咽:2,收敛:2,化痰:1,解毒:1},'抗菌收敛，止汗；口咽黏膜炎症可含漱（Commission E）','侧柏酮(thujone)、鼠尾草酸、迷迭香酸','含侧柏酮：不宜长期或大量；癫痫者忌；孕妇禁用，哺乳期忌用（回乳）','#8E9A72',{west:1,preg:2}),
+H('rosemary','迷迭香','rosemary midiexiang','理气','温','辛','心肝脾',[2,6],'leaf',{理气:2,温中:1,活血:1,疏肝:1},'健胃驱风，促进循环（Commission E：消化不良）','迷迭香酸、鼠尾草酸、1,8-桉叶素、樟脑','孕期不宜药用量；高血压、癫痫者慎','#6F7F4A',{west:1,sp:['late'],preg:1}),
+H('xiaohuixiang','小茴香','fennel xiaohuixiang','温里','温','辛','肝肾脾胃',[3,6],'seed',{理气:3,温中:2,止呕:1,化痰:1},'散寒止痛，理气和胃（中药）；驱风解痉、祛痰（Commission E）','反式茴香脑、葑酮、爱草脑(estragole)','阴虚火旺者慎；含爱草脑，婴幼儿及孕妇不宜长期大量','#B5A76A',{west:2,sp:['crush'],preg:1}),
+H('anise','茴芹籽','anise aniseed huiqinzi','理气','温','辛甘','肺胃',[1,5],'seed',{化痰:2,理气:2,温中:1},'祛痰，驱风解痉（Commission E：消化不良、呼吸道卡他）','反式茴香脑(挥发油)','伞形科或茴香脑过敏者忌；孕期不宜药用量','#B9A777',{west:1,sp:['crush'],preg:1}),
+H('caraway','葛缕子','caraway gelvzi','理气','温','辛','脾胃',[1.5,6],'seed',{理气:3,温中:2,消食:1},'驱风解痉，缓解腹胀（Commission E：消化不良、胀气）','香芹酮、柠檬烯(挥发油)','胆道梗阻者慎','#8A6F4A',{west:1,sp:['crush']}),
+H('nettle','荨麻叶','nettle qianmaye','祛湿','凉','甘咸','肝肾膀胱',[8,12],'leaf',{利水:3,祛湿:2,养血:1,清热:1},'利尿，辅助缓解风湿不适（Commission E：冲洗疗法，须多饮水）','黄酮、硅酸、钾盐、叶绿素、铁','心、肾功能不全所致水肿者不宜；须同时多饮水','#5E7A3A',{west:1,ix:['利尿剂 / 降压药 / 降糖药：作用可能叠加','锂盐：利尿可能升高血锂']}),
+H('yarrow','蓍草','yarrow shicao','解表','凉','苦辛','肺肝脾',[2,4.5],'herb',{解表:2,理气:1,消食:1,止血:1,活血:1},'苦味健胃，解痉，发汗（Commission E：食欲不振、消化不良）','母菊薁、蓍草苦素、黄酮','菊科过敏者忌；孕妇禁用','#A8AE7A',{west:1,preg:2}),
+H('mullein','毛蕊花','mullein maoruihua','化痰','凉','甘','肺',[3,4],'flower',{润肺:2,化痰:2,宣肺:1},'润喉祛痰（Commission E：呼吸道卡他）','黏液质、皂苷、桃叶珊瑚苷','茶液须细滤，绒毛会刺激咽喉','#D9C66A',{west:1,sp:['wrap']}),
+H('plantain','长叶车前','ribwort plantain changyecheqian','化痰','凉','甘苦','肺膀胱',[3,6],'leaf',{化痰:2,润肺:2,清热:1,利咽:1},'润喉镇咳，收敛抗菌（Commission E：呼吸道卡他、口咽黏膜炎症）','桃叶珊瑚苷、黏液质、毛蕊花糖苷','与中药车前草（Plantago asiatica）不同种，用途不同','#7F8F52',{west:1}),
+H('rosehip','玫瑰果','rosehip meiguiguo','收涩','平','酸甘','肝肾大肠',[2,10],'fruit',{生津:2,收敛:1,清热:1},'酸甜生津，富含维生素 C（欧洲传统果茶）','维生素 C、类胡萝卜素、果胶、半乳糖脂','维生素 C 不耐久煮，宜泡或短煮；果内绒毛须滤净','#B8432A',{west:1,sp:['crush']}),
+H('sjw','贯叶连翘','st johns wort hypericum guanyelianqiao','理气','寒','辛','肝',[2,4],'herb',{疏肝:3,安神:2,清热:1},'疏肝解郁，清热利湿（《中国药典》贯叶金丝桃）；Commission E：轻度情绪低落、焦虑不安','金丝桃素、贯叶金丝桃素(hyperforin)、黄酮','与大量处方药相互作用，服药者勿用；不可与抗抑郁药合用；双相障碍者忌；浅肤色者大量服用有光敏反应；孕期哺乳期不建议','#C9A03A',{west:2,preg:2,warn:'贯叶连翘会降低多种处方药的血药浓度（口服避孕药、抗凝药、免疫抑制剂、抗 HIV 药等），并可与抗抑郁药引起 5-羟色胺综合征。正在服用任何处方药者请勿使用。',ix:['强效诱导 CYP3A4 与 P-糖蛋白：降低口服避孕药、华法林、环孢素 / 他克莫司、地高辛、抗 HIV 药及部分抗癌药的血药浓度','SSRI / SNRI / 曲坦类：5-羟色胺综合征风险']}),
+H('milkthistle','水飞蓟','milk thistle shuifeiji','清热','凉','苦','肝胆',[6,15],'seed',{清热:2,解毒:2,疏肝:2},'清热解毒，疏肝利胆（《中国药典》）；Commission E：消化不良，提取物用于肝病辅助','水飞蓟宾等水飞蓟素（水溶性差）','菊科过敏者忌；水飞蓟素难溶于水，茶剂溶出有限，不能等同于标准化提取物','#8A7A5A',{west:2,sp:['crush']}),
+H('jianghuang','姜黄','turmeric jianghuang','活血','温','辛苦','脾肝',[3,10],'slice',{活血:3,理气:2,温中:1},'破血行气，通经止痛（中药）；利胆、助消化（Commission E）','姜黄素类（脂溶性，配油脂或黑胡椒吸收更好）、姜黄酮','血虚无气滞血瘀者慎；孕妇慎用；胆道梗阻、胆结石者慎','#D99A1E',{west:2,preg:1,ix:['抗凝 / 抗血小板药：出血风险增加','降糖药：可能增强降糖']}),
 ];
 const BY=Object.fromEntries(HERBS.map(h=>[h.id,h]));
-const CATS=['全部','补益','清热','解表','理气','活血','安神','平肝','祛湿','消食','收涩','化痰','温里'];
+/* 西方传统以浸泡（infusion）为标准制法的药材：药力参照改用“沸水加盖泡 10 分钟”，而非煎煮。
+   infK / ti 覆盖部位默认值：压碎的芳香种子、切碎的缬草根泡水即可充分出味 */
+const INF_STD={chamomile:{},lavender:{},lemonbalm:{},valerian:{infK:.7,ti:10},hops:{},passionflower:{},linden:{},elderflower:{},thyme:{},sage:{},rosemary:{},
+  xiaohuixiang:{infK:.8,ti:8},anise:{infK:.8,ti:8},caraway:{infK:.8,ti:8},nettle:{},yarrow:{},mullein:{},plantain:{},rosehip:{infK:.7,ti:10},sjw:{}};
+Object.entries(INF_STD).forEach(([id,o])=>Object.assign(BY[id],{std:'infuse'},o));
+const CATS=['全部','西方','补益','清热','解表','理气','活血','安神','平肝','祛湿','消食','收涩','化痰','温里'];
 
 /* 七情配伍：禁忌 */
 const CONFLICTS=[
@@ -642,11 +672,17 @@ const COMBOS=[
   {n:'茅根芦根',need:['baimaogen','lugen'],t:'白茅根凉血利尿、芦根清热生津，二根相合清热而不伤津。'},
   {n:'天麻川芎',need:['tianma','chuanxiong'],t:'大川芎丸组成：川芎活血祛风止痛，天麻平肝息风，治头风眩晕。'},
   {n:'阿胶配陈皮/砂仁',need:['ejiao',['chenpi','sharen']],t:'理气药可制阿胶滋腻碍胃之弊。'},
+  {n:'茴香三子',need:['xiaohuixiang','anise','caraway'],t:'德国家庭常备的 Fenchel-Anis-Kümmel 茶：三种伞形科种子等量，驱风消胀、解痉，成人与儿童腹胀常用。用前压碎。'},
+  {n:'椴花接骨木花',need:['linden','elderflower'],t:'德国药典“发汗茶”（Species diaphoreticae）的主体：趁热饮后保暖发汗，用于感冒初起。'},
+  {n:'蓍草接骨木花薄荷',need:['yarrow','elderflower','bohe'],t:'英国草药传统的感冒茶，三药等量：发汗、疏风、通鼻窍。'},
+  {n:'缬草配啤酒花',need:['valerian','hops'],t:'Commission E 认可的固定组合：缬草与啤酒花协同镇静助眠，常再配香蜂草。服后勿驾驶。'},
+  {n:'洋甘菊配薄荷',need:['chamomile','bohe'],t:'欧洲最常见的健胃组合：洋甘菊解痉抗炎，薄荷驱风止呕。'},
+  {n:'玫瑰果配洛神花',need:['rosehip','luoshen'],t:'德国经典果茶 Hagebutte-Hibiskus：酸甜生津，色泽深红。'},
 ];
 
 function matchCombo(x,ids){return x.need.every(n=>Array.isArray(n)?n.some(i=>ids.has(i)):ids.has(n))}
 /* 成方中的君药（识别到成方时按原方定君） */
-Object.entries({当归补血汤:['huangqi'],生脉饮:['renshen','xiyangshen','dangshen'],四君子汤:['renshen','dangshen'],四物汤:['shudi'],'玉屏风散（缺防风）':['huangqi'],酸枣仁汤意:['suanzaoren'],桔梗汤:['jiegeng'],八珍汤:['renshen','dangshen','shudi'],桑菊饮:['sangye'],甘麦大枣汤:['xiaomai'],玄麦甘桔:['xuanshen'],四神汤:['shanyao'],酸梅汤:['wumei'],夏桑菊:['xiakucao'],五红汤:['dazao'],交泰丸:['huanglian'],黄连阿胶汤:['huanglian'],二至丸:['nvzhenzi'],天麻川芎:['tianma']}).forEach(([n,j])=>{const x=COMBOS.find(c=>c.n===n);if(x)x.jun=j});
+Object.entries({当归补血汤:['huangqi'],生脉饮:['renshen','xiyangshen','dangshen'],四君子汤:['renshen','dangshen'],四物汤:['shudi'],'玉屏风散（缺防风）':['huangqi'],酸枣仁汤意:['suanzaoren'],桔梗汤:['jiegeng'],八珍汤:['renshen','dangshen','shudi'],桑菊饮:['sangye'],甘麦大枣汤:['xiaomai'],玄麦甘桔:['xuanshen'],四神汤:['shanyao'],酸梅汤:['wumei'],夏桑菊:['xiakucao'],五红汤:['dazao'],交泰丸:['huanglian'],黄连阿胶汤:['huanglian'],二至丸:['nvzhenzi'],天麻川芎:['tianma'],茴香三子:['xiaohuixiang'],椴花接骨木花:['elderflower'],缬草配啤酒花:['valerian']}).forEach(([n,j])=>{const x=COMBOS.find(c=>c.n===n);if(x)x.jun=j});
 
 const BODIES={
   平和:{want:[],d:'阴阳气血调和'},
@@ -736,6 +772,26 @@ const PRESETS=[
   {c:'活血降脂',n:'山楂荷叶茶',src:'民间保健方',d:'化浊降脂、消食',m:'infuse',w:500,mi:12,t:100,items:[['shanzha',10],['heye',6]]},
   {c:'活血降脂',n:'丹参山楂茶',src:'民间保健方',d:'活血化瘀、消食（服抗凝药者禁用）',m:'boil',w:600,mi:20,items:[['danshen',10],['shanzha',10]]},
   {c:'活血降脂',n:'葛根丹参饮',src:'现代保健方',d:'生津通络、活血（须遵医嘱）',m:'boil',w:700,mi:30,soak:true,items:[['gegen',15],['danshen',10]]},
+  // 西方草药
+  {c:'西方·安神助眠',n:'洋甘菊茶',src:'欧洲传统 · Commission E',d:'舒缓肠胃、放松安神，西方最常见的草本茶',m:'infuse',w:250,mi:8,t:95,items:[['chamomile',3]]},
+  {c:'西方·安神助眠',n:'洋甘菊薰衣草睡前茶',src:'现代西方睡前茶',d:'放松助眠，气味芳香',m:'infuse',w:300,mi:8,t:95,items:[['chamomile',3],['lemonbalm',2],['lavender',1]]},
+  {c:'西方·安神助眠',n:'缬草啤酒花安神茶',src:'德国药典 Species sedativae 化裁',d:'入睡困难、紧张不安；服后勿驾驶',m:'infuse',w:300,mi:15,t:100,items:[['valerian',2],['hops',1],['lemonbalm',1.5],['bohe',1]]},
+  {c:'西方·安神助眠',n:'西番莲椴花舒缓茶',src:'欧洲传统',d:'缓解紧张、心神不宁',m:'infuse',w:300,mi:10,t:95,items:[['passionflower',2],['lemonbalm',2],['linden',2]]},
+  {c:'西方·安神助眠',n:'贯叶连翘香蜂草茶',src:'Commission E（贯叶连翘）',d:'舒缓低落情绪；与多种处方药相互作用，服药者勿用',m:'infuse',w:300,mi:10,t:100,items:[['sjw',2],['lemonbalm',2]]},
+  {c:'西方·消化',n:'茴香三子茶',src:'德国传统 Fenchel-Anis-Kümmel',d:'驱风消胀，腹胀、嗳气',m:'infuse',w:300,mi:10,t:100,items:[['xiaohuixiang',2],['anise',2],['caraway',2]]},
+  {c:'西方·消化',n:'薄荷洋甘菊健胃茶',src:'德国药典 Species stomachicae 化裁',d:'饭后胀满、胃部不适',m:'infuse',w:300,mi:8,t:95,items:[['bohe',2],['chamomile',2],['xiaohuixiang',1.5]]},
+  {c:'西方·消化',n:'蒲公英蓍草苦味茶',src:'欧洲苦味药（Bitters）传统',d:'餐前饮用，促进消化液分泌',m:'infuse',w:350,mi:10,t:100,items:[['pugongying',6],['yarrow',1.5],['bohe',2]]},
+  {c:'西方·消化',n:'水飞蓟蒲公英茶',src:'欧洲传统',d:'传统用于肝胆调理；水飞蓟素水溶性差，茶剂作用有限',m:'boil',w:500,mi:15,items:[['milkthistle',6],['pugongying',6],['bohe',2]]},
+  {c:'西方·感冒呼吸',n:'椴花接骨木花发汗茶',src:'德国药典 Species diaphoreticae',d:'感冒初起、发热无汗，趁热饮后保暖发汗',m:'infuse',w:300,mi:10,t:100,items:[['linden',2],['elderflower',4]]},
+  {c:'西方·感冒呼吸',n:'蓍草接骨木花薄荷茶',src:'英国传统感冒茶',d:'感冒流感初起，发汗、通鼻',m:'infuse',w:300,mi:10,t:100,items:[['yarrow',1.5],['elderflower',2],['bohe',2]]},
+  {c:'西方·感冒呼吸',n:'百里香止咳茶',src:'德国药典 Species pectorales 化裁',d:'咳嗽痰多、支气管不适',m:'infuse',w:300,mi:10,t:100,items:[['thyme',2],['plantain',2],['mullein',1.5],['gancao',1.5]]},
+  {c:'西方·感冒呼吸',n:'鼠尾草润喉茶',src:'欧洲传统（可饮可漱）',d:'咽痛、口腔不适；不宜久服',m:'infuse',w:250,mi:8,t:95,items:[['sage',2],['chamomile',2],['fengmi',10]]},
+  {c:'西方·感冒呼吸',n:'紫锥菊接骨木果茶',src:'现代西方免疫茶',d:'感冒初起短期使用，不超过 10 天',m:'boil',w:500,mi:15,items:[['echinacea',2],['elderberry',5],['rosehip',4]]},
+  {c:'西方·感冒呼吸',n:'生姜百里香蜂蜜茶',src:'欧洲民间',d:'受凉咳嗽、咽喉不适',m:'infuse',w:300,mi:10,t:100,items:[['shengjiang',5],['thyme',1.5],['fengmi',15]]},
+  {c:'西方·日常调养',n:'玫瑰果洛神花茶',src:'德国经典果茶 Hagebutte-Hibiskus',d:'酸甜生津，含维生素 C 与花青素',m:'infuse',w:400,mi:10,t:100,items:[['rosehip',4],['luoshen',3]]},
+  {c:'西方·日常调养',n:'荨麻蒲公英春季茶',src:'欧洲“春季净化”传统',d:'利尿、促进代谢，须多饮水',m:'infuse',w:400,mi:10,t:100,items:[['nettle',4],['pugongying',6],['bohe',1]]},
+  {c:'西方·日常调养',n:'姜黄生姜黄金茶',src:'源自印度阿育吠陀，现代西方流行',d:'温通暖胃；配少量油脂或黑胡椒吸收更好',m:'boil',w:400,mi:10,items:[['jianghuang',3],['shengjiang',3],['rougui',1],['fengmi',10]]},
+  {c:'西方·日常调养',n:'迷迭香薄荷提神茶',src:'欧洲传统',d:'提神醒脑、餐后助消化',m:'infuse',w:250,mi:6,t:95,items:[['rosemary',2],['bohe',2]]},
   // 配伍反例
   {c:'配伍反例',n:'甘草 + 海藻',src:'十八反',d:'演示“藻戟遂芫俱战草”',m:'boil',w:600,mi:30,items:[['gancao',6],['haizao',10]]},
   {c:'配伍反例',n:'丁香 + 郁金',src:'十九畏',d:'演示“丁香莫与郁金见”',m:'boil',w:500,mi:20,items:[['dingxiang',2],['yujin',6]]},
@@ -1007,6 +1063,69 @@ const EN_DATA={
     gancao_mid:'Accumulation of glycyrrhizic acid causes pseudoaldosteronism',
   },
 };
+Object.assign(EN_DATA.herbs,{
+  chamomile:{n:'Chamomile (Matricaria chamomilla)',g:'Calms and relaxes, relieves spasms and settles the stomach, anti-inflammatory (Commission E: gastrointestinal spasms and inflammation)',c:'Apigenin, α-bisabolol, chamazulene',w:'Avoid with allergy to the daisy family (Asteraceae)',ix:['Warfarin: case reports of increased anticoagulation','Sedatives: effects may add up'],note:''},
+  lavender:{n:'Lavender (Lavandula angustifolia)',g:'Calms the spirit and aids sleep, eases anxiety and functional upper-abdominal discomfort (Commission E)',c:'Linalool, linalyl acetate (volatile oil), rosmarinic acid',w:'Use with caution in early pregnancy; large amounts may cause headache or constipation',ix:['Sedatives / alcohol: additive effect'],note:''},
+  lemonbalm:{n:'Lemon Balm (Melissa officinalis)',g:'Sedative and calming, relieves nervous gastrointestinal complaints (Commission E: nervous sleeping disorders)',c:'Rosmarinic acid, citral, citronellal (volatile oil)',w:'Use with caution in hypothyroidism (in-vitro TSH inhibition)',ix:['Sedatives: additive effect','Thyroid hormone medication: may interfere'],note:''},
+  valerian:{n:'Valerian Root (Valeriana officinalis)',g:'Sedative, aids sleep and relieves nervous tension (Commission E / EMA: mild nervous tension and sleep disorders)',c:'Valerenic acid, valepotriates, isovaleric acid',w:'Do not drive or operate machinery afterwards; do not combine with alcohol; a few people become stimulated instead; not advised in pregnancy or breastfeeding',ix:['Sedatives / alcohol / anesthetics: additive CNS depression; stop two weeks before surgery'],note:''},
+  hops:{n:'Hops (Humulus lupulus)',g:'Sedative and calming, stomachic (Commission E: restlessness, anxiety, sleep disturbances)',c:'Humulone, lupulone (bitter acids), 8-prenylnaringenin (phytoestrogen)',w:'Use with caution in depression and in estrogen-sensitive conditions',ix:['Sedatives / alcohol: additive effect'],note:''},
+  passionflower:{n:'Passionflower (Passiflora incarnata)',g:'Sedative and anxiolytic (Commission E: nervous restlessness)',c:'Flavonoids (vitexin, isovitexin), traces of harman alkaloids',w:'Contraindicated in pregnancy (may stimulate the uterus); do not drive afterwards',ix:['Sedatives: additive effect','MAOI antidepressants: theoretical interaction'],note:''},
+  linden:{n:'Linden Flower (Tilia cordata)',g:'Promotes sweating and reduces fever, calming (Commission E: colds and related coughs)',c:'Tiliroside, mucilage, farnesol (volatile oil)',w:'Not for prolonged heavy use in heart disease (traditional caution)',ix:[],note:''},
+  elderflower:{n:'Elderflower (Sambucus nigra)',g:'Promotes sweating and releases the exterior, increases bronchial secretion (Commission E / EMA: early colds)',c:'Rutin, chlorogenic acid, triterpenes',w:'Flowers only; stems, leaves and unripe berries contain cyanogenic glycosides and must not be used',ix:[],note:''},
+  elderberry:{n:'Elderberry (Sambucus nigra)',g:'Traditionally used at the onset of colds and flu',c:'Anthocyanins (cyanidin-3-glucoside), flavonoids',w:'Raw berries and seeds contain cyanogenic glycosides and lectins; must be cooked, never steeped raw',ix:['Immunosuppressants: may theoretically antagonize'],note:''},
+  echinacea:{n:'Echinacea (Echinacea purpurea)',g:'Short-term supportive use at the onset of colds (Commission E / EMA)',c:'Alkamides, cichoric acid, polysaccharides',w:'Avoid with daisy-family allergy; not for autoimmune disease or progressive systemic disease (tuberculosis, multiple sclerosis, HIV); no more than 10 days continuously',ix:['Immunosuppressants (cyclosporine, steroids): may antagonize'],note:''},
+  thyme:{n:'Thyme (Thymus vulgaris)',g:'Expectorant and antitussive, antispasmodic and antibacterial (Commission E: bronchitis, whooping-cough-like cough, upper respiratory catarrh)',c:'Thymol, carvacrol (volatile oil), flavonoids',w:'Not in medicinal amounts during pregnancy; avoid with mint-family allergy',ix:[],note:''},
+  sage:{n:'Sage Leaf (Salvia officinalis)',g:'Antibacterial and astringent, reduces sweating; gargle for mouth and throat inflammation (Commission E)',c:'Thujone, carnosic acid, rosmarinic acid',w:'Contains thujone: not for prolonged or heavy use; avoid in epilepsy; contraindicated in pregnancy and avoid while breastfeeding (reduces milk)',ix:[],note:''},
+  rosemary:{n:'Rosemary (Rosmarinus officinalis)',g:'Stomachic and carminative, promotes circulation (Commission E: dyspepsia)',c:'Rosmarinic acid, carnosic acid, 1,8-cineole, camphor',w:'Not in medicinal amounts during pregnancy; caution with hypertension or epilepsy',ix:[],note:''},
+  xiaohuixiang:{n:'Fennel Seed (Xiaohuixiang)',g:'Disperses cold and relieves pain, regulates qi and harmonizes the stomach (TCM); carminative, antispasmodic, expectorant (Commission E)',c:'trans-Anethole, fenchone, estragole',w:'Caution in yin deficiency with heat; contains estragole — not for prolonged heavy use in infants or pregnancy',ix:[],note:''},
+  anise:{n:'Aniseed (Pimpinella anisum)',g:'Expectorant, carminative and antispasmodic (Commission E: dyspepsia, respiratory catarrh)',c:'trans-Anethole (volatile oil)',w:'Avoid with allergy to anethole or the carrot family; not in medicinal amounts during pregnancy',ix:[],note:''},
+  caraway:{n:'Caraway (Carum carvi)',g:'Carminative and antispasmodic, relieves bloating (Commission E: dyspepsia, flatulence)',c:'Carvone, limonene (volatile oil)',w:'Caution in biliary obstruction',ix:[],note:''},
+  nettle:{n:'Nettle Leaf (Urtica dioica)',g:'Diuretic, supportive for rheumatic complaints (Commission E: irrigation therapy — drink plenty of water)',c:'Flavonoids, silicic acid, potassium salts, chlorophyll, iron',w:'Not for edema due to impaired heart or kidney function; drink plenty of water with it',ix:['Diuretics / antihypertensives / antidiabetics: effects may add up','Lithium: diuresis may raise lithium levels'],note:''},
+  yarrow:{n:'Yarrow (Achillea millefolium)',g:'Bitter stomachic, antispasmodic, promotes sweating (Commission E: loss of appetite, dyspepsia)',c:'Chamazulene, achillin, flavonoids',w:'Avoid with daisy-family allergy; contraindicated in pregnancy',ix:[],note:''},
+  mullein:{n:'Mullein Flower (Verbascum)',g:'Soothes the throat and loosens phlegm (Commission E: respiratory catarrh)',c:'Mucilage, saponins, aucubin',w:'Strain the tea finely; the fine hairs irritate the throat',ix:[],note:''},
+  plantain:{n:'Ribwort Plantain (Plantago lanceolata)',g:'Soothes the throat and eases cough, astringent and antibacterial (Commission E: respiratory catarrh, mouth and throat inflammation)',c:'Aucubin, mucilage, acteoside',w:'A different species from the Chinese herb Cheqiancao (Plantago asiatica), with different uses',ix:[],note:''},
+  rosehip:{n:'Rosehip (Rosa canina)',g:'Tart and thirst-quenching, rich in vitamin C (a traditional European fruit tea)',c:'Vitamin C, carotenoids, pectin, galactolipids',w:'Vitamin C does not survive long boiling — steep or boil briefly; strain out the fine hairs',ix:[],note:''},
+  sjw:{n:'St John’s Wort (Hypericum perforatum)',g:'Soothes the liver and relieves constraint, clears heat and drains damp (Chinese Pharmacopoeia); Commission E: mild low mood, anxiety and restlessness',c:'Hypericin, hyperforin, flavonoids',w:'Interacts with many prescription drugs — do not use if you take any; never combine with antidepressants; avoid in bipolar disorder; photosensitivity in fair-skinned people at high doses; not advised in pregnancy or breastfeeding',ix:['Strong inducer of CYP3A4 and P-glycoprotein: lowers blood levels of oral contraceptives, warfarin, cyclosporine / tacrolimus, digoxin, HIV drugs and some cancer drugs','SSRIs / SNRIs / triptans: risk of serotonin syndrome'],note:'',warn:'St John’s wort lowers the blood levels of many prescription drugs (oral contraceptives, anticoagulants, immunosuppressants, HIV drugs and others) and can cause serotonin syndrome with antidepressants. Do not use it if you take any prescription medication.'},
+  milkthistle:{n:'Milk Thistle (Silybum marianum)',g:'Clears heat and resolves toxicity, soothes the liver and benefits the gallbladder (Chinese Pharmacopoeia); Commission E: dyspepsia, extracts as supportive treatment in liver disease',c:'Silymarin (silybin and others; poorly water-soluble)',w:'Avoid with daisy-family allergy; silymarin barely dissolves in water, so a tea is not equivalent to a standardized extract',ix:[],note:''},
+  jianghuang:{n:'Turmeric (Jianghuang)',g:'Breaks up blood stasis and moves qi, unblocks the channels and relieves pain (TCM); promotes bile flow and digestion (Commission E)',c:'Curcuminoids (fat-soluble; absorbed better with fat or black pepper), turmerones',w:'Caution in blood deficiency without stasis; caution in pregnancy; caution with biliary obstruction or gallstones',ix:['Anticoagulants / antiplatelets: increased bleeding risk','Antidiabetics: may enhance the effect'],note:''},
+});
+Object.assign(EN_DATA.presets,{
+  '洋甘菊茶':{n:'Chamomile Tea',src:'European tradition · Commission E',d:'Settles the stomach and relaxes; the most common Western herbal tea'},
+  '洋甘菊薰衣草睡前茶':{n:'Chamomile–Lavender Bedtime Tea',src:'Modern Western bedtime blend',d:'Relaxing and fragrant, for winding down'},
+  '缬草啤酒花安神茶':{n:'Valerian–Hops Calming Tea',src:'Adapted from the German Species sedativae',d:'Trouble falling asleep, nervous tension; do not drive afterwards'},
+  '西番莲椴花舒缓茶':{n:'Passionflower–Linden Soothing Tea',src:'European tradition',d:'Eases tension and restlessness'},
+  '贯叶连翘香蜂草茶':{n:'St John’s Wort–Lemon Balm Tea',src:'Commission E (St John’s wort)',d:'For low mood; interacts with many prescription drugs — not if you take medication'},
+  '茴香三子茶':{n:'Fennel–Anise–Caraway Tea',src:'German tradition (Fenchel-Anis-Kümmel)',d:'Carminative; for bloating and belching'},
+  '薄荷洋甘菊健胃茶':{n:'Peppermint–Chamomile Stomach Tea',src:'Adapted from the German Species stomachicae',d:'Fullness and stomach discomfort after meals'},
+  '蒲公英蓍草苦味茶':{n:'Dandelion–Yarrow Bitter Tea',src:'European bitters tradition',d:'Drink before meals to stimulate digestive secretions'},
+  '水飞蓟蒲公英茶':{n:'Milk Thistle–Dandelion Tea',src:'European tradition',d:'Traditional liver and gallbladder support; silymarin dissolves poorly, so a tea is weak'},
+  '椴花接骨木花发汗茶':{n:'Linden–Elderflower Sweat Tea',src:'German Species diaphoreticae',d:'Early cold with fever and no sweating; drink hot and keep warm'},
+  '蓍草接骨木花薄荷茶':{n:'Yarrow–Elderflower–Peppermint Tea',src:'British traditional cold tea',d:'Onset of colds and flu; promotes sweating and clears the nose'},
+  '百里香止咳茶':{n:'Thyme Cough Tea',src:'Adapted from the German Species pectorales',d:'Productive cough and bronchial discomfort'},
+  '鼠尾草润喉茶':{n:'Sage Throat Tea',src:'European tradition (drink or gargle)',d:'Sore throat and mouth discomfort; not for long-term use'},
+  '紫锥菊接骨木果茶':{n:'Echinacea–Elderberry Tea',src:'Modern Western immune blend',d:'Short-term at the onset of a cold, no more than 10 days'},
+  '生姜百里香蜂蜜茶':{n:'Ginger–Thyme–Honey Tea',src:'European folk remedy',d:'Cough and throat discomfort after a chill'},
+  '玫瑰果洛神花茶':{n:'Rosehip–Hibiscus Tea',src:'Classic German fruit tea (Hagebutte-Hibiskus)',d:'Tart and refreshing, with vitamin C and anthocyanins'},
+  '荨麻蒲公英春季茶':{n:'Nettle–Dandelion Spring Tea',src:'European “spring cleanse” tradition',d:'Diuretic; drink plenty of water with it'},
+  '姜黄生姜黄金茶':{n:'Turmeric–Ginger Golden Tea',src:'From Indian Ayurveda, popular in the modern West',d:'Warming; absorbs better with a little fat or black pepper'},
+  '迷迭香薄荷提神茶':{n:'Rosemary–Peppermint Pick-me-up',src:'European tradition',d:'Refreshing, and helps digestion after meals'},
+});
+Object.assign(EN_DATA.combos,{
+  '茴香三子':{n:'Fennel–Anise–Caraway',t:'The German household Fenchel-Anis-Kümmel tea: three carrot-family seeds in equal parts, carminative and antispasmodic, used for bloating in adults and children. Crush before use.'},
+  '椴花接骨木花':{n:'Linden + Elderflower',t:'The core of the German pharmacopoeia “sweat tea” (Species diaphoreticae): drink hot, keep warm and sweat, at the onset of a cold.'},
+  '蓍草接骨木花薄荷':{n:'Yarrow–Elderflower–Peppermint',t:'The cold tea of British herbal tradition, in equal parts: promotes sweating, disperses wind and opens the nose.'},
+  '缬草配啤酒花':{n:'Valerian + Hops',t:'A fixed combination approved by Commission E: valerian and hops act together as a sedative, often with lemon balm. Do not drive afterwards.'},
+  '洋甘菊配薄荷':{n:'Chamomile + Peppermint',t:'The most common European stomach pairing: chamomile relieves spasm and inflammation, peppermint is carminative and settles nausea.'},
+  '玫瑰果配洛神花':{n:'Rosehip + Hibiscus',t:'The classic German fruit tea Hagebutte-Hibiskus: tart, thirst-quenching and deep red.'},
+});
+Object.assign(EN_DATA.lt,{
+  valerian:'Usually no more than 4–6 weeks continuously; taper off after long use',hops:'Sedatives are not for long continuous use',passionflower:'Sedatives are not for long continuous use',
+  echinacea:'EMA advises no more than 10 days of continuous use',sage:'Contains thujone; not for prolonged use',thyme:'Stop once symptoms ease',
+  sjw:'A course is usually 4–6 weeks, under medical guidance',nettle:'A diuretic; watch electrolytes with long use',
+  elderflower:'A diaphoretic; stop once the cold resolves',linden:'A diaphoretic; stop once the cold resolves',yarrow:'A bitter diaphoretic; not for prolonged use',
+  lavender:'Calming herbs are best used intermittently',jianghuang:'Moves blood and qi; prolonged use consumes blood',anise:'Contains anethole; not for prolonged use',xiaohuixiang:'Pungent and warm, contains estragole; not for prolonged use',
+});
+
 /* ---------- 语言 / i18n ---------- */
 const ED=(typeof EN_DATA!=='undefined')?EN_DATA:{herbs:{},presets:{},combos:{},conflicts:{},lt:{}};
 const isEN=()=>S.lang==='en';
@@ -1021,8 +1140,8 @@ const CHENG_EN={木:'Wood overacting on Earth — excess liver qi invades the sp
 const WU_EN={木:'insult Metal in reverse (wood-fire scorching the lung)',火:'insult Water in reverse',土:'insult Wood in reverse (congested earth stagnating wood)',金:'insult Fire in reverse',水:'insult Earth in reverse (kidney water flooding the spleen)'};
 const PROTECT={土:['健脾（甘味）','spleen-strengthening (sweet)'],水:['补肾（咸/入肾）','kidney-supporting'],火:['温通（苦/温）','warming, unblocking'],金:['润肺（入肺）','lung-moistening'],木:['柔肝（酸味）','liver-softening (sour)']};
 const PART_EN={flower:'flower',leaf:'leaf',herb:'aerial part',peel:'peel',fruit:'fruit',seed:'seed',root:'root',slice:'slices',bark:'bark',fungus:'fungus',bulb:'bulb',stem:'stem',algae:'seaweed',sugar:'sugar',gel:'gelatin'};
-const CAT_EN={全部:'All',补益:'Tonics',清热:'Clear heat',解表:'Release exterior',理气:'Move qi',活血:'Move blood',安神:'Calming',平肝:'Calm liver',祛湿:'Resolve damp',消食:'Digestive',收涩:'Astringent',化痰:'Phlegm',温里:'Warm interior'};
-const PCAT_EN={补气养血:'Qi & Blood',滋阴润燥:'Nourish Yin',温阳散寒:'Warm & Dispel Cold',感冒初起:'Early Cold / Flu',清热解暑:'Clear Heat & Summer',润肺利咽:'Lung & Throat',疏肝安神:'Mood & Sleep',健脾祛湿:'Spleen & Damp',消食化积:'Digestion',明目养肝:'Eyes & Liver',活血降脂:'Circulation',配伍反例:'Counter-examples'};
+const CAT_EN={全部:'All',西方:'Western',补益:'Tonics',清热:'Clear heat',解表:'Release exterior',理气:'Move qi',活血:'Move blood',安神:'Calming',平肝:'Calm liver',祛湿:'Resolve damp',消食:'Digestive',收涩:'Astringent',化痰:'Phlegm',温里:'Warm interior'};
+const PCAT_EN={补气养血:'Qi & Blood',滋阴润燥:'Nourish Yin',温阳散寒:'Warm & Dispel Cold',感冒初起:'Early Cold / Flu',清热解暑:'Clear Heat & Summer',润肺利咽:'Lung & Throat',疏肝安神:'Mood & Sleep',健脾祛湿:'Spleen & Damp',消食化积:'Digestion',明目养肝:'Eyes & Liver',活血降脂:'Circulation','西方·安神助眠':'Western · Sleep & Calm','西方·消化':'Western · Digestion','西方·感冒呼吸':'Western · Colds & Breathing','西方·日常调养':'Western · Everyday',配伍反例:'Counter-examples'};
 const BODY_EN={平和:['Balanced','yin–yang, qi and blood in harmony'],气虚:['Qi-deficient','tires easily, short of breath, catches colds'],阳虚:['Yang-deficient','feels cold, cold hands and feet'],阴虚:['Yin-deficient','dry mouth and throat, hot palms and soles'],血虚:['Blood-deficient','sallow complexion, dizziness, pale lips and nails'],痰湿:['Phlegm-damp','heavy build, sluggish, greasy tongue coat'],湿热:['Damp-heat','oily skin, bitter taste, yellow greasy coat'],血瘀:['Blood-stasis','dull complexion, bruises easily'],气郁:['Qi-stagnant','low mood, tense, chest tightness'],特禀:['Allergic','allergic constitution']};
 const ROLE_EN={君:'Sovereign',臣:'Minister',佐:'Assistant',使:'Envoy'};
 const TAG_EN={
@@ -1155,8 +1274,8 @@ function extraction(h,it,cfg){
   if(h.p==='sugar')return .98;
   if(c.method==='infuse'){
     const tf=clamp(.72+(c.temp-80)*.014,.6,1);
-    const time=1-Math.exp(-c.minutes/P.ti);
-    e=P.E*P.inf*tf*time;
+    const time=1-Math.exp(-c.minutes/(h.ti||P.ti));
+    e=P.E*(h.infK||P.inf)*tf*time;
     if(h.sp.includes('crush'))e*=it.fl.crush?1.3:.8;
   }else{
     let min=c.minutes,loss=1,tb=P.tb;
@@ -1174,7 +1293,7 @@ function extraction(h,it,cfg){
 }
 function curRatio(){const G=S.items.reduce((a,i)=>a+(+i.g||0),0);return G>0?S.water/G:10}
 /* 标准煎煮下的参照溶出率：药典常用量默认按规范汤剂（浸泡、沸后文火 30 分钟、特殊处理到位）计 */
-function eRef(h){return extraction(h,{fl:defFlags(h)},{method:'boil',minutes:30,temp:100,soak:true,R:10})}
+function eRef(h){return extraction(h,{fl:defFlags(h)},h.std==='infuse'?{method:'infuse',minutes:10,temp:100,soak:true,R:30}:{method:'boil',minutes:30,temp:100,soak:true,R:10})}
 /* 当日实际喝进去的累计溶出：煮=头煎+复煎（复煎约为头煎效率的 70%）；泡=首泡+续泡 */
 function eTotal(e){return Math.max(e,clamp(e+(1-e)*e*(S.method==='boil'?.7:.6),0,.97))}
 
@@ -1223,7 +1342,7 @@ function renderDrawers(){
   const q=$('#q').value.trim().toLowerCase();
   const ins=new Set(S.items.map(i=>i.id));
   const hit=h=>!q||h.n.includes(q)||h.py.includes(q)||h.g.includes(q)||h.id.includes(q)||Object.keys(h.fx).some(k=>k.includes(q)||TAG_EN[k][0].toLowerCase().includes(q)||TAG_EN[k][2].toLowerCase().includes(q))||(EH(h).n||'').toLowerCase().includes(q)||(EH(h).g||'').toLowerCase().includes(q);
-  const list=HERBS.filter(h=>(cat==='全部'||h.cat===cat)&&hit(h));
+  const list=HERBS.filter(h=>(cat==='全部'||(cat==='西方'?h.west>0:h.cat===cat))&&hit(h));
   $('#cabCount').textContent=L(`${list.length} / ${HERBS.length} 味`,`${list.length} / ${HERBS.length} herbs`);
   $('#drawers').innerHTML=list.map(h=>`<button class="drawer${ins.has(h.id)?' in':''}" data-id="${h.id}" title="${hg(h)}" style="--c:${natColor(h.t)}"><span class="knob"></span><b>${hnShort(h)}</b><small>${isEN()?`${hpy(h)} · ${natT(h.tl)}`:`${h.tl} · ${h.f}`}</small></button>`).join('')||`<p class="muted" style="grid-column:1/-1">${L('没有匹配的药材','No matching herbs')}</p>`;
 }
@@ -1422,6 +1541,13 @@ const LT={
   yinyanghuo:[28,'辛温助阳，久服伤阴；有肝损伤个案'],heshouwu:[28,'有药物性肝损伤报道，久服需监测肝功能'],
   ejiao:[42,'滋腻碍胃，久服宜配陈皮等理气'],yimucao:[14,'活血利水，久服耗血'],taoren:[7,'有小毒，不宜久服'],niuxi:[28,'活血下行，久服耗血'],
 };
+Object.assign(LT,{
+  valerian:[28,'连续使用一般不超过 4–6 周，长期后停用宜逐渐减量'],hops:[28,'镇静药不宜长期连续使用'],passionflower:[28,'镇静药不宜长期连续使用'],
+  echinacea:[10,'EMA 建议连续使用不超过 10 天'],sage:[14,'含侧柏酮，不宜久服'],thyme:[21,'症状缓解即停'],
+  sjw:[42,'一般以 4–6 周为一疗程，须在医师指导下使用'],nettle:[28,'利尿之品，久服注意电解质'],
+  elderflower:[10,'发汗解表，感冒愈后即停'],linden:[14,'发汗之品，感冒愈后即停'],yarrow:[14,'发汗苦味药，不宜久服'],
+  lavender:[28,'安神药宜间歇使用'],jianghuang:[28,'活血行气，久服耗血'],anise:[14,'含茴香脑，不宜久服'],xiaohuixiang:[21,'辛温，含爱草脑，不宜久服'],
+});
 function ltReason(id,zh,key){return isEN()?(ED.lt[key||id]||zh):zh}
 function dosing(c){
   const pd=S.perDay,days=S.days;
@@ -1498,7 +1624,7 @@ function buildAlerts(c,d){
     if(daily>U*2)A.push(['red',L('日量过大','Daily dose too high'),L(`${n} ${pdTxt}，超过常用日量上限 ${h.d[1]} g 的两倍${UT}。`,`${n} ${pdTxt} — more than twice the usual daily maximum of ${h.d[1]} g${UT}.`)]);
     else if(daily>U)A.push(['amber',L('超日常用量','Above usual dose'),L(`${n} ${pdTxt}，高于常用日量 ${h.d[0]}–${h.d[1]} g${UT}。`,`${n} ${pdTxt} — above the usual daily range of ${h.d[0]}–${h.d[1]} g${UT}.`)]);
     else if(daily<h.d[0]*.5)A.push(['info',L('量偏小','Low dose'),L(`${n} ${pdTxt}，低于常用量下限一半，作用轻微。`,`${n} ${pdTxt} — under half the usual minimum; effect will be slight.`)]);
-    if(S.method==='infuse'&&r.rel<.4)A.push(['info',L('溶出偏低','Poor extraction'),L(`${n}（${PART[h.p].lab}）泡水估算溶出 ${Math.round(r.e*100)}%，只相当于标准煎煮的 ${Math.round(r.rel*100)}%。建议切薄片、延长焖泡，或改用煮。`,`${n} (${PART_EN[h.p]}) extracts ~${Math.round(r.e*100)}% when steeped — only ${Math.round(r.rel*100)}% of a standard decoction. Slice thinly, steep longer, or decoct instead.`)]);
+    if(S.method==='infuse'&&r.rel<.4)A.push(['info',L('溶出偏低','Poor extraction'),L(`${n}（${PART[h.p].lab}）泡水估算溶出 ${Math.round(r.e*100)}%，只相当于标准${h.std==='infuse'?'泡法':'煎煮'}的 ${Math.round(r.rel*100)}%。建议${h.std==='infuse'?'用沸水、加盖、延长焖泡':'切薄片、延长焖泡，或改用煮'}。`,`${n} (${PART_EN[h.p]}) extracts ~${Math.round(r.e*100)}% when steeped — only ${Math.round(r.rel*100)}% of a standard ${h.std==='infuse'?'infusion. Use boiling water, cover, and steep longer':'decoction. Slice thinly, steep longer, or decoct instead'}.`)]);
     if(S.method==='boil'&&h.sp.includes('late')&&!r.it.fl.late&&S.minutes>10)A.push(['info',L('宜后下','Add last'),L(`${n}含挥发性成分，久煎 ${S.minutes} 分钟损失明显，建议关火前 5 分钟放入。`,`${n} contains volatile oils that are largely lost over ${S.minutes} minutes. Add it in the last 5 minutes.`)]);
     if(S.method==='boil'&&h.sp.includes('first')&&!r.it.fl.first)A.push(['info',L('宜先煎','Cook first'),L(`${n}质地坚硬，宜先煎 30 分钟再下其他药。`,`${n} is hard; simmer it 30 minutes before adding the other herbs.`)]);
     if(h.sp.includes('crush')&&!r.it.fl.crush)A.push(['info',h.id==='dazao'?L('宜掰开','Split open'):L('宜捣碎','Crush first'),L(`${n}${h.id==='dazao'?'整枚':'完整'}使用时有效成分难以溶出。`,`Used whole, ${n} releases little of its active content.`)]);
@@ -1510,7 +1636,8 @@ function buildAlerts(c,d){
     if(h.sp.includes('powder'))A.push(['info',L('研粉','Take as powder'),h.id==='jineijin'?L('鸡内金研末吞服（每次 1.5–3 g）效果优于入汤剂，其消化酶不耐高温。','Chicken gizzard lining works better swallowed as powder (1.5–3 g per dose); its enzymes do not survive boiling.'):L(`${n}研粉吞服（每次 1–3 g）效果为佳，入汤剂效力降低。`,`${n} works best swallowed as powder (1–3 g per dose); decocting weakens it.`)]);
     if(h.sp.includes('melt')&&!r.it.fl.melt)A.push(['amber',L('宜烊化','Melt separately'),L(`${n}与群药同${S.method==='boil'?'煎易粘锅、包裹他药':'泡难以溶化'}。应隔水蒸化或用热药液溶化后兑服。`,`${S.method==='boil'?`Cooked with the other herbs, ${n} sticks to the pot and coats them.`:`${n} will not dissolve by steeping.`} Melt it over a water bath or in the hot strained liquid, then stir in.`)]);
     if(h.sp.includes('honey')&&!r.it.fl.honey)A.push(['info',L('蜂蜜宜温调','Add honey warm'),L('蜂蜜不宜久煮或沸水冲，待汤液降至 60 °C 以下再调入，以保留酶类、减少 5-羟甲基糠醛生成。','Do not boil honey or add it to boiling water. Stir it in once the liquid is below 60 °C to keep its enzymes and limit HMF formation.')]);
-    if(h.raw&&S.method==='infuse')A.push(['red',L('必须煮熟','Must be cooked'),L(`${n}生品含植物凝集素，泡水不能使其失活，可致恶心呕吐，须充分煮熟。`,`Raw ${n} contains lectins that steeping cannot deactivate; it can cause nausea and vomiting. Boil thoroughly.`)]);
+    if(h.warn)A.push(['red',L('药物相互作用','Drug interactions'),`${n}${COLON()}${isEN()?(EH(h).warn||h.warn):h.warn}`]);
+    if(h.raw&&S.method==='infuse')A.push(['red',L('必须煮熟','Must be cooked'),L(`${n}生品含${h.id==='elderberry'?'生氰苷与':''}植物凝集素，泡水不能使其失活，可致恶心呕吐，须充分煮熟。`,`Raw ${n} contains ${h.id==='elderberry'?'cyanogenic glycosides and ':''}lectins that steeping cannot deactivate; it can cause nausea and vomiting. Boil thoroughly.`)]);
   });
   if(S.weight<50&&c.rows.length)A.push(['info',L('低体重','Low body weight'),L(`体重 ${S.weight} kg 低于 50 kg，宜取常用量下限。超量提醒已按常用上限的 ${Math.round(wf()*100)}% 计算，克数不会自动修改。`,`At ${S.weight} kg (under 50 kg), stay near the low end of usual doses. Overdose alerts now use ${Math.round(wf()*100)}% of the usual maximum; grams are not changed automatically.`)]);
   if(c.T<=-1.5)A.push(['amber',L('整体寒凉','Overall cold'),L(`全方药性偏寒（${r1(c.T)}），脾胃虚寒、经期女性不宜久服，可加生姜 2–3 片或大枣佐之。`,`The formula is cold overall (${r1(c.T)}). Not for long-term use with a weak, cold digestion or during menstruation; add 2–3 slices of ginger or a few jujubes to balance it.`)]);
@@ -1604,7 +1731,7 @@ function renderAnalysis(c){
 
   const ixAll=[];c.rows.forEach(r=>hix(r.h).forEach(x=>ixAll.push(`<li><b>${hnShort(r.h)}</b>${COLON()}${x}</li>`)));
   const herbsInfo=c.rows.map(r=>{const nt=hnote(r.h);return `<details class="herb"><summary>${hn(r.h)} <span class="muted num" style="font-size:12px">${r.g} g · ${L('药力','potency')} ${r1(r.s)}</span></summary>
-     <p><span class="lbl">${L('功效　','Actions: ')}</span>${hg(r.h)}</p><p><span class="lbl">${L('主要成分　','Constituents: ')}</span>${hc(r.h)}</p><p><span class="lbl">${L('注意　','Cautions: ')}</span>${hw(r.h)}${nt?L(`（${nt}）`,` (${nt})`):''}</p></details>`}).join('');
+     <p><span class="lbl">${L('功效　','Actions: ')}</span>${hg(r.h)}</p><p><span class="lbl">${L('主要成分　','Constituents: ')}</span>${hc(r.h)}</p><p><span class="lbl">${L('注意　','Cautions: ')}</span>${hw(r.h)}${nt?L(`（${nt}）`,` (${nt})`):''}</p>${r.h.west?`<p class="lbl">${r.h.west===1?L('西方草药：剂量参照德国 Commission E / EMA 专论；性味归经为中西结合文献（Holmes、Ross 等）的参考归类，非药典记载。','Western herb: doses follow German Commission E / EMA monographs; the nature, flavor and meridian entries are reference attributions from integrative literature (Holmes, Ross), not pharmacopoeial.'):L('中西通用：性味归经据《中国药典》，西方用法参照 Commission E。','Used in both traditions: nature and meridians per the Chinese Pharmacopoeia; Western use per Commission E.')}</p>`:''}</details>`}).join('');
 
   const nticks=c.rows.map(r=>`<span class="gtick" style="left:${(clamp(r.h.t,-3,3)+3)/6*100}%" title="${hnShort(r.h)} ${natT(r.h.tl)}"></span>`).join('');
   const merE=Object.entries(c.mer).sort((a,b)=>b[1]-a[1]);
