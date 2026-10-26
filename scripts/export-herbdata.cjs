@@ -29,7 +29,9 @@ js += `
   pcats: PCATS.map(c => ({ k:c, en:PCAT_EN[c]||c })),
   nat: NAT_EN, fl: FL_EN, mer: MER_EN, el: EL_EN, org: ORG, orgEn: ORG_EN,
   sheng: SHENG_TXT, shengEn: SHENG_EN, cheng: CHENG_TXT, chengEn: CHENG_EN, wu: WU_TXT, wuEn: WU_EN, protect: Object.fromEntries(Object.entries(PROTECT).map(([k,v])=>[k,{zh:v[0],en:v[1]}])),
-  roleEn: ROLE_EN, en: { herbs: EN_DATA.herbs, presets: EN_DATA.presets, combos: EN_DATA.combos, conflicts: EN_DATA.conflicts }
+  roleEn: ROLE_EN,
+  symptoms: SYMPTOMS.map(x => ({ k:x.k, en:x.en, syn:x.syn, tags:Object.entries(x.tags).map(([k,v])=>({k,v})) })),
+  redFlags: RED_FLAGS, crisis: CRISIS, en: { herbs: EN_DATA.herbs, presets: EN_DATA.presets, combos: EN_DATA.combos, conflicts: EN_DATA.conflicts }
 };`;
 vm.runInContext(js, ctx, { filename: 'index-script.js' });
 const o = ctx.__out;

@@ -100,6 +100,14 @@ main{display:flex;flex-direction:column;gap:18px;min-width:0}
 .recipe small{font-size:12px;color:var(--muted);line-height:1.4}
 .recipe .hs{font-size:11px;color:var(--muted);opacity:.85}
 .recipe.bad b{color:var(--red)}
+.libmode{display:flex;gap:6px;padding:10px 14px 0}
+.symtools{padding:10px 14px 0;display:flex;flex-direction:column;gap:8px}
+.symnote{margin:10px 14px 14px;font-size:12px;color:var(--muted)}
+.symwarn{margin:10px 14px 0;padding:10px 12px;border-radius:4px;background:var(--red-soft);font-size:13px}
+.symwarn b{color:var(--red)}
+.recipe .match{font-size:12px;color:var(--accent);font-weight:500}
+.recipe .mbar{height:4px;border-radius:2px;background:var(--panel2);overflow:hidden}
+.recipe .mbar i{display:block;height:100%;background:var(--accent)}
 .pnote{padding:8px 14px;border-bottom:1px solid var(--line);font-size:13px;background:var(--panel2)}
 .pnote b{font-family:var(--serif)}
 
@@ -385,8 +393,21 @@ button,.drawer,.recipe,.chip,.flag,.card h3,input,select{touch-action:manipulati
           <h2><span data-i="lib">方库</span> <span class="eyebrow" id="libCount"></span></h2>
         </div>
         <div id="libBody">
-          <div class="chips libcats" id="libcats"></div>
-          <div class="lib" id="lib"></div>
+          <div class="libmode" role="group" aria-label="方库浏览方式">
+            <button class="chip" id="modeCat" data-i="modeCat">按分类</button>
+            <button class="chip" id="modeSym" data-i="modeSym">按症状找方</button>
+          </div>
+          <div id="catView">
+            <div class="chips libcats" id="libcats"></div>
+            <div class="lib" id="lib"></div>
+          </div>
+          <div id="symView" hidden>
+            <div class="symtools">
+              <input class="search" id="symq" type="search" autocomplete="off">
+              <div class="chips" id="symchips"></div>
+            </div>
+            <div id="symres"></div>
+          </div>
         </div>
       </section>
 
@@ -814,6 +835,41 @@ const PRESETS=[
 ];
 const PCATS=[...new Set(PRESETS.map(p=>p.c))];
 
+/* 症状 → 功效映射：用于方库“按症状找方”。syn 为同义词（中英，英文小写），tags 为对应功效的权重 */
+const SYMPTOMS=[
+  {k:'失眠',en:'Insomnia',syn:['睡不着','入睡难','多梦','易醒','睡眠','sleep','insomnia'],tags:{安神:1}},
+  {k:'焦虑紧张',en:'Anxiety & stress',syn:['焦虑','紧张','压力','心烦','烦躁','anxiety','anxious','stress','nervous'],tags:{安神:.6,疏肝:.6}},
+  {k:'情绪低落',en:'Low mood',syn:['抑郁','郁闷','不开心','情绪','low mood','depressed','sad'],tags:{疏肝:1,理气:.4}},
+  {k:'疲劳乏力',en:'Fatigue',syn:['累','疲劳','乏力','没精神','气短','fatigue','tired','exhausted'],tags:{补气:1,健脾:.4}},
+  {k:'怕冷',en:'Feeling cold',syn:['手脚冰凉','手脚凉','畏寒','cold hands','feel cold','chilly'],tags:{温阳:1,温中:.5}},
+  {k:'口干咽干',en:'Dry mouth',syn:['口干','咽干','口渴','dry mouth','thirst','thirsty'],tags:{生津:1,滋阴:.7}},
+  {k:'上火',en:'“Internal heat”',syn:['口苦','口疮','口腔溃疡','长痘','internal heat','mouth ulcer','acne'],tags:{清热:1,解毒:.6}},
+  {k:'咽喉痛',en:'Sore throat',syn:['喉咙痛','嗓子疼','咽痛','声音嘶哑','失声','sore throat','hoarse'],tags:{利咽:1,清热:.5,解毒:.4}},
+  {k:'咳嗽痰多',en:'Cough with phlegm',syn:['咳嗽','有痰','痰多','cough','phlegm'],tags:{化痰:1,宣肺:.6}},
+  {k:'干咳',en:'Dry cough',syn:['秋燥','dry cough'],tags:{润肺:1,滋阴:.5}},
+  {k:'感冒初起',en:'Early cold',syn:['感冒','着凉','受凉','流鼻涕','鼻塞','发热','common cold','flu','runny nose','stuffy nose','chills'],tags:{解表:1,疏风:.8}},
+  {k:'腹胀',en:'Bloating',syn:['胀气','胃胀','嗳气','打嗝','bloating','gas','belching'],tags:{理气:1,消食:.4}},
+  {k:'消化不良',en:'Indigestion',syn:['积食','吃多了','不消化','食欲差','没胃口','indigestion','poor appetite','overate'],tags:{消食:1,健脾:.5}},
+  {k:'胃寒胃痛',en:'Cold, aching stomach',syn:['胃寒','胃痛','胃凉','stomach ache','cold stomach'],tags:{温中:1,缓急:.5}},
+  {k:'恶心',en:'Nausea',syn:['想吐','呕吐','晕车','nausea','vomit','motion sickness'],tags:{止呕:1}},
+  {k:'便秘',en:'Constipation',syn:['大便干','constipation','constipated'],tags:{润肠:1}},
+  {k:'腹泻便溏',en:'Loose stools',syn:['腹泻','拉肚子','便溏','diarrhea','loose stool'],tags:{健脾:1,收敛:.6}},
+  {k:'湿气重',en:'Dampness',syn:['湿气','困重','舌苔厚','身体沉','damp','dampness','heavy body'],tags:{祛湿:1,健脾:.4}},
+  {k:'水肿',en:'Puffiness',syn:['浮肿','脚肿','edema','swelling','puffy'],tags:{利水:1}},
+  {k:'眼干眼累',en:'Dry, tired eyes',syn:['眼干','眼睛累','眼疲劳','视力模糊','看屏幕','眼睛','dry eye','dry eyes','eye','eyes','eye strain','tired eyes','blurry vision'],tags:{明目:1}},
+  {k:'头晕易怒',en:'Dizziness, irritability',syn:['头晕','头胀','易怒','急躁','dizzy','irritable'],tags:{平肝:1,疏肝:.4}},
+  {k:'面色差',en:'Pale, weak blood',syn:['面色萎黄','脸色差','贫血','唇色淡','心悸','pale','anemia','palpitations'],tags:{养血:1,补气:.4}},
+  {k:'多汗易感冒',en:'Sweating, frequent colds',syn:['自汗','出汗多','易感冒','免疫力','sweating','catch colds','immunity'],tags:{固表:1,补气:.5}},
+  {k:'腰膝酸软',en:'Sore back & knees',syn:['腰酸','膝盖','腰痛','sore back','weak knees','back pain'],tags:{强筋:1,温阳:.4}},
+  {k:'经期不适',en:'Period discomfort',syn:['痛经','月经','经期','period','menstrual','period pain'],tags:{活血:.7,养血:.6,缓急:.5}},
+  {k:'痉挛腹痛',en:'Cramps',syn:['抽筋','痉挛','腹痛','cramp','spasm'],tags:{缓急:1}},
+  {k:'血脂偏高',en:'High blood lipids',syn:['血脂','胆固醇','降脂','cholesterol','lipids'],tags:{活血:.6,消食:.6,祛湿:.5}},
+  {k:'暑热',en:'Summer heat',syn:['中暑','天热','summer heat','heatstroke'],tags:{清热:.8,生津:.8,祛湿:.4}},
+];
+/* 需要就医、不应自行用草药茶处理的情况 */
+const RED_FLAGS=['胸痛','呼吸困难','喘不上气','高烧','高热','便血','吐血','咳血','黑便','昏迷','意识不清','抽搐','剧烈头痛','孕期出血','chest pain','shortness of breath','high fever','bleeding','coughing blood','blood in stool','fainting','seizure','severe headache'];
+const CRISIS=['自杀','轻生','不想活','suicid','kill myself','self-harm'];
+
 const EN_DATA={
   herbs:{
     gouqi:{n:'Goji Berry (Gouqizi)',g:'Nourish and tonify the liver and kidney, replenish essence and brighten the eyes',c:'Lycium barbarum polysaccharides (LBP), zeaxanthin, betaine',w:'Use with caution in spleen deficiency with loose stools, or fever from external contraction',ix:['Warfarin: case reports of enhanced anticoagulation and elevated INR'],note:''},
@@ -1180,7 +1236,7 @@ const STATIC={
   sub:['保健草药配伍模拟 · 以克为度 · 性味归经与五行推演','Herbal wellness formula simulator · dosed to the gram · nature, flavor, meridians & Five Phases'],
   disc:['本工具依据《中国药典》常用量与中医药性理论做教学推演，不能替代医师辨证。慢病、服药中、孕期及儿童请先咨询医师或药师。','An educational model based on Chinese Pharmacopoeia dose ranges and TCM materia medica theory. It does not replace diagnosis by a qualified practitioner. With a chronic condition, current medication, pregnancy, or for children, consult a physician or pharmacist first.'],
   cab:['药柜','Herb Cabinet'],lgCold:['寒凉','Cold / cool'],lgNeu:['平','Neutral'],lgHot:['温热','Warm / hot'],lgTip:['点击抽屉加入药方','Click a drawer to add it'],
-  lib:['方库','Formula Library'],brewH:['烹制与服用','Preparation & Dosing'],anaH:['分析','Analysis'],foldAll:['全部收起','Collapse all'],unfoldAll:['全部展开','Expand all'],formula:['药方','Formula'],doseG:['剂量 · 克','dose · grams'],clear:['清空','Clear'],
+  lib:['方库','Formula Library'],modeCat:['按分类','By group'],modeSym:['按症状找方','Find by symptom'],brewH:['烹制与服用','Preparation & Dosing'],anaH:['分析','Analysis'],foldAll:['全部收起','Collapse all'],unfoldAll:['全部展开','Expand all'],formula:['药方','Formula'],doseG:['剂量 · 克','dose · grams'],clear:['清空','Clear'],
   infuse:['泡水','Steep'],boil:['煮','Decoct'],water:['水量','Water'],temp:['水温','Water temp'],body:['体质','Constitution'],
   perDay:['每日剂数','Doses per day'],days:['连续服用','Course length'],weight:['体重','Body weight'],
   soak:['煎前冷水浸泡 30 分钟','Soak in cold water 30 min first'],preg:['孕期 / 备孕','Pregnant / trying to conceive'],
@@ -1857,12 +1913,78 @@ function foldAllCards(closed){$('#analysis').querySelectorAll('.card[data-fold]'
 $('#foldAll').addEventListener('click',()=>foldAllCards(true));
 $('#unfoldAll').addEventListener('click',()=>foldAllCards(false));
 
+/* ---------- 按症状找方 ---------- */
+let symMode=false,symSel=new Set();
+const PROFILE={};
+/* 每个方子在其自身煮法下的功效构成（与“分析”页同一算法），算一次后缓存 */
+function presetProfile(p){
+  if(PROFILE[p.n])return PROFILE[p.n];
+  const saved=S;
+  S={...S,method:p.m,water:p.w,minutes:p.mi,temp:p.t||95,soak:!!p.soak,items:p.items.map(([id,g])=>({id,g,fl:defFlags(BY[id])}))};
+  const c=compute();S=saved;
+  return PROFILE[p.n]={tagN:c.tagN,preg:c.rows.some(r=>r.h.preg>0)};
+}
+function symText(x){return L(x.k,x.en)}
+function symFromQuery(q){
+  q=q.trim().toLowerCase();if(!q)return [];
+  return SYMPTOMS.filter(x=>[x.k,x.en.toLowerCase(),...x.syn].some(w=>{w=w.toLowerCase();return q.includes(w)||(q.length>=2&&w.includes(q))}));
+}
+function symMatch(){
+  const q=$('#symq').value.trim();
+  const fromQ=symFromQuery(q);
+  const active=[...new Set([...SYMPTOMS.filter(x=>symSel.has(x.k)),...fromQ])];
+  const ql=q.toLowerCase();
+  const res=[];
+  PRESETS.forEach((p,i)=>{
+    if(p.c==='配伍反例')return;
+    const pr=presetProfile(p);
+    let score=0;const hit=[];
+    active.forEach(x=>{
+      const m=Object.entries(x.tags).reduce((a,[t,w])=>a+w*(pr.tagN[t]||0),0);
+      score+=m;if(m>=.08)hit.push(x);
+    });
+    if(active.length)score/=active.length;
+    const nameHit=ql.length>=2&&(pName(p).toLowerCase().includes(ql)||pDesc(p).toLowerCase().includes(ql)||p.n.includes(q));
+    if(nameHit)score+=.15;
+    if(score<.08&&!nameHit)return;
+    const tags=[...new Set(active.flatMap(x=>Object.keys(x.tags)))].map(t=>[t,pr.tagN[t]||0]).filter(x=>x[1]>.03).sort((a,b)=>b[1]-a[1]).slice(0,3);
+    res.push({p,i,score,hit,tags,preg:pr.preg});
+  });
+  res.sort((a,b)=>b.score-a.score);
+  return {active,res:res.slice(0,12),q};
+}
+function renderSym(){
+  $('#modeCat').setAttribute('aria-pressed',!symMode);$('#modeSym').setAttribute('aria-pressed',symMode);
+  $('#catView').hidden=symMode;$('#symView').hidden=!symMode;
+  if(!symMode)return;
+  $('#symq').placeholder=L('描述症状或输入方名，如：失眠、口干、咳嗽有痰','Describe symptoms or a formula name, e.g. insomnia, dry mouth, cough');
+  const {active,res,q}=symMatch();
+  const act=new Set(active.map(x=>x.k));
+  $('#symchips').innerHTML=SYMPTOMS.map(x=>`<button class="chip" data-s="${x.k}" aria-pressed="${act.has(x.k)}">${symText(x)}</button>`).join('');
+  const ql=q.toLowerCase();
+  let html='';
+  if(CRISIS.some(w=>ql.includes(w)))html+=`<div class="symwarn"><b>${L('请马上联系可以帮助你的人。','Please reach out for help now.')}</b> ${L('如果你有伤害自己的念头，请立即拨打当地急救电话或心理危机干预热线，或告诉身边信任的人。草药茶帮不上这个忙。','If you are thinking about harming yourself, call your local emergency number or a crisis line right away, or tell someone you trust. Herbal tea cannot help with this.')}</div>`;
+  else if(RED_FLAGS.some(w=>ql.includes(w)))html+=`<div class="symwarn"><b>${L('这些症状需要尽快就医。','These symptoms need prompt medical attention.')}</b> ${L('请不要依赖草药茶自行处理。','Please do not rely on herbal tea to manage them.')}</div>`;
+  if(!active.length&&!q){html+=`<p class="symnote">${L('选一个或几个症状，或直接输入描述。结果按方子的功效构成与症状的匹配程度排序。','Pick one or more symptoms, or type a description. Results are ranked by how well each formula’s actions match.')}</p>`}
+  else if(!res.length){html+=`<p class="symnote">${L('没有找到匹配的方子。换个说法，或从上面的症状里选。','No matching formula. Try other words, or pick from the symptoms above.')}</p>`}
+  else{
+    const top=res[0].score||1;
+    html+=`<div class="lib">${res.map(({p,i,score,hit,tags,preg})=>`<button class="recipe" data-i="${i}" aria-current="${p.n===S.pn}">
+      <span class="rt"><b>${pName(p)}</b><span class="mth">${pcatN(p.c)}</span></span>
+      <span class="mbar"><i style="width:${Math.round(Math.min(1,score/top)*100)}%"></i></span>
+      <span class="match">${hit.length?L('对应：','Matches: ')+hit.map(symText).join(L('、',', ')):L('名称相符','Name matches')}${tags.length?' · '+tags.map(([t,v])=>`${tagN(t)} ${Math.round(v*100)}%`).join(L('、',', ')):''}</span>
+      <small>${pDesc(p)}${preg&&S.preg?`<br><span style="color:var(--amber)">${L('含孕期慎用或禁用药','Contains herbs to avoid or use with caution in pregnancy')}</span>`:''}</small></button>`).join('')}</div>`;
+    html+=`<p class="symnote">${L('匹配只依据方子的功效构成，仅供参考，不能替代医师辨证。症状持续或加重请就医。','Matching uses each formula’s action profile only. It is a reference, not a diagnosis; see a doctor if symptoms persist or worsen.')}</p>`;
+  }
+  $('#symres').innerHTML=html;
+}
+
 /* ---------- 刷新 ---------- */
 function refresh(){
   const c=compute();
   updateRowLive(c);renderBrew(c);renderAnalysis(c);foldCards();weightHint();save();
 }
-function fullRender(){applyStatic();foldPanels();syncBrewUI();renderCats();renderRows();renderDrawers();renderLib();renderPnote();refresh()}
+function fullRender(){applyStatic();foldPanels();syncBrewUI();renderCats();renderRows();renderDrawers();renderLib();renderSym();renderPnote();refresh()}
 function detach(){if(S.pn){S.pn=null;renderLib();renderPnote()}}
 
 /* ---------- 事件 ---------- */
@@ -1901,6 +2023,13 @@ $('#preg').addEventListener('change',e=>{S.preg=e.target.checked;refresh()});
 $('#body').addEventListener('change',e=>{S.body=e.target.value;refresh()});
 $('#libcats').addEventListener('click',e=>{const b=e.target.closest('.chip');if(!b)return;libCat=b.dataset.c;renderLib()});
 $('#lib').addEventListener('click',e=>{const b=e.target.closest('.recipe');if(!b)return;applyPreset(PRESETS[+b.dataset.i]);fullRender()});
+$('#symres').addEventListener('click',e=>{const b=e.target.closest('.recipe');if(!b)return;applyPreset(PRESETS[+b.dataset.i]);fullRender()});
+$('#symchips').addEventListener('click',e=>{const b=e.target.closest('.chip');if(!b)return;const k=b.dataset.s;
+  const fromQ=symFromQuery($('#symq').value).some(x=>x.k===k);
+  if(symSel.has(k))symSel.delete(k);else if(fromQ)$('#symq').value='';else symSel.add(k);renderSym()});
+$('#symq').addEventListener('input',renderSym);
+$('#modeCat').addEventListener('click',()=>{symMode=false;renderSym()});
+$('#modeSym').addEventListener('click',()=>{symMode=true;renderSym();try{$('#symq').focus({preventScroll:true})}catch(e){}});
 $('#clear').addEventListener('click',()=>{S.items=[];detach();renderRows();renderDrawers();refresh()});
 $('#lang').addEventListener('click',()=>{S.lang=isEN()?'zh':'en';fullRender()});
 

@@ -165,6 +165,14 @@ struct ENData: Codable {
     let conflicts: [String: ENConflict]
 }
 
+struct Symptom: Codable, Identifiable, Hashable {
+    let k: String
+    let en: String
+    let syn: [String]
+    let tags: [KV]
+    var id: String { k }
+}
+
 struct HerbData: Codable {
     let herbs: [Herb]
     let part: [String: PartInfo]
@@ -191,6 +199,9 @@ struct HerbData: Codable {
     let wuEn: [String: String]
     let protect: [String: ZhEn]
     let roleEn: [String: String]
+    let symptoms: [Symptom]
+    let redFlags: [String]
+    let crisis: [String]
     let en: ENData
 }
 
