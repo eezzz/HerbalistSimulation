@@ -82,12 +82,12 @@ struct CabinetView: View {
             .searchable(text: $q, prompt: L("药名、拼音或功效，如：明目、安神", "Name, pinyin or action, e.g. sleep, eyes"))
             .navigationTitle(L("药柜", "Herb Cabinet"))
             .toolbar {
-                ToolbarItem(placement: .topBarLeading) {
+                ToolbarItem(placement: .topBarLeading) { SettingsButton() }
+                ToolbarItem(placement: .topBarTrailing) {
                     Text(L("\(list.count) / \(DB.shared.data.herbs.count) 味", "\(list.count) / \(DB.shared.data.herbs.count)"))
                         .font(.caption.monospacedDigit())
                         .foregroundStyle(.secondary)
                 }
-                ToolbarItem(placement: .topBarTrailing) { LangButton() }
             }
             .sheet(item: $detail) { h in HerbDetailView(h: h) }
         }

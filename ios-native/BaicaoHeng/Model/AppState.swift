@@ -27,7 +27,7 @@ struct Settings: Codable {
     var perDay = 1
     var days = 14
     var weight: Double = 60
-    var lang: Lang = .zh
+    var lang: Lang = .en          // 默认英文，可在设置里改为中文
     var pn: String? = nil        // 当前载入的方名（中文键）
     var collapsed: [String: Bool] = [:]
 }
@@ -45,6 +45,7 @@ final class AppState: ObservableObject {
         }
     }
     @Published var tab: AppTab = .library
+    @Published var showSettings = false
 
     private static let key = "baicaoheng.state.v1"
 
@@ -56,7 +57,6 @@ final class AppState: ObservableObject {
             self.s = s
         } else {
             var s = Settings()
-            if Locale.preferredLanguages.first?.hasPrefix("zh") == false { s.lang = .en }
             self.s = s
             if let first = DB.shared.data.presets.first { applyPreset(first) }
         }
@@ -147,7 +147,6 @@ final class AppState: ObservableObject {
         (m ?? s.method) == "infuse" ? 2...40 : 5...90
     }
 
-    func toggleLang() { s.lang = s.lang == .zh ? .en : .zh }
 
     func isCollapsed(_ key: String) -> Bool { s.collapsed[key] ?? false }
 

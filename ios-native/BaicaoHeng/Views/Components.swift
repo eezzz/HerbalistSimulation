@@ -2,18 +2,6 @@ import SwiftUI
 
 // MARK: - 通用小组件
 
-struct LangButton: View {
-    @EnvironmentObject var st: AppState
-    var body: some View {
-        Button { st.toggleLang() } label: {
-            Text(st.s.lang == .zh ? "EN" : "中")
-                .font(.subheadline.weight(.semibold))
-                .frame(minWidth: 32, minHeight: 32)
-        }
-        .accessibilityLabel(L("切换到英文", "Switch to Chinese"))
-    }
-}
-
 struct Chip: View {
     let text: String
     let on: Bool

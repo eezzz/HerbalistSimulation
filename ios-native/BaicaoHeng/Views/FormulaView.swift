@@ -75,7 +75,7 @@ struct FormulaView: View {
             .listStyle(.sidebar)
             .navigationTitle(L("药方", "Formula"))
             .toolbar {
-                ToolbarItem(placement: .topBarTrailing) { LangButton() }
+                ToolbarItem(placement: .topBarLeading) { SettingsButton() }
                 ToolbarItemGroup(placement: .keyboard) {
                     Spacer()
                     Button(L("完成", "Done")) { focusedHerb = nil }

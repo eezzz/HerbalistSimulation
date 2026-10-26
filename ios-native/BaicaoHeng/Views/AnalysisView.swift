@@ -22,7 +22,8 @@ struct AnalysisView: View {
             }
             .navigationTitle(L("分析", "Analysis"))
             .toolbar {
-                ToolbarItem(placement: .topBarLeading) {
+                ToolbarItem(placement: .topBarLeading) { SettingsButton() }
+                ToolbarItem(placement: .topBarTrailing) {
                     Menu {
                         Button(L("全部展开", "Expand all")) { st.setAllCollapsed(Self.sectionKeys, false) }
                         Button(L("全部收起", "Collapse all")) { st.setAllCollapsed(Self.sectionKeys, true) }
@@ -31,7 +32,6 @@ struct AnalysisView: View {
                     }
                     .accessibilityLabel(L("展开或收起全部", "Expand or collapse all"))
                 }
-                ToolbarItem(placement: .topBarTrailing) { LangButton() }
             }
             .adBanner()
         }

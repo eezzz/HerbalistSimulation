@@ -23,6 +23,17 @@ struct RootView: View {
     @EnvironmentObject var store: PurchaseStore
 
     var body: some View {
+        ZStack {
+            tabs
+        }
+        .sheet(isPresented: $st.showSettings) { SupportView() }
+        .task {
+            // 买过去广告的用户不再弹广告同意 / 跟踪授权
+            if !store.adsRemoved { ads.start() }
+        }
+    }
+
+    private var tabs: some View {
         TabView(selection: $st.tab) {
             LibraryView()
                 .tabItem { Label(L("方库", "Library"), systemImage: "books.vertical") }
@@ -41,9 +52,5 @@ struct RootView: View {
         .tint(Color.brand)
         // 选择器、搜索框提示、标签栏等系统控件会缓存文字；切换语言时整体重建界面，保证全部换成新语言
         .id(st.s.lang)
-        .task {
-            // 买过去广告的用户不再弹广告同意 / 跟踪授权
-            if !store.adsRemoved { ads.start() }
-        }
     }
 }

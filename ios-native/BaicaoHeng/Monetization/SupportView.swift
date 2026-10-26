@@ -10,6 +10,18 @@ struct SupportView: View {
     var body: some View {
         NavigationStack {
             List {
+                Section {
+                    Picker(selection: $st.s.lang) {
+                        Text("English").tag(Lang.en)
+                        Text("中文").tag(Lang.zh)
+                    } label: {
+                        Text(L("语言", "Language"))
+                    }
+                    .pickerStyle(.segmented)
+                } header: {
+                    Text(L("语言", "Language"))
+                }
+
                 if AdConfig.adsEnabled {
                     Section {
                         if store.adsRemoved {
@@ -83,10 +95,9 @@ struct SupportView: View {
 
 /// 工具栏上的“设置”按钮
 struct SettingsButton: View {
-    @State private var show = false
+    @EnvironmentObject var st: AppState
     var body: some View {
-        Button { show = true } label: { Image(systemName: "gearshape") }
+        Button { st.showSettings = true } label: { Image(systemName: "gearshape") }
             .accessibilityLabel(L("设置", "Settings"))
-            .sheet(isPresented: $show) { SupportView() }
     }
 }

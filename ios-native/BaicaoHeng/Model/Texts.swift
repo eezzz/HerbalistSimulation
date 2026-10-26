@@ -8,7 +8,7 @@ enum Lang: String, Codable {
 
 /// 当前界面语言。由 AppState 在语言切换时更新，界面在同一次刷新中读取。
 enum Loc {
-    static var lang: Lang = .zh
+    static var lang: Lang = .en
 }
 
 func L(_ zh: String, _ en: String) -> String { Loc.lang == .en ? en : zh }

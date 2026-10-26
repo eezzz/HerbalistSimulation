@@ -36,7 +36,6 @@ struct LibraryView: View {
             .navigationTitle(L("方库", "Formula Library"))
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) { SettingsButton() }
-                ToolbarItem(placement: .topBarTrailing) { LangButton() }
             }
             .adBanner()
         }
