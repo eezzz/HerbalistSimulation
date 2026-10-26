@@ -1371,10 +1371,11 @@ function mid(h){return (h.d[0]+h.d[1])/2}
 /* 低体重（<50 kg）时按经验收紧常用量上限，只影响提醒，不改克数 */
 function wf(){return S.weight<50?clamp(S.weight/55,.7,1):1}
 function upper(h){return Math.max(h.d[0],Math.round(h.d[1]*wf()*2)/2)}
-const WEIGHT_HERBS={rougui:['香豆素上限','coumarin limit'],chaye:['咖啡因上限','caffeine limit'],gancao:['甘草酸保守参考值','conservative glycyrrhizin value']};
+const WEIGHT_HERBS={rougui:n=>L(`${n}的香豆素上限`,`${n}’s coumarin limit`),chaye:n=>L(`${n}的咖啡因上限`,`${n}’s caffeine limit`),gancao:n=>L(`${n}的甘草酸保守参考值`,`${n}’s conservative glycyrrhizin value`)};
+const weightHits=()=>S.items.filter(i=>WEIGHT_HERBS[i.id]&&(+i.g||0)>0).map(i=>WEIGHT_HERBS[i.id](hnShort(BY[i.id])));
 function weightHint(){
   const el=$('#weightHint'),f=$('#weightF');if(!el)return;
-  const hit=S.items.filter(i=>WEIGHT_HERBS[i.id]&&(+i.g||0)>0).map(i=>`${hnShort(BY[i.id])}${L('的','’s ')}${L(WEIGHT_HERBS[i.id][0],WEIGHT_HERBS[i.id][1])}`);
+  const hit=weightHits();
   const low=S.weight<50;
   const parts=[];
   if(hit.length)parts.push(L('影响：','Affects: ')+hit.join(L('、',', ')));

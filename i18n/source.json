@@ -5,7 +5,6 @@
   "Herbs",
   "Formula",
   "Analysis",
-  "’s ",
   "Affects: ",
   "No weight-based compounds in this formula (cinnamon, green tea, licorice); below 50 kg dose alerts are tightened",
   "cold in nature; prolonged use damages spleen–stomach yang",
@@ -269,6 +268,9 @@
   "Matches: "
  ],
  "ui_templates": [
+  "{0}’s coumarin limit",
+  "{0}’s caffeine limit",
+  "{0}’s conservative glycyrrhizin value",
   "Under 50 kg: overdose alerts tightened to {0}% of the usual maximum",
   "Assumes ~3% content. Solid line: EU SCF limit of 100 mg/day for regular intake; orange line: conservative weight-based value of 0.2 mg/kg/day ({0} kg → {1} mg; van Gelderen 2000)",
   "Assumes ~0.4% in cassia; EFSA tolerable intake 0.1 mg/kg/day (at {0} kg)",

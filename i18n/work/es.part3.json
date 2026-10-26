@@ -4,12 +4,42 @@
   "decoction. Slice thinly, steep longer, or decoct instead": "una decocción estándar. Córtala en láminas finas, deja reposar más tiempo o prepárala en decocción"
  },
  "templates": [
-  ["Estimated {0} {1} per dose (split it into smaller servings), above the reference limit of {2} {3}.", "Se estiman {0} {1} por dosis (repártela en tomas más pequeñas), por encima del límite de referencia de {2} {3}."],
-  ["Estimated {0} {1}/day, above the reference limit of {2} {3}; over {4} days the cumulative risk is higher.", "Se estiman {0} {1}/día, por encima del límite de referencia de {2} {3}; en {4} días el riesgo acumulado es mayor."],
-  ["Estimated {0} {1}/day, above the reference limit of {2} {3}.", "Se estiman {0} {1}/día, por encima del límite de referencia de {2} {3}."],
-  ["{0} ({1}) extracts ~{2}% when steeped — only {3}% of a standard {4}.", "{0} ({1}) libera ~{2}% en infusión: solo el {3}% de {4}."],
-  ["Cooked with the other herbs, {0} sticks to the pot and coats them. Melt it over a water bath or in the hot strained liquid, then stir in.", "Si se cuece con las demás hierbas, {0} se pega a la olla y las recubre. Derrítelo a baño maría o en el líquido caliente ya colado y luego mézclalo."],
-  ["{0} will not dissolve by steeping. Melt it over a water bath or in the hot strained liquid, then stir in.", "{0} no se disuelve en infusión. Derrítelo a baño maría o en el líquido caliente ya colado y luego mézclalo."]
+  [
+   "Estimated {0} {1} per dose (split it into smaller servings), above the reference limit of {2} {3}.",
+   "Se estiman {0} {1} por dosis (repártela en tomas más pequeñas), por encima del límite de referencia de {2} {3}."
+  ],
+  [
+   "Estimated {0} {1}/day, above the reference limit of {2} {3}; over {4} days the cumulative risk is higher.",
+   "Se estiman {0} {1}/día, por encima del límite de referencia de {2} {3}; en {4} días el riesgo acumulado es mayor."
+  ],
+  [
+   "Estimated {0} {1}/day, above the reference limit of {2} {3}.",
+   "Se estiman {0} {1}/día, por encima del límite de referencia de {2} {3}."
+  ],
+  [
+   "{0} ({1}) extracts ~{2}% when steeped — only {3}% of a standard {4}.",
+   "{0} ({1}) libera ~{2}% en infusión: solo el {3}% de {4}."
+  ],
+  [
+   "Cooked with the other herbs, {0} sticks to the pot and coats them. Melt it over a water bath or in the hot strained liquid, then stir in.",
+   "Si se cuece con las demás hierbas, {0} se pega a la olla y las recubre. Derrítelo a baño maría o en el líquido caliente ya colado y luego mézclalo."
+  ],
+  [
+   "{0} will not dissolve by steeping. Melt it over a water bath or in the hot strained liquid, then stir in.",
+   "{0} no se disuelve en infusión. Derrítelo a baño maría o en el líquido caliente ya colado y luego mézclalo."
+  ],
+  [
+   "{0}’s coumarin limit",
+   "{0} (límite de cumarina)"
+  ],
+  [
+   "{0}’s caffeine limit",
+   "{0} (límite de cafeína)"
+  ],
+  [
+   "{0}’s conservative glycyrrhizin value",
+   "{0} (valor de referencia conservador de glicirricina)"
+  ]
  ],
  "symSyn": {},
  "redFlags": [],

@@ -314,14 +314,16 @@ struct Engine {
     func upper(_ h: Herb) -> Double { max(h.dMin, (h.dMax * wf() * 2).rounded() / 2) }
 
     func weightHint() -> (text: String, idle: Bool) {
-        let names: [String: (String, String)] = [
-            "rougui": ("香豆素上限", "coumarin limit"),
-            "chaye": ("咖啡因上限", "caffeine limit"),
-            "gancao": ("甘草酸保守参考值", "conservative glycyrrhizin value"),
-        ]
+        // 整句写出，方便西语 / 葡语按各自语序翻译
         let hit: [String] = S.items.compactMap { i in
-            guard let w = names[i.id], i.g > 0, let h = db.byId[i.id] else { return nil }
-            return hnShort(h) + L("的", "’s ") + L(w.0, w.1)
+            guard i.g > 0, let h = db.byId[i.id] else { return nil }
+            let n = hnShort(h)
+            switch i.id {
+            case "rougui": return L("\(n)的香豆素上限", "\(n)’s coumarin limit")
+            case "chaye": return L("\(n)的咖啡因上限", "\(n)’s caffeine limit")
+            case "gancao": return L("\(n)的甘草酸保守参考值", "\(n)’s conservative glycyrrhizin value")
+            default: return nil
+            }
         }
         let low = S.weight < 50
         var parts: [String] = []

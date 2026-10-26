@@ -32,6 +32,8 @@ enum Loc {
 
 /// 非中文界面（英文、西班牙文、葡萄牙文）都以英文原文为底本，再经 T() 翻译
 var isEN: Bool { Loc.lang != .zh }
+/// 西语、葡语比英文长，部分版面改为换行或上下排列；中英文版面不变
+var isLongLang: Bool { Loc.lang == .es || Loc.lang == .pt }
 
 /// 中文界面用 zh；其他语言用英文原文 en 经 T() 翻译
 func L(_ zh: String, _ en: String) -> String { Loc.lang == .zh ? zh : T(en) }

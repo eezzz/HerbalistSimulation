@@ -145,10 +145,19 @@ struct FormulaView: View {
         .padding(.vertical, 4)
     }
 
+    @ViewBuilder
     private func stat(_ k: String, _ v: String) -> some View {
-        HStack(alignment: .firstTextBaseline, spacing: 8) {
-            Text(k).font(.caption).foregroundStyle(.secondary).frame(width: isEN ? 64 : 44, alignment: .leading)
-            Text(v).font(.subheadline)
+        if isLongLang {
+            // 西语、葡语的标签较长，放在数值上方
+            VStack(alignment: .leading, spacing: 1) {
+                Text(k).font(.caption).foregroundStyle(.secondary)
+                Text(v).font(.subheadline)
+            }
+        } else {
+            HStack(alignment: .firstTextBaseline, spacing: 8) {
+                Text(k).font(.caption).foregroundStyle(.secondary).frame(width: isEN ? 64 : 44, alignment: .leading)
+                Text(v).font(.subheadline)
+            }
         }
     }
 

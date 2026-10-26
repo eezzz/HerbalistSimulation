@@ -1473,11 +1473,11 @@
   ],
   [
    "formula is {0}, a {1} bias",
-   "a fórmula é {0}, uma tendência {1}"
+   "a fórmula é de caráter {0}, uma tendência {1}"
   ],
   [
    "daily {0} exceeds the reference limit",
-   "{0} diário excede o limite de referência"
+   "a ingestão diária de {0} excede o limite de referência"
   ],
   [
    "You plan {0} days in a row, beyond the suggested {1}. Limiting factor: {2}.",
@@ -1706,6 +1706,18 @@
   [
    "{0} will not dissolve by steeping. Melt it over a water bath or in the hot strained liquid, then stir in.",
    "{0} não se dissolve em infusão. Derreta em banho-maria ou no líquido quente já coado e depois misture."
+  ],
+  [
+   "{0}’s coumarin limit",
+   "{0} (limite de cumarina)"
+  ],
+  [
+   "{0}’s caffeine limit",
+   "{0} (limite de cafeína)"
+  ],
+  [
+   "{0}’s conservative glycyrrhizin value",
+   "{0} (valor de referência conservador de glicirrizina)"
   ]
  ],
  "symSyn": {

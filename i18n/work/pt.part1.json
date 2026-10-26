@@ -808,11 +808,11 @@
   ],
   [
    "formula is {0}, a {1} bias",
-   "a fórmula é {0}, uma tendência {1}"
+   "a fórmula é de caráter {0}, uma tendência {1}"
   ],
   [
    "daily {0} exceeds the reference limit",
-   "{0} diário excede o limite de referência"
+   "a ingestão diária de {0} excede o limite de referência"
   ],
   [
    "You plan {0} days in a row, beyond the suggested {1}. Limiting factor: {2}.",

@@ -85,18 +85,31 @@ struct BarList: View {
 struct AlertRow: View {
     let a: AlertItem
     var body: some View {
-        HStack(alignment: .firstTextBaseline, spacing: 8) {
-            Text(a.ty)
-                .font(.caption.weight(.bold))
-                .foregroundStyle(.white)
-                .padding(.horizontal, 6)
-                .padding(.vertical, 2)
-                .background(RoundedRectangle(cornerRadius: 4).fill(levelColor(a.lv)))
-                .fixedSize()
-            Text(a.t).font(.subheadline)
+        Group {
+            if isLongLang {
+                // 西语、葡语的标签较长，单独一行，说明文字用满整行宽度
+                VStack(alignment: .leading, spacing: 4) {
+                    tag
+                    Text(a.t).font(.subheadline)
+                }
+            } else {
+                HStack(alignment: .firstTextBaseline, spacing: 8) {
+                    tag.fixedSize()
+                    Text(a.t).font(.subheadline)
+                }
+            }
         }
         .padding(.vertical, 6)
         .listRowBackground(levelColor(a.lv).opacity(0.12))
+    }
+
+    private var tag: some View {
+        Text(a.ty)
+            .font(.caption.weight(.bold))
+            .foregroundStyle(.white)
+            .padding(.horizontal, 6)
+            .padding(.vertical, 2)
+            .background(RoundedRectangle(cornerRadius: 4).fill(levelColor(a.lv)))
     }
 }
 
@@ -183,7 +196,17 @@ struct NatureGauge: View {
             .frame(height: 26)
             HStack {
                 ForEach([L("大寒", "V. cold"), L("寒", "Cold"), L("凉", "Cool"), L("平", "Neutral"), L("温", "Warm"), L("热", "Hot"), L("大热", "V. hot")], id: \.self) { s in
-                    Text(s).font(.caption2).foregroundStyle(.secondary).frame(maxWidth: .infinity)
+                    if isLongLang {
+                        // 每个单词一行、必要时缩小字号，避免单词从中间断开
+                        VStack(spacing: 0) {
+                            ForEach(s.split(separator: " ").map(String.init), id: \.self) { w in
+                                Text(w).lineLimit(1).minimumScaleFactor(0.6)
+                            }
+                        }
+                        .font(.caption2).foregroundStyle(.secondary).frame(maxWidth: .infinity)
+                    } else {
+                        Text(s).font(.caption2).foregroundStyle(.secondary).frame(maxWidth: .infinity)
+                    }
                 }
             }
         }

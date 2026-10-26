@@ -206,9 +206,9 @@
   "V. cold": "Muy frío",
   "Cold": "Frío",
   "Cool": "Fresco",
-  "Warm": "Tibio",
+  "Warm": "Cálido",
   "Hot": "Caliente",
-  "V. hot": "Muy cal.",
+  "V. hot": "Muy caliente",
   "The formula is empty. Load a classic formula from Library, or pick herbs in Herbs.": "La fórmula está vacía. Cargue una fórmula clásica desde Recetario o elija hierbas en Hierbas.",
   "grams": "gramos",
   "Clear": "Borrar",
@@ -808,7 +808,7 @@
   ],
   [
    "formula is {0}, a {1} bias",
-   "la fórmula es {0}, con una tendencia {1}"
+   "la fórmula es de carácter {0}, con una tendencia {1}"
   ],
   [
    "daily {0} exceeds the reference limit",

@@ -113,7 +113,7 @@ struct DrawerTile: View {
                 HStack(alignment: .top) {
                     Text(hnShort(h))
                         .font(isEN ? .subheadline.weight(.semibold) : .headline)
-                        .lineLimit(2)
+                        .lineLimit(isLongLang ? 3 : 2)
                         .minimumScaleFactor(0.8)
                     Spacer(minLength: 2)
                     Image(systemName: added ? "checkmark.circle.fill" : "circle.fill")
@@ -123,7 +123,8 @@ struct DrawerTile: View {
                 Text(isEN ? "\(hpy(h)) · \(natT(h.tl))" : "\(h.tl) · \(h.f)")
                     .font(.caption2)
                     .foregroundStyle(.secondary)
-                    .lineLimit(2)
+                    .lineLimit(isLongLang ? 3 : 2)
+                    .minimumScaleFactor(isLongLang ? 0.85 : 1)
             }
             .padding(10)
             .frame(maxWidth: .infinity, minHeight: 64, alignment: .topLeading)

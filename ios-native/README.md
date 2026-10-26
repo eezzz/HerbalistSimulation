@@ -176,7 +176,7 @@ python scripts/extract-i18n.py            # 重新汇总待译英文 → i18n/so
 # 把 source.json 里新增的条目译好，放进 i18n/work/<es|pt>.partN.json（可用 scripts/check-i18n.py 检查）
 python scripts/merge-i18n.py es pt        # 合并为 i18n/es.json、i18n/pt.json
 node scripts/export-herbdata.cjs index.html ios-native/BaicaoHeng/Resources/herbdata.json
-python scripts/test-i18n.py               # 检查是否有漏译、模板错配
+python scripts/test-i18n.py               # 检查漏译、模板错配，并用网页版引擎生成的真实句子检查残留英文（需要 node）
 ```
 
 真机检查：设置 → 语言依次切到 Español、Português，四个页面、设置页、分析页各分区与注意事项无残留英文或中文（药名括号里的拼音 / 拉丁名除外）；方库搜索 “ojos secos” / “olhos secos” 能匹配到杞菊明目茶。

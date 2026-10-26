@@ -206,9 +206,9 @@
   "V. cold": "Muy frío",
   "Cold": "Frío",
   "Cool": "Fresco",
-  "Warm": "Tibio",
+  "Warm": "Cálido",
   "Hot": "Caliente",
-  "V. hot": "Muy cal.",
+  "V. hot": "Muy caliente",
   "The formula is empty. Load a classic formula from Library, or pick herbs in Herbs.": "La fórmula está vacía. Cargue una fórmula clásica desde Recetario o elija hierbas en Hierbas.",
   "grams": "gramos",
   "Clear": "Borrar",
@@ -1346,10 +1346,10 @@
   "Western · Colds & Breathing": "Occidentales · Resfriados y respiración",
   "Western · Everyday": "Occidentales · Uso diario",
   "Counter-examples": "Contraejemplos",
-  "Very cold": "Muy fría",
-  "Slightly cold": "Ligeramente fría",
-  "Slightly cool": "Ligeramente fresca",
-  "Slightly warm": "Ligeramente cálida",
+  "Very cold": "Muy frío",
+  "Slightly cold": "Ligeramente frío",
+  "Slightly cool": "Ligeramente fresco",
+  "Slightly warm": "Ligeramente cálido",
   "Very hot": "Muy caliente",
   "Sour": "Ácido",
   "Bitter": "Amargo",
@@ -1473,7 +1473,7 @@
   ],
   [
    "formula is {0}, a {1} bias",
-   "la fórmula es {0}, con una tendencia {1}"
+   "la fórmula es de carácter {0}, con una tendencia {1}"
   ],
   [
    "daily {0} exceeds the reference limit",
@@ -1706,6 +1706,18 @@
   [
    "{0} will not dissolve by steeping. Melt it over a water bath or in the hot strained liquid, then stir in.",
    "{0} no se disuelve en infusión. Derrítelo a baño maría o en el líquido caliente ya colado y luego mézclalo."
+  ],
+  [
+   "{0}’s coumarin limit",
+   "{0} (límite de cumarina)"
+  ],
+  [
+   "{0}’s caffeine limit",
+   "{0} (límite de cafeína)"
+  ],
+  [
+   "{0}’s conservative glycyrrhizin value",
+   "{0} (valor de referencia conservador de glicirricina)"
   ]
  ],
  "symSyn": {

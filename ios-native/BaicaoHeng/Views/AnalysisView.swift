@@ -246,6 +246,7 @@ struct DosingBlock: View {
                 statBox(L("疗程合计", "Course total"), "\(num(d.courseTotal)) g", L("\(days) 天", "\(days) days"), .primary)
                 statBox(L("建议最长连服", "Max. continuous"), "\(d.maxDays)" + L(" 天", " d"), L("之后停 \(d.rest) 天", "then pause \(d.rest) d"), over ? .alertAmber : .alertOK)
             }
+            .fixedSize(horizontal: false, vertical: isLongLang)
 
             VStack(alignment: .leading, spacing: 4) {
                 GeometryReader { g in
@@ -270,40 +271,44 @@ struct DosingBlock: View {
                     .font(.caption).foregroundStyle(.secondary)
             }
 
-            ScrollView(.horizontal, showsIndicators: false) {
-                Grid(alignment: .trailing, horizontalSpacing: 14, verticalSpacing: 6) {
-                    GridRow {
-                        Text(L("药材", "Herb")).gridColumnAlignment(.leading)
-                        Text(L("每剂", "g/dose"))
-                        Text(L("每日", "g/day"))
-                        Text(L("常用日量", "Usual/day"))
-                        Text(L("疗程", "Course g"))
-                        Text(L("久服上限", "Max days"))
-                        Text("")
-                    }
-                    .font(.caption2.weight(.semibold)).foregroundStyle(.secondary)
-                    Divider()
-                    ForEach(d.rows) { x in
-                        let u = upper(x.r.h)
-                        let overDay = x.daily > u
-                        let tooLong = (x.lt.map { days > $0.days }) ?? false
+            if isLongLang {
+                compactTable
+            } else {
+                ScrollView(.horizontal, showsIndicators: false) {
+                    Grid(alignment: .trailing, horizontalSpacing: 14, verticalSpacing: 6) {
                         GridRow {
-                            Text(hnShort(x.r.h)).gridColumnAlignment(.leading)
-                            Text(num(x.r.g))
-                            Text(num(x.daily))
-                            Text("\(num(x.r.h.dMin))–\(num(u < x.r.h.dMax ? u : x.r.h.dMax))").foregroundStyle(.secondary)
-                            Text(num(x.total))
-                            Text(x.lt.map { "\($0.days)" + L(" 天", " d") } ?? "—")
-                            Text(overDay ? L("超日量", "Over daily") : (tooLong ? L("超久服", "Too long") : L("正常", "OK")))
-                                .font(.caption2.weight(.semibold))
-                                .padding(.horizontal, 6).padding(.vertical, 1)
-                                .foregroundStyle(overDay || tooLong ? Color.alertAmber : Color.alertOK)
-                                .background(Capsule().fill((overDay || tooLong ? Color.alertAmber : Color.alertOK).opacity(0.15)))
+                            Text(L("药材", "Herb")).gridColumnAlignment(.leading)
+                            Text(L("每剂", "g/dose"))
+                            Text(L("每日", "g/day"))
+                            Text(L("常用日量", "Usual/day"))
+                            Text(L("疗程", "Course g"))
+                            Text(L("久服上限", "Max days"))
+                            Text("")
                         }
-                        .font(.caption.monospacedDigit())
+                        .font(.caption2.weight(.semibold)).foregroundStyle(.secondary)
+                        Divider()
+                        ForEach(d.rows) { x in
+                            let u = upper(x.r.h)
+                            let overDay = x.daily > u
+                            let tooLong = (x.lt.map { days > $0.days }) ?? false
+                            GridRow {
+                                Text(hnShort(x.r.h)).gridColumnAlignment(.leading)
+                                Text(num(x.r.g))
+                                Text(num(x.daily))
+                                Text("\(num(x.r.h.dMin))–\(num(u < x.r.h.dMax ? u : x.r.h.dMax))").foregroundStyle(.secondary)
+                                Text(num(x.total))
+                                Text(x.lt.map { "\($0.days)" + L(" 天", " d") } ?? "—")
+                                Text(overDay ? L("超日量", "Over daily") : (tooLong ? L("超久服", "Too long") : L("正常", "OK")))
+                                    .font(.caption2.weight(.semibold))
+                                    .padding(.horizontal, 6).padding(.vertical, 1)
+                                    .foregroundStyle(overDay || tooLong ? Color.alertAmber : Color.alertOK)
+                                    .background(Capsule().fill((overDay || tooLong ? Color.alertAmber : Color.alertOK).opacity(0.15)))
+                            }
+                            .font(.caption.monospacedDigit())
+                        }
                     }
+                    .padding(.vertical, 4)
                 }
-                .padding(.vertical, 4)
             }
 
             SubHeading(text: L("关键成分每日摄入估算", "Estimated daily intake of key compounds"))
@@ -318,13 +323,75 @@ struct DosingBlock: View {
 
     private func statBox(_ k: String, _ v: String, _ sub: String, _ color: Color) -> some View {
         VStack(alignment: .leading, spacing: 2) {
-            Text(k).font(.caption2).foregroundStyle(.secondary).lineLimit(1).minimumScaleFactor(0.8)
+            Text(k).font(.caption2).foregroundStyle(.secondary).lineLimit(isLongLang ? 2 : 1).minimumScaleFactor(0.8)
+                .fixedSize(horizontal: false, vertical: isLongLang)
             Text(v).font(.title3.monospacedDigit().weight(.semibold)).foregroundStyle(color).lineLimit(1).minimumScaleFactor(0.7)
             Text(sub).font(.caption2).foregroundStyle(.secondary).lineLimit(1).minimumScaleFactor(0.8)
         }
-        .frame(maxWidth: .infinity, alignment: .leading)
+        .frame(maxWidth: .infinity, maxHeight: isLongLang ? .infinity : nil, alignment: .topLeading)
         .padding(8)
         .background(RoundedRectangle(cornerRadius: 8).fill(Color.track.opacity(0.6)))
+    }
+
+    // MARK: 逐味剂量表
+
+    private func status(_ overDay: Bool, _ tooLong: Bool) -> some View {
+        Text(twoLines(overDay ? L("超日量", "Over daily") : (tooLong ? L("超久服", "Too long") : L("正常", "OK"))))
+            .font(.caption2.weight(.semibold))
+            .multilineTextAlignment(.center)
+            .padding(.horizontal, 6).padding(.vertical, 1)
+            .foregroundStyle(overDay || tooLong ? Color.alertAmber : Color.alertOK)
+            .background(Capsule().fill((overDay || tooLong ? Color.alertAmber : Color.alertOK).opacity(0.15)))
+    }
+
+    private func flags(_ x: DRow) -> (overDay: Bool, tooLong: Bool) {
+        (x.daily > upper(x.r.h), (x.lt.map { days > $0.days }) ?? false)
+    }
+
+    /// 两个以上单词的表头 / 标签拆成两行
+    private func twoLines(_ s: String) -> String {
+        guard s.count > 8 else { return s }
+        if let r = s.range(of: " ") { return s.replacingCharacters(in: r, with: "\n") }
+        if let r = s.range(of: "/") { return s.replacingCharacters(in: r, with: "/\n") }
+        return s
+    }
+
+    /// 西语、葡语：药名单独占一整行，数字列放在下一行，表格不超出屏幕宽度
+    private var compactTable: some View {
+        Grid(alignment: .trailing, horizontalSpacing: 10, verticalSpacing: 4) {
+            GridRow {
+                Text(twoLines(L("每剂", "g/dose")))
+                Text(twoLines(L("每日", "g/day")))
+                Text(twoLines(L("常用日量", "Usual/day")))
+                Text(twoLines(L("疗程", "Course g")))
+                Text(twoLines(L("久服上限", "Max days")))
+                Text("")
+            }
+            .font(.caption2.weight(.semibold)).foregroundStyle(.secondary)
+            .multilineTextAlignment(.trailing)
+            Divider()
+            ForEach(d.rows) { x in
+                let u = upper(x.r.h)
+                let f = flags(x)
+                GridRow {
+                    Text(hnShort(x.r.h))
+                        .font(.caption.weight(.semibold))
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .gridCellColumns(6)
+                }
+                .padding(.top, 4)
+                GridRow {
+                    Text(num(x.r.g))
+                    Text(num(x.daily))
+                    Text("\(num(x.r.h.dMin))–\(num(u < x.r.h.dMax ? u : x.r.h.dMax))").foregroundStyle(.secondary)
+                    Text(num(x.total))
+                    Text(x.lt.map { "\($0.days)" + L(" 天", " d") } ?? "—")
+                    status(f.overDay, f.tooLong).frame(maxWidth: .infinity, alignment: .trailing)
+                }
+                .font(.caption.monospacedDigit())
+            }
+        }
+        .padding(.vertical, 4)
     }
 }
 
