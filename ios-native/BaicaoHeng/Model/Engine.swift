@@ -790,7 +790,9 @@ struct Engine {
 
     /// 汤色 RGB（0–1）
     func brewRGB(_ c: Calc, dark: Bool) -> (Double, Double, Double) {
-        let base: (Double, Double, Double) = dark ? (42 / 255, 45 / 255, 40 / 255) : (243 / 255, 241 / 255, 228 / 255)
+        let baseDark: (Double, Double, Double) = (42.0 / 255.0, 45.0 / 255.0, 40.0 / 255.0)
+        let baseLight: (Double, Double, Double) = (243.0 / 255.0, 241.0 / 255.0, 228.0 / 255.0)
+        let base = dark ? baseDark : baseLight
         guard !c.rows.isEmpty else { return base }
         var w = 0.0
         var rgb = (0.0, 0.0, 0.0)
