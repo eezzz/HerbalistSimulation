@@ -71,6 +71,10 @@ struct CabinetView: View {
                         .font(.caption)
                         .foregroundStyle(.secondary)
                         .padding(.horizontal)
+                    Text(formNoteText())
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                        .padding(.horizontal)
                         .padding(.bottom, 16)
                 }
                 .padding(.top, 8)
@@ -145,6 +149,10 @@ struct HerbDetailView: View {
                     LabeledContent(L("归经", "Meridians"), value: merT(h))
                     LabeledContent(L("常用日量", "Usual daily dose"), value: "\(num(h.dMin))–\(num(h.dMax)) g")
                     LabeledContent(L("部位", "Part"), value: partN(h.p))
+                }
+                Section(L("规格", "Form")) {
+                    Text(hform(h))
+                        .foregroundStyle(h.formLv == 2 ? Color.alertRed : (h.formLv == 1 ? Color.alertAmber : Color.primary))
                 }
                 Section(L("功效", "Actions")) { Text(hg(h)) }
                 Section(L("主要成分", "Constituents")) { Text(hc(h)) }

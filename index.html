@@ -105,6 +105,10 @@ main{display:flex;flex-direction:column;gap:18px;min-width:0}
 .symnote{margin:10px 14px 14px;font-size:12px;color:var(--muted)}
 .symwarn{margin:10px 14px 0;padding:10px 12px;border-radius:4px;background:var(--red-soft);font-size:13px}
 .symwarn b{color:var(--red)}
+.formnote{margin:0;padding:8px 14px 10px;font-size:12px;color:var(--muted);border-top:1px solid var(--line)}
+.rname .form{font-size:12px;color:var(--muted)}
+.rname .form.lv2{color:var(--red)}
+.rname .form.lv1{color:var(--amber)}
 .recipe .match{font-size:12px;color:var(--accent);font-weight:500}
 .recipe .mbar{height:4px;border-radius:2px;background:var(--panel2);overflow:hidden}
 .recipe .mbar i{display:block;height:100%;background:var(--accent)}
@@ -421,6 +425,7 @@ button,.drawer,.recipe,.chip,.flag,.card h3,input,select{touch-action:manipulati
         <div class="pnote" id="pnote" hidden></div>
         <div class="rows" id="rows"></div>
         <div class="total" id="total"></div>
+        <p class="formnote" id="formNote"></p>
       </section>
 
       <section class="panel brew" aria-label="烹制" data-fold="brew">
@@ -834,6 +839,48 @@ const PRESETS=[
   {c:'配伍反例',n:'苦杏仁泡水',src:'有毒药误用',d:'演示有毒药材的烹制风险',m:'infuse',w:300,mi:10,t:100,items:[['xingren',12]]},
 ];
 const PCATS=[...new Set(PRESETS.map(p=>p.c))];
+
+/* 药材规格（炮制 / 鲜干）：[中文, English, 级别]。级别 0 说明，1 重要（不可互换），2 必须用炮制品（生品有害）。
+   未列出的：中药 = 干燥饮片（未经炒炙）；西方草药 = 干燥茶用切碎品 */
+const FORMS={
+  shengjiang:['新鲜生姜（鲜品），不是干姜','Fresh ginger root, not dried ginger',0],
+  congbai:['新鲜葱白（鲜品）','Fresh scallion whites',0],
+  shudi:['熟地黄：生地黄加黄酒反复蒸晒的炮制品，与生地黄性味不同，不可互换','Prepared rehmannia: raw rehmannia steamed with rice wine. It differs from raw rehmannia and the two are not interchangeable',1],
+  heshouwu:['制何首乌：黑豆汁蒸制的炮制品。切勿用生何首乌，其肝损伤与泻下作用更强','Processed fo-ti, steamed with black-bean juice. Never use raw fo-ti, which is more liver-toxic and laxative',2],
+  xingren:['焯苦杏仁或炒苦杏仁（去皮尖）。不可生吃，生品毒性更大','Blanched or stir-fried bitter apricot kernel, skins removed. Never eat raw kernels; they are more toxic',2],
+  taoren:['焯桃仁（去皮）。不可生吃','Blanched peach kernel, skins removed. Never eat raw',2],
+  baibiandou:['炒白扁豆，或充分煮熟后使用；生扁豆含凝集素','Stir-fried hyacinth bean, or boiled until fully cooked; raw beans contain lectins',2],
+  elderberry:['干燥接骨木果，须煮沸至少 15 分钟；勿用新鲜生果','Dried elderberries, boiled for at least 15 minutes; never use fresh raw berries',2],
+  juemingzi:['炒决明子（泡茶用的炒制品）','Stir-fried cassia seed (the roasted form used for tea)',0],
+  suanzaoren:['炒酸枣仁，用前捣碎','Stir-fried jujube seed, crushed before use',0],
+  baizhu:['麸炒白术（健脾常用）','Bran-fried white atractylodes (the usual form for digestion)',0],
+  yiyiren:['炒薏苡仁（健脾）；生薏苡仁偏于利湿','Stir-fried coix seed (for digestion); raw coix is more draining',0],
+  laifuzi:['炒莱菔子，用前捣碎','Stir-fried radish seed, crushed before use',0],
+  maiya:['炒麦芽','Stir-fried barley sprout',0],
+  shenqu:['六神曲（发酵制品），消食多用焦神曲','Medicated leaven, a fermented product; the charred form is used for digestion',0],
+  jineijin:['炒鸡内金，可研粉','Stir-fried chicken gizzard lining; may be powdered',0],
+  shanzha:['干山楂片；消食可用焦山楂','Dried hawthorn slices; the charred form is stronger for digestion',0],
+  gancao:['生甘草饮片（不是蜜炙的“炙甘草”）','Raw licorice slices (not honey-roasted licorice)',0],
+  huangqi:['生黄芪饮片（蜜炙黄芪偏于补中）','Raw astragalus slices (honey-roasted astragalus is used to tonify the middle)',0],
+  duzhong:['盐杜仲（盐水炒制品）','Salt-processed eucommia bark',0],
+  chenpi:['陈皮：贮存陈化的干橘皮，不是新鲜橘子皮','Aged dried tangerine peel, not fresh orange peel',0],
+  ejiao:['阿胶块（驴皮熬制的胶），需单独烊化','Donkey-hide gelatin blocks, melted separately',0],
+  renshen:['生晒参（干燥人参切片）','Dried white ginseng slices',0],
+  xiyangshen:['干燥西洋参片','Dried American ginseng slices',0],
+  sanqi:['三七干燥根，多研粉服用','Dried notoginseng root, usually taken as powder',0],
+  wumei:['乌梅：低温熏干的梅子','Smoked dried mume plum',0],
+  chaye:['干燥绿茶茶叶','Dried green tea leaves',0],
+  dazao:['干大枣','Dried jujube',0],gouqi:['干枸杞子','Dried goji berries',0],longyan:['干龙眼肉','Dried longan flesh',0],
+  sangshen:['干桑椹','Dried mulberries',0],lianzi:['干莲子（去心）','Dried lotus seeds, germ removed',0],luohanguo:['干罗汉果，用前打碎','Dried monk fruit, cracked before use',0],
+  rosehip:['干燥玫瑰果（去籽去毛）','Dried rosehip shells, seeds and hairs removed',0],
+  xiaohuixiang:['干燥小茴香，用前压碎','Dried fennel seed, crushed before use',0],
+  fengmi:['成品蜂蜜（1 岁以下婴儿禁食）','Honey (never for infants under 1)',0],
+  hongtang:['食品级红糖','Food-grade brown sugar',0],bingtang:['食品级冰糖','Food-grade rock sugar',0],
+};
+function formOf(h){
+  return FORMS[h.id]||(h.west===1?['干燥药材（茶用切碎品）','Dried herb, cut for tea',0]
+    :['中药饮片（干燥、切制，未经炒炙）','Dried, cut herb slices from a TCM pharmacy (not stir-fried or roasted)',0]);
+}
 
 /* 症状 → 功效映射：用于方库“按症状找方”。syn 为同义词（中英，英文小写），tags 为对应功效的权重 */
 const SYMPTOMS=[
@@ -1251,6 +1298,8 @@ const hg=h=>isEN()?(EH(h).g||h.g):h.g;
 const hc=h=>isEN()?(EH(h).c||h.c):h.c;
 const hw=h=>isEN()?(EH(h).w||h.w):h.w;
 const hix=h=>isEN()?(EH(h).ix||h.ix):h.ix;
+const hform=h=>{const f=formOf(h);return L(f[0],f[1])};
+const FORM_NOTE=()=>L('所有药材均指药房或正规渠道购买的干燥饮片或茶用草药（已切制，部分经炒、炙、蒸等炮制），克数按干品计；除生姜、葱白外都不是新鲜植物。切勿自行采挖野生植物：不少有毒植物与药材外形相似，如钩吻（断肠草）与金银花、商陆与人参。','All herbs mean dried, cut herbs bought from a pharmacy or a reliable supplier (some stir-fried, roasted or steamed); grams are dry weight. Apart from fresh ginger and scallion, none are fresh plants. Never forage wild plants yourself: many poisonous plants look like medicinal ones, such as gelsemium and honeysuckle, or pokeweed and ginseng.');
 const hnote=h=>isEN()?(EH(h).note!=null?EH(h).note:h.note):h.note;
 const natT=k=>L(k,NAT_EN[k]||k);
 const flavT=f=>isEN()?[...f].map(c=>FL_EN[c]||c).join('/'):f;
@@ -1276,6 +1325,7 @@ const LIST=L=>L.join(isEN()?', ':'、');
 const SEP=()=>L('；','; ');
 const COLON=()=>L('：',': ');
 function applyStatic(){
+  {const fn=document.getElementById('formNote');if(fn)fn.textContent=FORM_NOTE();}
   document.documentElement.lang=isEN()?'en':'zh-CN';
   document.title=L('百草衡','Baicao Heng — Herbal Formula Simulator');
   document.querySelectorAll('[data-i]').forEach(el=>{const v=STATIC[el.dataset.i];if(v)el.textContent=v[isEN()?1:0]});
@@ -1463,7 +1513,8 @@ function renderRows(){
     const h=BY[it.id];
     return `<div class="row" data-id="${h.id}">
       <div class="rname"><div class="t"><span class="natdot" style="--c:${natColor(h.t)}"></span><b>${hn(h)}</b><span class="role" data-role></span><span class="flags">${flagsHTML(h,it)}</span></div>
-      <small>${natT(h.tl)} · ${flavT(h.f)} · ${isEN()?`enters ${merT(h)}`:`归${h.m}经`} · ${partN(h.p)}</small></div>
+      <small>${natT(h.tl)} · ${flavT(h.f)} · ${isEN()?`enters ${merT(h)}`:`归${h.m}经`} · ${partN(h.p)}</small>
+      <small class="form lv${formOf(h)[2]}">${L('规格：','Form: ')}${hform(h)}</small></div>
       <div class="stepper"><button data-act="dec" aria-label="${L('减 1 克','Minus 1 g')}">−</button><input type="number" id="g-${h.id}" min="0" max="120" step="0.5" value="${it.g}" aria-label="${hn(h)} ${L('克数','grams')}"><span>g</span><button data-act="inc" aria-label="${L('加 1 克','Plus 1 g')}">+</button></div>
       <div class="dose" data-dose>${doseBar(h,it.g)}</div>
       <div class="eff" data-eff></div>
@@ -1706,6 +1757,7 @@ function buildAlerts(c,d){
     if(h.sp.includes('powder'))A.push(['info',L('研粉','Take as powder'),h.id==='jineijin'?L('鸡内金研末吞服（每次 1.5–3 g）效果优于入汤剂，其消化酶不耐高温。','Chicken gizzard lining works better swallowed as powder (1.5–3 g per dose); its enzymes do not survive boiling.'):L(`${n}研粉吞服（每次 1–3 g）效果为佳，入汤剂效力降低。`,`${n} works best swallowed as powder (1–3 g per dose); decocting weakens it.`)]);
     if(h.sp.includes('melt')&&!r.it.fl.melt)A.push(['amber',L('宜烊化','Melt separately'),L(`${n}与群药同${S.method==='boil'?'煎易粘锅、包裹他药':'泡难以溶化'}。应隔水蒸化或用热药液溶化后兑服。`,`${S.method==='boil'?`Cooked with the other herbs, ${n} sticks to the pot and coats them.`:`${n} will not dissolve by steeping.`} Melt it over a water bath or in the hot strained liquid, then stir in.`)]);
     if(h.sp.includes('honey')&&!r.it.fl.honey)A.push(['info',L('蜂蜜宜温调','Add honey warm'),L('蜂蜜不宜久煮或沸水冲，待汤液降至 60 °C 以下再调入，以保留酶类、减少 5-羟甲基糠醛生成。','Do not boil honey or add it to boiling water. Stir it in once the liquid is below 60 °C to keep its enzymes and limit HMF formation.')]);
+    {const f=formOf(h);if(f[2]===2)A.push(['amber',L('须用炮制品','Use the processed form'),L(f[0],f[1])]);else if(f[2]===1)A.push(['info',L('规格','Form'),L(f[0],f[1])]);}
     if(h.warn)A.push(['red',L('药物相互作用','Drug interactions'),`${n}${COLON()}${isEN()?(EH(h).warn||h.warn):h.warn}`]);
     if(h.raw&&S.method==='infuse')A.push(['red',L('必须煮熟','Must be cooked'),L(`${n}生品含${h.id==='elderberry'?'生氰苷与':''}植物凝集素，泡水不能使其失活，可致恶心呕吐，须充分煮熟。`,`Raw ${n} contains ${h.id==='elderberry'?'cyanogenic glycosides and ':''}lectins that steeping cannot deactivate; it can cause nausea and vomiting. Boil thoroughly.`)]);
   });
@@ -1801,7 +1853,7 @@ function renderAnalysis(c){
 
   const ixAll=[];c.rows.forEach(r=>hix(r.h).forEach(x=>ixAll.push(`<li><b>${hnShort(r.h)}</b>${COLON()}${x}</li>`)));
   const herbsInfo=c.rows.map(r=>{const nt=hnote(r.h);return `<details class="herb"><summary>${hn(r.h)} <span class="muted num" style="font-size:12px">${r.g} g · ${L('药力','potency')} ${r1(r.s)}</span></summary>
-     <p><span class="lbl">${L('功效　','Actions: ')}</span>${hg(r.h)}</p><p><span class="lbl">${L('主要成分　','Constituents: ')}</span>${hc(r.h)}</p><p><span class="lbl">${L('注意　','Cautions: ')}</span>${hw(r.h)}${nt?L(`（${nt}）`,` (${nt})`):''}</p>${r.h.west?`<p class="lbl">${r.h.west===1?L('西方草药：剂量参照德国 Commission E / EMA 专论；性味归经为中西结合文献（Holmes、Ross 等）的参考归类，非药典记载。','Western herb: doses follow German Commission E / EMA monographs; the nature, flavor and meridian entries are reference attributions from integrative literature (Holmes, Ross), not pharmacopoeial.'):L('中西通用：性味归经据《中国药典》，西方用法参照 Commission E。','Used in both traditions: nature and meridians per the Chinese Pharmacopoeia; Western use per Commission E.')}</p>`:''}</details>`}).join('');
+     <p><span class="lbl">${L('规格　','Form: ')}</span>${hform(r.h)}</p><p><span class="lbl">${L('功效　','Actions: ')}</span>${hg(r.h)}</p><p><span class="lbl">${L('主要成分　','Constituents: ')}</span>${hc(r.h)}</p><p><span class="lbl">${L('注意　','Cautions: ')}</span>${hw(r.h)}${nt?L(`（${nt}）`,` (${nt})`):''}</p>${r.h.west?`<p class="lbl">${r.h.west===1?L('西方草药：剂量参照德国 Commission E / EMA 专论；性味归经为中西结合文献（Holmes、Ross 等）的参考归类，非药典记载。','Western herb: doses follow German Commission E / EMA monographs; the nature, flavor and meridian entries are reference attributions from integrative literature (Holmes, Ross), not pharmacopoeial.'):L('中西通用：性味归经据《中国药典》，西方用法参照 Commission E。','Used in both traditions: nature and meridians per the Chinese Pharmacopoeia; Western use per Commission E.')}</p>`:''}</details>`}).join('');
 
   const nticks=c.rows.map(r=>`<span class="gtick" style="left:${(clamp(r.h.t,-3,3)+3)/6*100}%" title="${hnShort(r.h)} ${natT(r.h.tl)}"></span>`).join('');
   const merE=Object.entries(c.mer).sort((a,b)=>b[1]-a[1]);

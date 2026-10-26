@@ -536,6 +536,11 @@ struct Engine {
                                    t: L("蜂蜜不宜久煮或沸水冲，待汤液降至 60 °C 以下再调入，以保留酶类、减少 5-羟甲基糠醛生成。",
                                         "Do not boil honey or add it to boiling water. Stir it in once the liquid is below 60 °C to keep its enzymes and limit HMF formation.")))
             }
+            if h.formLv == 2 {
+                A.append(AlertItem(lv: .amber, ty: L("须用炮制品", "Use the processed form"), t: hform(h)))
+            } else if h.formLv == 1 {
+                A.append(AlertItem(lv: .info, ty: L("规格", "Form"), t: hform(h)))
+            }
             if !h.warn.isEmpty {
                 A.append(AlertItem(lv: .red, ty: L("药物相互作用", "Drug interactions"), t: n + COLON() + hwarn(h)))
             }

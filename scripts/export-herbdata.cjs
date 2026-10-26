@@ -16,7 +16,7 @@ js += `
 ;globalThis.__out = {
   herbs: HERBS.map(h => ({ id:h.id, n:h.n, py:h.py, cat:h.cat, tl:h.tl, t:h.t, f:h.f, m:h.m, mer:h.mer, d:h.d, p:h.p,
     fx:Object.entries(h.fx).map(([k,v])=>({k,v})), g:h.g, c:h.c, w:h.w, col:h.col, sp:h.sp, ix:h.ix, preg:h.preg, ni:h.ni, tox:h.tox, raw:h.raw,
-    west:h.west, warn:h.warn, note:h.note, std:h.std||'', infK:h.infK||0, ti:h.ti||0 })),
+    west:h.west, warn:h.warn, formZh:formOf(h)[0], formEn:formOf(h)[1], formLv:formOf(h)[2], note:h.note, std:h.std||'', infK:h.infK||0, ti:h.ti||0 })),
   part: Object.fromEntries(Object.entries(PART).map(([k,v]) => [k, { ...v, en: PART_EN[k] }])),
   presets: PRESETS.map(p => ({ c:p.c, n:p.n, src:p.src, d:p.d, m:p.m, w:p.w, mi:p.mi, t:p.t||95, soak:!!p.soak, items:p.items.map(([id,g])=>({id,g})) })),
   combos: COMBOS.map(x => ({ n:x.n, t:x.t, need:x.need.map(n => Array.isArray(n) ? n : [n]), ratio:x.ratio?{a:x.ratio[0],b:x.ratio[1],r:x.ratio[2]}:null, jun:x.jun||[] })),
@@ -30,6 +30,7 @@ js += `
   nat: NAT_EN, fl: FL_EN, mer: MER_EN, el: EL_EN, org: ORG, orgEn: ORG_EN,
   sheng: SHENG_TXT, shengEn: SHENG_EN, cheng: CHENG_TXT, chengEn: CHENG_EN, wu: WU_TXT, wuEn: WU_EN, protect: Object.fromEntries(Object.entries(PROTECT).map(([k,v])=>[k,{zh:v[0],en:v[1]}])),
   roleEn: ROLE_EN,
+  formNote: { zh: (()=>{S.lang='zh';return FORM_NOTE()})(), en: (()=>{S.lang='en';const t=FORM_NOTE();S.lang='zh';return t})() },
   symptoms: SYMPTOMS.map(x => ({ k:x.k, en:x.en, syn:x.syn, tags:Object.entries(x.tags).map(([k,v])=>({k,v})) })),
   redFlags: RED_FLAGS, crisis: CRISIS, en: { herbs: EN_DATA.herbs, presets: EN_DATA.presets, combos: EN_DATA.combos, conflicts: EN_DATA.conflicts }
 };`;

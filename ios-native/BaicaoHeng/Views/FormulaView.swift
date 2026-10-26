@@ -39,6 +39,9 @@ struct FormulaView: View {
                     if !st.s.items.isEmpty {
                         totals(c)
                     }
+                    Text(formNoteText())
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
                 } header: {
                     HStack {
                         Text(L("药方", "Formula") + " · " + L("克", "grams"))
@@ -233,6 +236,9 @@ struct HerbRow: View {
             Text("\(natT(h.tl)) · \(flavT(h.f)) · " + (isEN ? "enters \(merT(h))" : "归\(h.m)经") + " · \(partN(h.p))")
                 .font(.caption)
                 .foregroundStyle(.secondary)
+            Text(L("规格：", "Form: ") + hform(h))
+                .font(.caption)
+                .foregroundStyle(h.formLv == 2 ? Color.alertRed : (h.formLv == 1 ? Color.alertAmber : Color.secondary))
 
             let flags = flagButtons()
             if !flags.isEmpty {

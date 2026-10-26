@@ -150,6 +150,7 @@ struct AnalysisView: View {
                 ForEach(c.rows) { r in
                     DisclosureGroup {
                         VStack(alignment: .leading, spacing: 6) {
+                            profileLine(L("规格", "Form"), hform(r.h))
                             profileLine(L("功效", "Actions"), hg(r.h))
                             profileLine(L("主要成分", "Constituents"), hc(r.h))
                             profileLine(L("注意", "Cautions"), hw(r.h) + (hnote(r.h).isEmpty ? "" : L("（\(hnote(r.h))）", " (\(hnote(r.h)))")))

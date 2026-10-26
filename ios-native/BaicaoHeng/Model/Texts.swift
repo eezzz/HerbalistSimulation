@@ -52,6 +52,8 @@ func hc(_ h: Herb) -> String { isEN ? (EH(h)?.c ?? h.c) : h.c }
 func hw(_ h: Herb) -> String { isEN ? (EH(h)?.w ?? h.w) : h.w }
 func hix(_ h: Herb) -> [String] { isEN ? (EH(h)?.ix ?? h.ix) : h.ix }
 func hnote(_ h: Herb) -> String { isEN ? (EH(h)?.note ?? h.note) : h.note }
+func hform(_ h: Herb) -> String { L(h.formZh, h.formEn) }
+func formNoteText() -> String { L(DB.shared.data.formNote.zh, DB.shared.data.formNote.en) }
 func hwarn(_ h: Herb) -> String { isEN ? (EH(h)?.warn ?? h.warn) : h.warn }
 
 func natT(_ k: String) -> String { isEN ? (D.nat[k] ?? k) : k }

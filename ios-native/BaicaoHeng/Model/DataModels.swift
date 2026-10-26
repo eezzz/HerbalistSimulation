@@ -32,6 +32,9 @@ struct Herb: Codable, Identifiable, Hashable {
     let raw: Int
     let west: Int          // 0 中药，1 西方草药，2 中西通用
     let warn: String
+    let formZh: String     // 规格：鲜品 / 饮片 / 炮制品
+    let formEn: String
+    let formLv: Int        // 0 说明，1 不可互换，2 必须用炮制品（生品有害）
     let note: String
     let std: String        // "infuse" 表示标准制法为浸泡
     let infK: Double
@@ -202,6 +205,7 @@ struct HerbData: Codable {
     let symptoms: [Symptom]
     let redFlags: [String]
     let crisis: [String]
+    let formNote: ZhEn
     let en: ENData
 }
 
