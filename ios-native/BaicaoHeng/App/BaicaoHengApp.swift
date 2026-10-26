@@ -39,6 +39,8 @@ struct RootView: View {
                 .tag(AppTab.analysis)
         }
         .tint(Color.brand)
+        // 选择器、搜索框提示、标签栏等系统控件会缓存文字；切换语言时整体重建界面，保证全部换成新语言
+        .id(st.s.lang)
         .task {
             // 买过去广告的用户不再弹广告同意 / 跟踪授权
             if !store.adsRemoved { ads.start() }
