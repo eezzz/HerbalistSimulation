@@ -348,6 +348,10 @@ struct DosingBlock: View {
         (x.daily > upper(x.r.h), (x.lt.map { days > $0.days }) ?? false)
     }
 
+    private func header(_ t: String) -> some View {
+        Text(t).lineLimit(2).fixedSize()
+    }
+
     /// 两个以上单词的表头 / 标签拆成两行
     private func twoLines(_ s: String) -> String {
         guard s.count > 8 else { return s }
@@ -359,12 +363,13 @@ struct DosingBlock: View {
     /// 西语、葡语：药名单独占一整行，数字列放在下一行，表格不超出屏幕宽度
     private var compactTable: some View {
         Grid(alignment: .trailing, horizontalSpacing: 10, verticalSpacing: 4) {
+            // 表头固定两行：上行名称、下行单位，按完整宽度显示，不截断
             GridRow {
-                Text(twoLines(L("每剂", "g/dose")))
-                Text(twoLines(L("每日", "g/day")))
-                Text(twoLines(L("常用日量", "Usual/day")))
-                Text(twoLines(L("疗程", "Course g")))
-                Text(twoLines(L("久服上限", "Max days")))
+                header(L("每剂", "Dose\ng"))
+                header(L("每日", "Day\ng"))
+                header(L("常用日量", "Usual\ng/day"))
+                header(L("疗程", "Course\ng"))
+                header(L("久服上限", "Max\ndays"))
                 Text("")
             }
             .font(.caption2.weight(.semibold)).foregroundStyle(.secondary)

@@ -1,7 +1,12 @@
 {
  "strings": {
   "infusion. Use boiling water, cover, and steep longer": "uma infusão padrão. Use água fervente, tampe e deixe em infusão por mais tempo",
-  "decoction. Slice thinly, steep longer, or decoct instead": "uma decocção padrão. Corte em fatias finas, deixe em infusão por mais tempo ou prepare por decocção"
+  "decoction. Slice thinly, steep longer, or decoct instead": "uma decocção padrão. Corte em fatias finas, deixe em infusão por mais tempo ou prepare por decocção",
+  "Dose\ng": "Dose\ng",
+  "Day\ng": "Dia\ng",
+  "Usual\ng/day": "Usual\ng/dia",
+  "Course\ng": "Total\ng",
+  "Max\ndays": "Máx.\ndias"
  },
  "templates": [
   [

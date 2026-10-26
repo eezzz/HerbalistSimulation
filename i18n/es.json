@@ -1448,7 +1448,12 @@
   "Summer heat": "Calor de verano",
   "Only used to show ads that are more relevant to you. Choosing not to allow tracking does not affect any feature.": "Solo se usa para mostrar anuncios más relevantes para usted. Elegir no permitir el rastreo no afecta ninguna función.",
   "infusion. Use boiling water, cover, and steep longer": "una infusión estándar. Usa agua hirviendo, tapa y deja reposar más tiempo",
-  "decoction. Slice thinly, steep longer, or decoct instead": "una decocción estándar. Córtala en láminas finas, deja reposar más tiempo o prepárala en decocción"
+  "decoction. Slice thinly, steep longer, or decoct instead": "una decocción estándar. Córtala en láminas finas, deja reposar más tiempo o prepárala en decocción",
+  "Dose\ng": "Toma\ng",
+  "Day\ng": "Día\ng",
+  "Usual\ng/day": "Habitual\ng/día",
+  "Course\ng": "Total\ng",
+  "Max\ndays": "Máx.\ndías"
  },
  "templates": [
   [
