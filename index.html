@@ -1,6 +1,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#2D5B57">
+<meta name="theme-color" content="#EDF0EA" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#111513" media="(prefers-color-scheme: dark)">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="百草衡">
@@ -279,7 +280,7 @@ html[lang="en"] .seg button{font-family:var(--sans);font-size:14px}
 <style>
 /* 独立打开（GitHub Pages）时补上 artifact 外壳提供的基础重置 */
 [hidden]{display:none!important}
-.installbar{position:fixed;left:12px;right:12px;bottom:calc(12px + env(safe-area-inset-bottom,0px));z-index:50;display:flex;gap:10px;align-items:center;padding:12px 12px 12px 14px;border-radius:10px;background:var(--accent);color:var(--accent-ink);font-size:14px;line-height:1.5;box-shadow:0 6px 24px rgb(0 0 0 / .25)}
+.installbar{position:fixed;left:max(12px,env(safe-area-inset-left,0px));right:max(12px,env(safe-area-inset-right,0px));bottom:calc(12px + env(safe-area-inset-bottom,0px));z-index:50;display:flex;gap:10px;align-items:center;padding:12px 12px 12px 14px;border-radius:10px;background:var(--accent);color:var(--accent-ink);font-size:14px;line-height:1.5;box-shadow:0 6px 24px rgb(0 0 0 / .25)}
 .installbar span{flex:1}
 .installbar button{flex:none;width:36px;height:36px;border:0;border-radius:6px;background:transparent;color:inherit;font-size:22px}
 .whint{font-size:11px;line-height:1.4;color:var(--muted)}
@@ -288,6 +289,8 @@ html[lang="en"] .seg button{font-family:var(--sans);font-size:14px}
 .intake .tr2 i.k2{background:var(--amber);opacity:.9}
 body{margin:0}
 :root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+/* iPhone 安全区：竖屏时灵动岛在顶部（由上方 padding-top 让出），横屏时在左/右侧，底部有 Home 指示条 */
+body{padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
 /* ---------- 手机 / 触屏优化 ---------- */
 button,.drawer,.recipe,.chip,.flag,.card h3,input,select{touch-action:manipulation;-webkit-tap-highlight-color:transparent}
 @media (pointer:coarse){
@@ -316,7 +319,7 @@ button,.drawer,.recipe,.chip,.flag,.card h3,input,select{touch-action:manipulati
   input[type=range]::-moz-range-thumb{width:26px;height:26px}
 }
 @media (max-width:640px){
-  body{padding-inline:12px}
+  body{padding-left:max(12px,env(safe-area-inset-left,0px));padding-right:max(12px,env(safe-area-inset-right,0px))}
   .wrap{gap:14px}
   .brand h1{font-size:28px}
   .toprow{width:100%;justify-content:space-between;flex-wrap:nowrap;align-items:flex-start}
