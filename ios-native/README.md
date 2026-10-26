@@ -120,6 +120,49 @@ xcodebuild -exportArchive -archivePath build/BaicaoHeng.xcarchive \
 
 ---
 
+## 广告与去广告内购
+
+代码已全部写好，默认用 **Google 官方测试广告 ID** 和 **本地 StoreKit 测试配置**，不会产生真实收入或扣费。
+
+| 文件 | 作用 |
+|---|---|
+| `BaicaoHeng/Monetization/AdConfig.swift` | 读取 project.yml 里的广告开关与 ID；Debug 构建强制使用测试 ID |
+| `BaicaoHeng/Monetization/AdsManager.swift` | 启动流程：Google 同意弹窗（UMP）→ 苹果跟踪授权（ATT）→ 启动 SDK；底部自适应横幅 |
+| `BaicaoHeng/Monetization/PurchaseStore.swift` | 去广告内购（StoreKit 2，非消耗型 `com.eezzz.baicaoheng.removeads`），含恢复购买 |
+| `BaicaoHeng/Monetization/SupportView.swift` | 方库左上角齿轮进入的“设置”：去广告、恢复购买、广告隐私选项 |
+| `Products.storekit` | 本地内购测试配置（去广告 ¥6），Xcode 运行时自动加载 |
+
+广告只出现在「方库」和「分析」页底部，「药方」页不放广告，免得干扰查看克数与注意事项；买过去广告的用户不会再看到同意弹窗和跟踪授权。
+
+SDK 版本：Google Mobile Ads 12.x、User Messaging Platform 3.x（代码使用其 Swift 命名，如 `BannerView`、`ConsentInformation`）。若 Swift Package 解析失败或命名不符，按实际解析到的版本调整 `project.yml` 的 `majorVersion` 与相应 API 名称，不要改业务逻辑。
+
+### 测试（Debug，不需要任何账号）
+
+1. `xcodegen generate` 后运行到模拟器或真机
+2. 首次启动应弹出“允许跟踪”授权；之后「方库」「分析」页底部出现带 “Test Ad” 标记的横幅
+3. 方库左上角齿轮 →「去除广告」显示 ¥6.00 → 购买（本地测试，不扣费）→ 横幅消失
+4. 「恢复购买」能恢复；Xcode 菜单 Debug → StoreKit → Manage Transactions 删除交易后，重开 App 横幅重新出现
+5. 想测试欧盟同意弹窗：在 `AdsManager.start()` 的 `RequestParameters()` 上临时加 `debugSettings`（geography 设为 EEA、填入测试设备 ID），测完删掉
+
+### 正式上线广告（“一键”切换）
+
+1. **AdMob**：注册并新建 iOS 应用，创建一个“横幅”广告单元；把 `project.yml` 顶部三行改为：
+   ```yaml
+   ADS_ENABLED: "YES"
+   ADMOB_APP_ID: "ca-app-pub-你的发布商ID~应用ID"
+   ADMOB_BANNER_ID: "ca-app-pub-你的发布商ID/广告单元ID"
+   ```
+   然后 `xcodegen generate`，Release 构建即使用真实广告（Debug 仍是测试广告）。
+2. **内购**：App Store Connect → 该 App → 内购项目 → 新建“非消耗型”，产品 ID `com.eezzz.baicaoheng.removeads`，设定价格、名称和审核截图，随 App 版本一起提交审核。
+3. **app-ads.txt**：在 App Store 页面填写的开发者网站根目录放 `app-ads.txt`，内容为 AdMob 后台给出的一行（形如 `google.com, pub-XXXXXXXXXXXXXXXX, DIRECT, f08c47fec0942fa0`）。
+4. **屏蔽敏感广告**：AdMob → 屏蔽控制 → 敏感类别，屏蔽“药品”“保健品 / 减肥”等，避免与 App 的用药提示矛盾。
+5. **隐私标签**：App Store Connect → App 隐私，声明“设备 ID、广告数据、产品交互”用于“第三方广告”。
+6. （可选）把 Google 文档中的完整 SKAdNetwork 列表补进 `project.yml` 的 `SKAdNetworkItems`。
+
+不想要广告时，把 `ADS_ENABLED` 改为 `"NO"`：不显示广告、不弹同意和跟踪授权，“设置”里也不再出现去广告选项。
+
+---
+
 ## 数据更新
 
 网页版的药材、方剂、配伍改动后，在仓库根目录运行：

@@ -34,7 +34,11 @@ struct LibraryView: View {
             .searchable(text: $q, placement: .navigationBarDrawer(displayMode: .always),
                         prompt: L("搜症状或方名，如：眼睛干涩、失眠", "Symptom or formula, e.g. dry eye, insomnia"))
             .navigationTitle(L("方库", "Formula Library"))
-            .toolbar { ToolbarItem(placement: .topBarTrailing) { LangButton() } }
+            .toolbar {
+                ToolbarItem(placement: .topBarLeading) { SettingsButton() }
+                ToolbarItem(placement: .topBarTrailing) { LangButton() }
+            }
+            .adBanner()
         }
     }
 

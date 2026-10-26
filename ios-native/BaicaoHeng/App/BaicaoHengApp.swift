@@ -3,11 +3,15 @@ import SwiftUI
 @main
 struct BaicaoHengApp: App {
     @StateObject private var state = AppState()
+    @StateObject private var ads = AdsManager()
+    @StateObject private var store = PurchaseStore()
 
     var body: some Scene {
         WindowGroup {
             RootView()
                 .environmentObject(state)
+                .environmentObject(ads)
+                .environmentObject(store)
                 .environment(\.locale, Locale(identifier: state.s.lang == .en ? "en" : "zh-Hans"))
         }
     }
@@ -15,6 +19,8 @@ struct BaicaoHengApp: App {
 
 struct RootView: View {
     @EnvironmentObject var st: AppState
+    @EnvironmentObject var ads: AdsManager
+    @EnvironmentObject var store: PurchaseStore
 
     var body: some View {
         TabView(selection: $st.tab) {
@@ -33,5 +39,9 @@ struct RootView: View {
                 .tag(AppTab.analysis)
         }
         .tint(Color.brand)
+        .task {
+            // 买过去广告的用户不再弹广告同意 / 跟踪授权
+            if !store.adsRemoved { ads.start() }
+        }
     }
 }

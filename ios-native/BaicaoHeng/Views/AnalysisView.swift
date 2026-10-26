@@ -33,6 +33,7 @@ struct AnalysisView: View {
                 }
                 ToolbarItem(placement: .topBarTrailing) { LangButton() }
             }
+            .adBanner()
         }
     }
 
