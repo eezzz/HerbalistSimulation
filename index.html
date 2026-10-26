@@ -1,5 +1,13 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#2D5B57">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="百草衡">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icons/icon-180.png">
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
 <title>百草衡</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -271,6 +279,9 @@ html[lang="en"] .seg button{font-family:var(--sans);font-size:14px}
 <style>
 /* 独立打开（GitHub Pages）时补上 artifact 外壳提供的基础重置 */
 [hidden]{display:none!important}
+.installbar{position:fixed;left:12px;right:12px;bottom:calc(12px + env(safe-area-inset-bottom,0px));z-index:50;display:flex;gap:10px;align-items:center;padding:12px 12px 12px 14px;border-radius:10px;background:var(--accent);color:var(--accent-ink);font-size:14px;line-height:1.5;box-shadow:0 6px 24px rgb(0 0 0 / .25)}
+.installbar span{flex:1}
+.installbar button{flex:none;width:36px;height:36px;border:0;border-radius:6px;background:transparent;color:inherit;font-size:22px}
 .whint{font-size:11px;line-height:1.4;color:var(--muted)}
 .whint b{color:var(--amber);font-weight:500}
 #weightF.idle .ctl{opacity:.45}
@@ -1889,6 +1900,21 @@ $('#libcats').addEventListener('click',e=>{const b=e.target.closest('.chip');if(
 $('#lib').addEventListener('click',e=>{const b=e.target.closest('.recipe');if(!b)return;applyPreset(PRESETS[+b.dataset.i]);fullRender()});
 $('#clear').addEventListener('click',()=>{S.items=[];detach();renderRows();renderDrawers();refresh()});
 $('#lang').addEventListener('click',()=>{S.lang=isEN()?'zh':'en';fullRender()});
+
+/* ---------- 安装为手机应用（PWA） ---------- */
+(function(){
+  const hosted=location.protocol==='https:'&&!/claude\.(ai|site)|claudeusercontent/.test(location.hostname);
+  if(hosted&&'serviceWorker' in navigator){try{navigator.serviceWorker.register('sw.js').catch(()=>{})}catch(e){}}
+  const ios=/iP(hone|ad|od)/.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
+  const standalone=window.navigator.standalone===true||matchMedia('(display-mode: standalone)').matches;
+  let seen=false;try{seen=localStorage.getItem('bch-install-hint')==='1'}catch(e){}
+  if(!hosted||!ios||standalone||seen)return;
+  const bar=document.createElement('div');bar.className='installbar';
+  const draw=()=>{bar.innerHTML=`<span>${L('装到主屏幕：点 Safari 底部的 <b>分享</b> 按钮，选 <b>添加到主屏幕</b>，即可像 App 一样全屏、离线使用。','Install it: tap <b>Share</b> in Safari, then <b>Add to Home Screen</b> to use it full-screen and offline like an app.')}</span><button type="button" aria-label="${L('关闭','Close')}">×</button>`};
+  draw();document.body.appendChild(bar);
+  bar.addEventListener('click',e=>{if(e.target.closest('button')){bar.remove();try{localStorage.setItem('bch-install-hint','1')}catch(err){}}});
+  $('#lang').addEventListener('click',()=>{if(bar.isConnected)draw()});
+})();
 
 /* ---------- 初始化 ---------- */
 if(!load()||!S.items.length)applyPreset(PRESETS[0]);

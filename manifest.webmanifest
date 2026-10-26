@@ -1,0 +1,17 @@
+{
+  "name": "百草衡 · 草药配伍模拟",
+  "short_name": "百草衡",
+  "description": "中英双语草药配伍模拟器：精确到克，推演四气五味、五行、归经与配伍禁忌。",
+  "lang": "zh-CN",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#EDF0EA",
+  "theme_color": "#2D5B57",
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
