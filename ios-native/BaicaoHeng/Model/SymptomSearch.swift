@@ -47,8 +47,15 @@ enum SymptomSearch {
     static func fromQuery(_ query: String) -> [Symptom] {
         let q = query.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
         guard !q.isEmpty else { return [] }
+        let packs = DB.shared.data.packs ?? [:]
         return DB.shared.data.symptoms.filter { x in
-            ([x.k, x.en] + x.syn).contains { raw in
+            // 中、英、西、葡的名称与同义词都参与匹配，不论当前界面语言
+            var words = [x.k, x.en] + x.syn
+            for p in packs.values {
+                if let n = p.strings[x.en] { words.append(n) }
+                words += p.symSyn[x.k] ?? []
+            }
+            return words.contains { raw in
                 let w = raw.lowercased()
                 return q.contains(w) || (q.count >= 2 && w.contains(q))
             }

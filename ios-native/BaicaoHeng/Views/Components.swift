@@ -182,7 +182,7 @@ struct NatureGauge: View {
             }
             .frame(height: 26)
             HStack {
-                ForEach(isEN ? ["V. cold", "Cold", "Cool", "Neutral", "Warm", "Hot", "V. hot"] : ["大寒", "寒", "凉", "平", "温", "热", "大热"], id: \.self) { s in
+                ForEach([L("大寒", "V. cold"), L("寒", "Cold"), L("凉", "Cool"), L("平", "Neutral"), L("温", "Warm"), L("热", "Hot"), L("大热", "V. hot")], id: \.self) { s in
                     Text(s).font(.caption2).foregroundStyle(.secondary).frame(maxWidth: .infinity)
                 }
             }

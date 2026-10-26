@@ -46,8 +46,8 @@ targets:
       path: BaicaoHeng/Info.plist
       properties:
         CFBundleDisplayName: 百草衡
-        CFBundleDevelopmentRegion: zh-Hans
-        CFBundleLocalizations: [zh-Hans, en]
+        CFBundleDevelopmentRegion: en
+        CFBundleLocalizations: [en, zh-Hans, es, pt-BR]
         CFBundleShortVersionString: $(MARKETING_VERSION)
         CFBundleVersion: $(CURRENT_PROJECT_VERSION)
         ITSAppUsesNonExemptEncryption: false

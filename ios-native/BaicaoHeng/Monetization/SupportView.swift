@@ -12,12 +12,14 @@ struct SupportView: View {
             List {
                 Section {
                     Picker(selection: $st.s.lang) {
-                        Text("English").tag(Lang.en)
-                        Text("中文").tag(Lang.zh)
+                        ForEach(Lang.allCases, id: \.self) { l in
+                            Text(l.nativeName).tag(l)
+                        }
                     } label: {
                         Text(L("语言", "Language"))
                     }
-                    .pickerStyle(.segmented)
+                    .pickerStyle(.inline)
+                    .labelsHidden()
                 } header: {
                     Text(L("语言", "Language"))
                 }

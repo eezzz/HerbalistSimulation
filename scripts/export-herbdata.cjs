@@ -36,7 +36,19 @@ js += `
 };`;
 vm.runInContext(js, ctx, { filename: 'index-script.js' });
 const o = ctx.__out;
+// 西语 / 葡语翻译包（由 scripts/merge-i18n.py 生成）；红旗词与危机词合并进总表，任何语言输入都能触发提示
+const path = require('path');
+o.packs = {};
+for (const lang of ['es', 'pt']) {
+  const f = path.join(path.dirname(src), 'i18n', lang + '.json');
+  if (!fs.existsSync(f)) continue;
+  const p = JSON.parse(fs.readFileSync(f, 'utf8'));
+  o.packs[lang] = { strings: p.strings, templates: p.templates, symSyn: p.symSyn };
+  for (const w of p.redFlags || []) if (!o.redFlags.includes(w)) o.redFlags.push(w);
+  for (const w of p.crisis || []) if (!o.crisis.includes(w)) o.crisis.push(w);
+}
 fs.writeFileSync(out, JSON.stringify(o));
+console.log('packs', Object.keys(o.packs).join(',') || 'none');
 console.log('herbs', o.herbs.length, 'presets', o.presets.length, 'combos', o.combos.length, 'conflicts', o.conflicts.length,
   'lt', Object.keys(o.lt).length, 'tags', o.tags.length, 'bodies', o.bodies.length, 'bytes', fs.statSync(out).size);
 const missEn = o.herbs.filter(h => !o.en.herbs[h.id]).map(h => h.id);

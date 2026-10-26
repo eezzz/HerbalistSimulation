@@ -233,7 +233,7 @@ struct HerbRow: View {
                 .buttonStyle(.borderless)
                 .accessibilityLabel(L("移除", "Remove") + " " + hn(h))
             }
-            Text("\(natT(h.tl)) · \(flavT(h.f)) · " + (isEN ? "enters \(merT(h))" : "归\(h.m)经") + " · \(partN(h.p))")
+            Text("\(natT(h.tl)) · \(flavT(h.f)) · " + L("归\(h.m)经", "enters \(merT(h))") + " · \(partN(h.p))")
                 .font(.caption)
                 .foregroundStyle(.secondary)
             Text(L("规格：", "Form: ") + hform(h))

@@ -2,8 +2,27 @@ import Foundation
 
 // MARK: - 语言
 
-enum Lang: String, Codable {
-    case zh, en
+enum Lang: String, Codable, CaseIterable {
+    case en, zh, es, pt
+
+    /// 在设置里显示的名称（各用本语言书写）
+    var nativeName: String {
+        switch self {
+        case .en: return "English"
+        case .zh: return "中文"
+        case .es: return "Español"
+        case .pt: return "Português"
+        }
+    }
+
+    var localeID: String {
+        switch self {
+        case .en: return "en"
+        case .zh: return "zh-Hans"
+        case .es: return "es"
+        case .pt: return "pt-BR"
+        }
+    }
 }
 
 /// 当前界面语言。由 AppState 在语言切换时更新，界面在同一次刷新中读取。
@@ -11,8 +30,86 @@ enum Loc {
     static var lang: Lang = .en
 }
 
-func L(_ zh: String, _ en: String) -> String { Loc.lang == .en ? en : zh }
-var isEN: Bool { Loc.lang == .en }
+/// 非中文界面（英文、西班牙文、葡萄牙文）都以英文原文为底本，再经 T() 翻译
+var isEN: Bool { Loc.lang != .zh }
+
+/// 中文界面用 zh；其他语言用英文原文 en 经 T() 翻译
+func L(_ zh: String, _ en: String) -> String { Loc.lang == .zh ? zh : T(en) }
+
+/// 把英文原文翻译成当前语言（西语 / 葡语）。英文界面原样返回。
+/// 先查整句对照表；查不到时按带占位符的句式模板匹配（如 “{0} g/day”），占位内容若在对照表中也一并翻译。
+func T(_ en: String) -> String {
+    switch Loc.lang {
+    case .en, .zh: return en
+    case .es, .pt: return Translator.shared.translate(en, Loc.lang.rawValue)
+    }
+}
+
+final class Translator {
+    static let shared = Translator()
+
+    private struct Template {
+        let regex: NSRegularExpression
+        let target: String
+        let slots: Int
+    }
+
+    private var compiled: [String: [Template]] = [:]
+    private var memo: [String: [String: String]] = [:]
+
+    func translate(_ en: String, _ lang: String) -> String {
+        guard !en.isEmpty, let pack = DB.shared.data.packs?[lang] else { return en }
+        if let hit = memo[lang]?[en] { return hit }
+        var out = en
+        if let exact = pack.strings[en] {
+            out = exact
+        } else {
+            let range = NSRange(en.startIndex..., in: en)
+            for t in templates(lang, pack) {
+                guard let m = t.regex.firstMatch(in: en, options: [], range: range) else { continue }
+                var r = t.target
+                for i in 0..<t.slots {
+                    guard let rr = Range(m.range(at: i + 1), in: en) else { continue }
+                    let piece = String(en[rr])
+                    r = r.replacingOccurrences(of: "{\(i)}", with: piece.count < en.count ? translate(piece, lang) : piece)
+                }
+                out = r
+                break
+            }
+        }
+        memo[lang, default: [:]][en] = out
+        return out
+    }
+
+    private func literalLength(_ s: String) -> Int {
+        s.replacingOccurrences(of: #"\{\d+\}"#, with: "", options: .regularExpression).count
+    }
+
+    private func templates(_ lang: String, _ pack: LangPack) -> [Template] {
+        if let c = compiled[lang] { return c }
+        // 文字部分越长的模板越具体，优先匹配
+        let sorted = pack.templates.filter { $0.count == 2 }.sorted { literalLength($0[0]) > literalLength($1[0]) }
+        var out: [Template] = []
+        for pair in sorted {
+            var pattern = "^"
+            var slots = 0
+            var rest = Substring(pair[0])
+            while let r = rest.range(of: #"\{\d+\}"#, options: .regularExpression) {
+                pattern += NSRegularExpression.escapedPattern(for: String(rest[..<r.lowerBound]))
+                pattern += "(.*?)"
+                slots += 1
+                rest = rest[r.upperBound...]
+            }
+            pattern += NSRegularExpression.escapedPattern(for: String(rest)) + "$"
+            if let re = try? NSRegularExpression(pattern: pattern, options: [.dotMatchesLineSeparators]) {
+                out.append(Template(regex: re, target: pair[1], slots: slots))
+            }
+        }
+        compiled[lang] = out
+        return out
+    }
+}
+
 func COLON() -> String { L("：", ": ") }
 func SEP() -> String { L("；", "; ") }
 func joinList(_ a: [String]) -> String { a.joined(separator: L("、", ", ")) }
@@ -29,12 +126,12 @@ func num(_ v: Double) -> String {
 func pct(_ v: Double) -> String { "\(Int((v * 100).rounded()))%" }
 func signed(_ v: Double) -> String { (v > 0 ? "+" : "") + num(v) }
 
-// MARK: - 文本查找（中英）
+// MARK: - 文本查找（中文直接取；其他语言取英文原文再经 T() 翻译）
 
 private var D: HerbData { DB.shared.data }
 
 func EH(_ h: Herb) -> ENHerb? { D.en.herbs[h.id] }
-func hn(_ h: Herb) -> String { isEN ? (EH(h)?.n ?? h.n) : h.n }
+func hn(_ h: Herb) -> String { isEN ? T(EH(h)?.n ?? h.n) : h.n }
 func hnShort(_ h: Herb) -> String {
     guard isEN else { return h.n }
     var s = hn(h)
@@ -47,41 +144,45 @@ func hpy(_ h: Herb) -> String {
     }
     return h.py
 }
-func hg(_ h: Herb) -> String { isEN ? (EH(h)?.g ?? h.g) : h.g }
-func hc(_ h: Herb) -> String { isEN ? (EH(h)?.c ?? h.c) : h.c }
-func hw(_ h: Herb) -> String { isEN ? (EH(h)?.w ?? h.w) : h.w }
-func hix(_ h: Herb) -> [String] { isEN ? (EH(h)?.ix ?? h.ix) : h.ix }
-func hnote(_ h: Herb) -> String { isEN ? (EH(h)?.note ?? h.note) : h.note }
+func hg(_ h: Herb) -> String { isEN ? T(EH(h)?.g ?? h.g) : h.g }
+func hc(_ h: Herb) -> String { isEN ? T(EH(h)?.c ?? h.c) : h.c }
+func hw(_ h: Herb) -> String { isEN ? T(EH(h)?.w ?? h.w) : h.w }
+func hix(_ h: Herb) -> [String] { isEN ? (EH(h)?.ix ?? h.ix).map(T) : h.ix }
+func hnote(_ h: Herb) -> String { isEN ? T(EH(h)?.note ?? h.note) : h.note }
 func hform(_ h: Herb) -> String { L(h.formZh, h.formEn) }
 func formNoteText() -> String { L(DB.shared.data.formNote.zh, DB.shared.data.formNote.en) }
-func hwarn(_ h: Herb) -> String { isEN ? (EH(h)?.warn ?? h.warn) : h.warn }
+func hwarn(_ h: Herb) -> String { isEN ? T(EH(h)?.warn ?? h.warn) : h.warn }
 
-func natT(_ k: String) -> String { isEN ? (D.nat[k] ?? k) : k }
+func natT(_ k: String) -> String { isEN ? T(D.nat[k] ?? k) : k }
 func flavT(_ f: String) -> String {
-    isEN ? f.map { D.fl[String($0)] ?? String($0) }.joined(separator: "/") : f
+    isEN ? f.map { T(D.fl[String($0)] ?? String($0)) }.joined(separator: "/") : f
 }
-func flN(_ f: String) -> String { isEN ? (D.fl[f] ?? f) : f }
-func merT(_ h: Herb) -> String { isEN ? h.mer.map { D.mer[$0] ?? $0 }.joined(separator: ", ") : h.m }
-func merN(_ m: String) -> String { isEN ? (D.mer[m] ?? m) : m }
-func elN(_ e: String) -> String { isEN ? (D.el[e] ?? e) : e }
-func orgN(_ e: String) -> String { isEN ? (D.orgEn[e] ?? "") : (D.org[e] ?? "") }
+func flN(_ f: String) -> String { isEN ? T(D.fl[f] ?? f) : f }
+func merT(_ h: Herb) -> String { isEN ? h.mer.map { T(D.mer[$0] ?? $0) }.joined(separator: ", ") : h.m }
+func merN(_ m: String) -> String { isEN ? T(D.mer[m] ?? m) : m }
+func elN(_ e: String) -> String { isEN ? T(D.el[e] ?? e) : e }
+func orgN(_ e: String) -> String { isEN ? T(D.orgEn[e] ?? "") : (D.org[e] ?? "") }
+func shengT(_ e: String) -> String { L(D.sheng[e] ?? "", D.shengEn[e] ?? "") }
+func chengT(_ e: String) -> String { L(D.cheng[e] ?? "", D.chengEn[e] ?? "") }
+func wuT(_ e: String) -> String { L(D.wu[e] ?? "", D.wuEn[e] ?? "") }
+func protectT(_ e: String) -> String { L(D.protect[e]?.zh ?? "", D.protect[e]?.en ?? "") }
 
-func tagN(_ k: String) -> String { isEN ? (DB.shared.tags[k]?.enName ?? k) : k }
-func tagD(_ k: String) -> String { isEN ? (DB.shared.tags[k]?.enD ?? k) : (DB.shared.tags[k]?.d ?? k) }
-func tagF(_ k: String) -> String { isEN ? (DB.shared.tags[k]?.enFit ?? "") : (DB.shared.tags[k]?.fit ?? "") }
+func tagN(_ k: String) -> String { isEN ? T(DB.shared.tags[k]?.enName ?? k) : k }
+func tagD(_ k: String) -> String { isEN ? T(DB.shared.tags[k]?.enD ?? k) : (DB.shared.tags[k]?.d ?? k) }
+func tagF(_ k: String) -> String { isEN ? T(DB.shared.tags[k]?.enFit ?? "") : (DB.shared.tags[k]?.fit ?? "") }
 
-func catN(_ c: String) -> String { isEN ? (D.cats.first { $0.k == c }?.en ?? c) : c }
-func pcatN(_ c: String) -> String { isEN ? (D.pcats.first { $0.k == c }?.en ?? c) : c }
-func bodyN(_ k: String) -> String { isEN ? (DB.shared.bodies[k]?.enName ?? k) : k }
-func bodyD(_ k: String) -> String { isEN ? (DB.shared.bodies[k]?.enD ?? "") : (DB.shared.bodies[k]?.d ?? "") }
-func roleN(_ r: String) -> String { isEN ? (D.roleEn[r] ?? r) : r }
-func partN(_ p: String) -> String { let x = DB.shared.part(p); return isEN ? x.en : x.lab }
+func catN(_ c: String) -> String { isEN ? T(D.cats.first { $0.k == c }?.en ?? c) : c }
+func pcatN(_ c: String) -> String { isEN ? T(D.pcats.first { $0.k == c }?.en ?? c) : c }
+func bodyN(_ k: String) -> String { isEN ? T(DB.shared.bodies[k]?.enName ?? k) : k }
+func bodyD(_ k: String) -> String { isEN ? T(DB.shared.bodies[k]?.enD ?? "") : (DB.shared.bodies[k]?.d ?? "") }
+func roleN(_ r: String) -> String { isEN ? T(D.roleEn[r] ?? r) : r }
+func partN(_ p: String) -> String { let x = DB.shared.part(p); return isEN ? T(x.en) : x.lab }
 
-func pName(_ p: Preset) -> String { isEN ? (D.en.presets[p.n]?.n ?? p.n) : p.n }
-func pSrc(_ p: Preset) -> String { isEN ? (D.en.presets[p.n]?.src ?? p.src) : p.src }
-func pDesc(_ p: Preset) -> String { isEN ? (D.en.presets[p.n]?.d ?? p.d) : p.d }
-func cName(_ x: Combo) -> String { isEN ? (D.en.combos[x.n]?.n ?? x.n) : x.n }
-func cText(_ x: Combo) -> String { isEN ? (D.en.combos[x.n]?.t ?? x.t) : x.t }
+func pName(_ p: Preset) -> String { isEN ? T(D.en.presets[p.n]?.n ?? p.n) : p.n }
+func pSrc(_ p: Preset) -> String { isEN ? T(D.en.presets[p.n]?.src ?? p.src) : p.src }
+func pDesc(_ p: Preset) -> String { isEN ? T(D.en.presets[p.n]?.d ?? p.d) : p.d }
+func cName(_ x: Combo) -> String { isEN ? T(D.en.combos[x.n]?.n ?? x.n) : x.n }
+func cText(_ x: Combo) -> String { isEN ? T(D.en.combos[x.n]?.t ?? x.t) : x.t }
 
 /// 西方草药的出处说明
 func westNote(_ h: Herb) -> String? {

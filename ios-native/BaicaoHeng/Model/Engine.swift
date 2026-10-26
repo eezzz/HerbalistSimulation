@@ -399,7 +399,7 @@ struct Engine {
         var lim: [(Int, String)] = []
         let aT = abs(c.T)
         let nat = natLabel(c.T)
-        let natEn = (db.data.nat[nat] ?? nat).lowercased()
+        let natEn = natT(nat).lowercased()
         if aT > 0.6 {
             lim.append((aT > 1.2 ? 14 : 28, L("全方药性\(nat)，偏性\(aT > 1.2 ? "明显" : "较明显")",
                                               "formula is \(natEn), a \(aT > 1.2 ? "strong" : "noticeable") bias")))
@@ -430,7 +430,12 @@ struct Engine {
         for x in I where x.v > x.lim {
             let long = days > 14 && !x.perDose
             let zh = "估算\(x.perDose ? "每剂" : "每日") \(num(x.v)) \(x.u)，超过参考上限 \(num(x.lim)) \(x.u)\(x.perDose ? "，可分次饮用" : "")\(long ? "，连服 \(days) 天累积风险较高" : "")。"
-            let en = "Estimated \(num(x.v)) \(x.u)\(x.perDose ? " per dose (split it into smaller servings)" : "/day"), above the reference limit of \(num(x.lim)) \(x.u)\(long ? "; over \(days) days the cumulative risk is higher" : "")."
+            // 三种情况各写整句，便于翻译时按句式匹配
+            let en = x.perDose
+                ? "Estimated \(num(x.v)) \(x.u) per dose (split it into smaller servings), above the reference limit of \(num(x.lim)) \(x.u)."
+                : (long
+                    ? "Estimated \(num(x.v)) \(x.u)/day, above the reference limit of \(num(x.lim)) \(x.u); over \(days) days the cumulative risk is higher."
+                    : "Estimated \(num(x.v)) \(x.u)/day, above the reference limit of \(num(x.lim)) \(x.u).")
             A.append(AlertItem(lv: days > 14 ? .red : .amber, ty: L("\(x.k)超量", "\(x.k) over limit"), t: L(zh, en)))
         }
         return Dosing(rows: rows, I: I, dailyTotal: dailyTotal, courseTotal: dailyTotal * Double(days),
@@ -483,7 +488,7 @@ struct Engine {
                 let inf = h.std == "infuse"
                 let ep = Int((r.e * 100).rounded()), rp = Int((r.rel * 100).rounded())
                 let zh = "\(n)（\(db.part(h.p).lab)）泡水估算溶出 \(ep)%，只相当于标准\(inf ? "泡法" : "煎煮")的 \(rp)%。建议\(inf ? "用沸水、加盖、延长焖泡" : "切薄片、延长焖泡，或改用煮")。"
-                let en = "\(n) (\(db.part(h.p).en)) extracts ~\(ep)% when steeped — only \(rp)% of a standard \(inf ? "infusion. Use boiling water, cover, and steep longer" : "decoction. Slice thinly, steep longer, or decoct instead")."
+                let en = "\(n) (\(partN(h.p))) extracts ~\(ep)% when steeped — only \(rp)% of a standard \(inf ? "infusion. Use boiling water, cover, and steep longer" : "decoction. Slice thinly, steep longer, or decoct instead")."
                 A.append(AlertItem(lv: .info, ty: L("溶出偏低", "Poor extraction"), t: L(zh, en)))
             }
             if S.method == "boil" && h.has("late") && !r.it.fl.late && S.minutes > 10 {
@@ -527,8 +532,9 @@ struct Engine {
             if h.has("melt") && !r.it.fl.melt {
                 let boil = S.method == "boil"
                 let zh = "\(n)与群药同\(boil ? "煎易粘锅、包裹他药" : "泡难以溶化")。应隔水蒸化或用热药液溶化后兑服。"
-                let en = (boil ? "Cooked with the other herbs, \(n) sticks to the pot and coats them." : "\(n) will not dissolve by steeping.")
-                    + " Melt it over a water bath or in the hot strained liquid, then stir in."
+                let en = boil
+                    ? "Cooked with the other herbs, \(n) sticks to the pot and coats them. Melt it over a water bath or in the hot strained liquid, then stir in."
+                    : "\(n) will not dissolve by steeping. Melt it over a water bath or in the hot strained liquid, then stir in."
                 A.append(AlertItem(lv: .amber, ty: L("宜烊化", "Melt separately"), t: L(zh, en)))
             }
             if h.has("honey") && !r.it.fl.honey {
@@ -696,11 +702,12 @@ struct Engine {
             s += "功效以**\(tagD(t1))**" + (t2.map { "、**\(tagD($0))**" } ?? "") + "为主" + (t3.map { "，兼能\(tagD($0))" } ?? "") + "。"
             return s
         }
-        let natEn = (DB.shared.data.nat[nat] ?? nat).lowercased()
-        let flEn = (fls.isEmpty ? ["甘"] : fls).map { flN($0).lowercased() }.joined(separator: " and ")
-        var s = "This formula has **\(c.rows.count)** herbs weighing **\(num(c.G))** g in total, **\(S.method == "infuse" ? "steeped" : "decocted")** to about \(c.out) ml. "
-        s += "Overall nature is **\(natEn)**; the taste is mainly \(flEn); it enters mainly the \(mers.map(merN).joined(separator: ", ")) channels and leans toward \(elN(elTop)) in the Five Phases. "
-        s += "Its main actions are **\(tagD(t1))**" + (t2.map { " and **\(tagD($0))**" } ?? "") + (t3.map { ", with secondary \(tagD($0))" } ?? "") + "."
+        let natEn = natT(nat).lowercased()
+        let flEn = (fls.isEmpty ? ["甘"] : fls).map { flN($0).lowercased() }.joined(separator: T(" and "))
+        var s = T("This formula has **\(c.rows.count)** herbs weighing **\(num(c.G))** g in total, **\(S.method == "infuse" ? "steeped" : "decocted")** to about \(c.out) ml.") + " "
+        s += T("Overall nature is **\(natEn)**; the taste is mainly \(flEn); it enters mainly the \(mers.map(merN).joined(separator: ", ")) channels and leans toward \(elN(elTop)) in the Five Phases.") + " "
+        let mainActions = t2.map { T("Its main actions are **\(tagD(t1))** and **\(tagD($0))**") } ?? T("Its main actions are **\(tagD(t1))**")
+        s += mainActions + (t3.map { T(", with secondary \(tagD($0))") } ?? "") + "."
         return s
     }
 
@@ -719,20 +726,20 @@ struct Engine {
             R.append(L("五行分布较均衡，药力平和，适合日常调养。", "The Five Phases are fairly balanced; the formula is gentle and suited to everyday maintenance."))
         } else {
             R.append(L("以**\(e1)**为主（\(pct(p1))），药力重在\(D.org[e1] ?? "")。",
-                       "**\(elN(e1))** dominates (\(pct(p1))); the formula acts mainly on the \(D.orgEn[e1] ?? "")."))
+                       "**\(elN(e1))** dominates (\(pct(p1))); the formula acts mainly on the \(orgN(e1))."))
         }
         if p1 > 0.36, let ke = KE[e1] {
             let prot = D.protect[ke]
             R.append(L("\(e1)气偏盛，长期单用时需防相乘：\(D.cheng[e1] ?? "")；过盛时还可能\(D.wu[e1] ?? "")。可酌加\(prot?.zh ?? "")之品以护\(D.org[ke] ?? "")。",
-                       "\(elN(e1)) is strong. With long-term use alone, watch for overacting: \(D.chengEn[e1] ?? ""). In excess it may also \(D.wuEn[e1] ?? ""). Consider adding \(prot?.en ?? "") herbs to protect the \(D.orgEn[ke] ?? "")."))
+                       "\(elN(e1)) is strong. With long-term use alone, watch for overacting: \(chengT(e1)). In excess it may also \(wuT(e1)). Consider adding \(protectT(ke)) herbs to protect the \(orgN(ke))."))
         }
         for m in EL {
             if let ch = SHENG[m], el[m] > 0.17, el[ch] > 0.17 {
-                R.append(L((D.sheng[m] ?? "") + "。", (D.shengEn[m] ?? "") + "."))
+                R.append(isEN ? shengT(m) + "." : (D.sheng[m] ?? "") + "。")
             }
         }
         if p5 < 0.06 && p1 - p5 >= 0.12 {
-            R.append(L("\(e5)（\(D.org[e5] ?? "")）几乎未涉及。", "\(elN(e5)) (\(D.orgEn[e5] ?? "")) is barely addressed."))
+            R.append(L("\(e5)（\(D.org[e5] ?? "")）几乎未涉及。", "\(elN(e5)) (\(orgN(e5))) is barely addressed."))
         }
         return R
     }
@@ -769,12 +776,15 @@ struct Engine {
     }
 
     func tasteText(_ c: Calc) -> String {
-        let zh = ["酸": "酸", "苦": "苦", "甘": "甘甜", "辛": "辛香", "咸": "微咸"]
-        let en = ["酸": "sour", "苦": "bitter", "甘": "sweet", "辛": "spicy-aromatic", "咸": "slightly salty"]
+        // 每种组合写成整句，便于翻译
+        let main: [String: String] = ["酸": L("酸为主", "mainly sour"), "苦": L("苦为主", "mainly bitter"), "甘": L("甘甜为主", "mainly sweet"),
+                                      "辛": L("辛香为主", "mainly spicy-aromatic"), "咸": L("微咸为主", "mainly slightly salty")]
+        let hint: [String: String] = ["酸": L("带酸", "a hint of sour"), "苦": L("带苦", "a hint of bitter"), "甘": L("带甘甜", "a hint of sweet"),
+                                      "辛": L("带辛香", "a hint of spicy-aromatic"), "咸": L("带微咸", "a hint of slightly salty")]
         var parts: [String] = []
         for (k, v) in c.fl.sortedDesc() {
-            if v > 0.35 { parts.append(L((zh[k] ?? k) + "为主", "mainly " + (en[k] ?? k))) }
-            else if v > 0.15 { parts.append(L("带" + (zh[k] ?? k), "a hint of " + (en[k] ?? k))) }
+            if v > 0.35 { parts.append(main[k] ?? k) }
+            else if v > 0.15 { parts.append(hint[k] ?? k) }
         }
         return parts.isEmpty ? L("味淡", "mild") : parts.joined(separator: L("，", ", "))
     }

@@ -12,7 +12,7 @@ struct BaicaoHengApp: App {
                 .environmentObject(state)
                 .environmentObject(ads)
                 .environmentObject(store)
-                .environment(\.locale, Locale(identifier: state.s.lang == .en ? "en" : "zh-Hans"))
+                .environment(\.locale, Locale(identifier: state.s.lang.localeID))
         }
     }
 }

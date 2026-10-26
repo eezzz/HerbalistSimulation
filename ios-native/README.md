@@ -4,7 +4,7 @@
 
 - 最低 iOS 17，仅 iPhone
 - Bundle ID：`com.eezzz.baicaoheng`，显示名「百草衡」
-- 中英双语，默认英文；在任一页左上角齿轮“设置”里切换语言
+- 英文（默认）、中文、西班牙文（拉美）、葡萄牙文（巴西）；在任一页左上角齿轮“设置”里切换语言
 
 ## 目录
 
@@ -160,6 +160,26 @@ SDK 版本：Google Mobile Ads 12.x、User Messaging Platform 3.x（代码使用
 6. （可选）把 Google 文档中的完整 SKAdNetwork 列表补进 `project.yml` 的 `SKAdNetworkItems`。
 
 不想要广告时，把 `ADS_ENABLED` 改为 `"NO"`：不显示广告、不弹同意和跟踪授权，“设置”里也不再出现去广告选项。
+
+---
+
+## 多语言
+
+- 中文直接使用代码里的中文；英文、西班牙文、葡萄牙文都以英文原文为底本：英文原样显示，西语 / 葡语经 `T()` 查翻译包（`herbdata.json` 的 `packs`）。
+- 翻译包先查整句，查不到再按带占位符的句式模板匹配（如 `{0} g/day`），占位内容也会递归翻译。
+- 症状搜索会同时匹配中、英、西、葡四种语言的症状名与同义词；就医 / 求助提示词也包含西语、葡语。
+
+改了界面英文或数据后更新翻译：
+
+```bash
+python scripts/extract-i18n.py            # 重新汇总待译英文 → i18n/source.json
+# 把 source.json 里新增的条目译好，放进 i18n/work/<es|pt>.partN.json（可用 scripts/check-i18n.py 检查）
+python scripts/merge-i18n.py es pt        # 合并为 i18n/es.json、i18n/pt.json
+node scripts/export-herbdata.cjs index.html ios-native/BaicaoHeng/Resources/herbdata.json
+python scripts/test-i18n.py               # 检查是否有漏译、模板错配
+```
+
+真机检查：设置 → 语言依次切到 Español、Português，四个页面、设置页、分析页各分区与注意事项无残留英文或中文（药名括号里的拼音 / 拉丁名除外）；方库搜索 “ojos secos” / “olhos secos” 能匹配到杞菊明目茶。
 
 ---
 

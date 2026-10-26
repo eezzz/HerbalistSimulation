@@ -20,6 +20,7 @@ struct CabinetView: View {
             }) { return true }
             if let e = EH(h) {
                 if e.n.lowercased().contains(q) || (e.g ?? "").lowercased().contains(q) { return true }
+                if T(e.n).lowercased().contains(q) || T(e.g ?? "").lowercased().contains(q) { return true }
             }
             return false
         }

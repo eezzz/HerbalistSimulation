@@ -176,6 +176,13 @@ struct Symptom: Codable, Identifiable, Hashable {
     var id: String { k }
 }
 
+/// 一种界面语言的翻译包：英文原文 → 译文；带占位符的句式模板；症状同义词（用于搜索）
+struct LangPack: Codable {
+    let strings: [String: String]
+    let templates: [[String]]
+    let symSyn: [String: [String]]
+}
+
 struct HerbData: Codable {
     let herbs: [Herb]
     let part: [String: PartInfo]
@@ -206,6 +213,7 @@ struct HerbData: Codable {
     let redFlags: [String]
     let crisis: [String]
     let formNote: ZhEn
+    let packs: [String: LangPack]?
     let en: ENData
 }
 
