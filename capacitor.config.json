@@ -1,9 +1,0 @@
-{
-  "appId": "com.eezzz.baicaoheng",
-  "appName": "百草衡",
-  "webDir": "www",
-  "ios": {
-    "contentInset": "never",
-    "backgroundColor": "#EDF0EA"
-  }
-}
