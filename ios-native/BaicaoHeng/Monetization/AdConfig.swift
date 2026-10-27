@@ -11,6 +11,11 @@ enum AdConfig {
     /// 去广告内购（非消耗型），需在 App Store Connect 建同名产品
     static let removeAdsProductID = "com.eezzz.baicaoheng.removeads"
 
+    /// 客服邮箱，来自 project.yml 的 SUPPORT_EMAIL；为空时设置页不显示“联系客服”
+    static var supportEmail: String {
+        (Bundle.main.object(forInfoDictionaryKey: "BHSupportEmail") as? String ?? "").trimmingCharacters(in: .whitespaces)
+    }
+
     /// project.yml 中 ADS_ENABLED = YES 时启用广告
     static var adsEnabled: Bool {
         let v = Bundle.main.object(forInfoDictionaryKey: "BHAdsEnabled")

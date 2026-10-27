@@ -1,4 +1,5 @@
 import SwiftUI
+import UIKit
 
 /// 设置与支持：去广告内购、恢复购买、广告隐私选项、免责声明
 struct SupportView: View {
@@ -47,6 +48,16 @@ struct SupportView: View {
                             }
                             .disabled(store.product == nil || store.busy)
                         }
+                        if let id = store.purchaseID {
+                            LabeledContent(L("购买编号", "Purchase ID")) {
+                                Text(id).monospacedDigit().textSelection(.enabled)
+                            }
+                            .contextMenu {
+                                Button { UIPasteboard.general.string = id } label: {
+                                    Label(L("复制", "Copy"), systemImage: "doc.on.doc")
+                                }
+                            }
+                        }
                         Button(L("恢复购买", "Restore purchases")) {
                             Task { await store.restore() }
                         }
@@ -72,6 +83,16 @@ struct SupportView: View {
                     #endif
                 }
 
+                if let url = supportMailURL {
+                    Section {
+                        Link(destination: url) {
+                            Label(L("联系客服", "Contact support"), systemImage: "envelope")
+                        }
+                    } footer: {
+                        Text(L("购买或去广告有问题时，邮件会自动附上版本号和购买编号。", "For purchase or ad-removal issues; the email includes your app version and purchase ID."))
+                    }
+                }
+
                 Section {
                     Text(disclaimerText()).font(.footnote).foregroundStyle(.secondary)
                     LabeledContent(L("版本", "Version"), value: appVersion)
@@ -86,6 +107,20 @@ struct SupportView: View {
                 Button(L("好", "OK"), role: .cancel) {}
             }
         }
+    }
+
+    /// mailto 链接：主题带版本号，正文带购买编号，方便核对订单
+    private var supportMailURL: URL? {
+        let to = AdConfig.supportEmail
+        guard !to.isEmpty else { return nil }
+        var c = URLComponents()
+        c.scheme = "mailto"
+        c.path = to
+        c.queryItems = [
+            URLQueryItem(name: "subject", value: L("百草衡 客服", "Support request") + " (\(appVersion))"),
+            URLQueryItem(name: "body", value: "\n\n—\n" + L("购买编号：", "Purchase ID: ") + (store.purchaseID ?? "-") + "\niOS " + UIDevice.current.systemVersion),
+        ]
+        return c.url
     }
 
     private var appVersion: String {

@@ -783,7 +783,13 @@
   "Dried elderberries, boiled for at least 15 minutes; never use fresh raw berries": "Bayas de saúco secas, hervidas al menos 15 minutos; nunca use bayas frescas crudas",
   "Echinacea (Echinacea purpurea)": "Equinácea (Echinacea purpurea)",
   "Short-term supportive use at the onset of colds (Commission E / EMA)": "Uso de apoyo a corto plazo al inicio de los resfriados (Commission E / EMA)",
-  "Alkamides, cichoric acid, polysaccharides": "Alcamidas, ácido chicórico, polisacáridos"
+  "Alkamides, cichoric acid, polysaccharides": "Alcamidas, ácido chicórico, polisacáridos",
+  "Purchase ID": "N.º de compra",
+  "Copy": "Copiar",
+  "Contact support": "Contactar con soporte",
+  "For purchase or ad-removal issues; the email includes your app version and purchase ID.": "Para problemas con la compra o la eliminación de anuncios; el correo incluye la versión de la app y el n.º de compra.",
+  "Support request": "Solicitud de soporte",
+  "Purchase ID: ": "N.º de compra: "
  },
  "templates": [
   [

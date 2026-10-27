@@ -7,6 +7,8 @@ import StoreKit
 final class PurchaseStore: ObservableObject {
     @Published private(set) var product: Product?
     @Published private(set) var adsRemoved: Bool
+    /// 去广告购买的原始交易号（originalTransactionId），售后时用来在 App Store Server API 中查询
+    @Published private(set) var purchaseID: String?
     @Published private(set) var busy = false
     @Published var message: String?
 
@@ -43,6 +45,7 @@ final class PurchaseStore: ObservableObject {
             case .success(let verification):
                 if case .verified(let t) = verification {
                     setRemoved(true)
+                    purchaseID = String(t.originalID)
                     await t.finish()
                     message = L("已去除广告，感谢支持！", "Ads removed. Thank you for your support!")
                 } else {
@@ -76,18 +79,22 @@ final class PurchaseStore: ObservableObject {
     }
 
     func refreshEntitlements() async {
-        var owned = false
+        var owned: Transaction?
         for await result in Transaction.currentEntitlements {
             if case .verified(let t) = result, t.productID == AdConfig.removeAdsProductID, t.revocationDate == nil {
-                owned = true
+                owned = t
             }
         }
-        setRemoved(owned)
+        setRemoved(owned != nil)
+        purchaseID = owned.map { String($0.originalID) }
     }
 
     private func handle(_ result: VerificationResult<Transaction>) async {
         guard case .verified(let t) = result else { return }
-        if t.productID == AdConfig.removeAdsProductID { setRemoved(t.revocationDate == nil) }
+        if t.productID == AdConfig.removeAdsProductID {
+            setRemoved(t.revocationDate == nil)
+            purchaseID = t.revocationDate == nil ? String(t.originalID) : nil
+        }
         await t.finish()
     }
 
